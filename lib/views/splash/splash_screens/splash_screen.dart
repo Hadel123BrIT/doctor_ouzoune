@@ -67,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   onlastPage?
                   GestureDetector(
                     onTap: (){
-                      Get.toNamed(AppRoutes.login);
+                      Get.toNamed(AppRoutes.firstchoice);
                     },
                     child:  Text("done".tr,
                       textAlign: TextAlign.center,

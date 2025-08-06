@@ -18,6 +18,6 @@ class AppAssets {
   //Icons
   static const String  maleDentistIcon = 'assets/images/dentist_man.png';
   static const String femaleDentistIcon = 'assets/images/dentist_women.png';
-
+  static const String procedureFilter = 'assets/images/filter.svg';
 
 }

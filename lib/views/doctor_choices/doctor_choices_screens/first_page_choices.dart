@@ -33,7 +33,7 @@ class FirstPageChoices extends StatelessWidget {
           children: [
             SizedBox(height: context.height * 0.1),
             Text(
-              "Welcome to your app.\n Please select your needed.",
+              "Welcome to your app.\n What do you usually need? ",
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleLarge,
             ),

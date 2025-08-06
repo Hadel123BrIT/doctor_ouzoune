@@ -27,7 +27,7 @@ class LoginController extends GetxController {
             margin: EdgeInsets.all(15),
 
           );
-          Get.offAllNamed(AppRoutes.firstchoice);
+          Get.offAllNamed(AppRoutes.homepage);
         }
       } catch (e) {
         Get.snackbar('Error', 'An error occurred: $e');

@@ -38,7 +38,7 @@ class SecondPageChoices extends StatelessWidget {
               children: [
                 SizedBox(height: context.height * 0.1),
                 Text(
-                  "please choose.\nHow can we help you",
+                  "please choose.\n How many assistants do you usually need?",
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
@@ -98,13 +98,13 @@ class SecondPageChoices extends StatelessWidget {
           ),
           Obx(() => controller.showNextButton.value && controller.selectedAssistants.value >= 0
               ? Positioned(
-            bottom: context.height * 0.05, // بدلاً من 40
+            bottom: context.height * 0.05,
             left: 0,
             right: 0,
             child: Center(
               child: GestureDetector(
                 onTap: () {
-                  Get.toNamed(AppRoutes.homepage);
+                  Get.toNamed(AppRoutes.login);
                 },
                 child: Text(
                   "next".tr,

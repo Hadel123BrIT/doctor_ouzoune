@@ -50,7 +50,7 @@ class RegisterController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.offAllNamed(AppRoutes.firstchoice);
+        Get.offAllNamed(AppRoutes.homepage);
         Get.snackbar('Success'.tr, 'Registration successful'.tr);
       } else {
         final errorData = response.data;

@@ -43,7 +43,7 @@ Widget BuildBody(BuildContext context) {
               color: AppColors.primaryGreen,
               context: context,
               icon: FontAwesomeIcons.briefcaseMedical,
-              label: "Additional Kits",
+              label: "Additional Tools",
               onTap: () {
                 Get.toNamed(AppRoutes.additional_kit);
               },

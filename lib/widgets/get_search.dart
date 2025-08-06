@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:ouzoun/core/constants/app_colors.dart';
+import 'package:ouzoun/core/constants/app_images.dart';
 
 import '../views/procedure/procedure_controller/procedure_controller.dart';
 import '../views/procedure/widget/showFilterDialog.dart';
@@ -55,8 +56,10 @@ class Getsearch extends StatelessWidget {
               onPressed: (){
                 showFilterDialog(context);
               },
-              icon: Icon(Icons.filter_list_sharp,
+              icon: SvgPicture.asset(AppAssets.procedureFilter,
               color: Colors.grey,
+                width: 24,
+                height: 24,
               ),
             ),
           ),
