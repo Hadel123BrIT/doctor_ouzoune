@@ -33,27 +33,16 @@ class AdditionalKits extends StatelessWidget {
         actions: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Stack(
-              alignment: Alignment.topRight,
-              children: [
-                IconButton(
-                  onPressed: showSelectedToolsDialog,
-                  icon: Icon(Icons.shopping_cart_checkout_outlined, color: Colors.white),
-                ),
-                Obx(() => controller.selectedToolsCount > 0
-                    ? CircleAvatar(
-                  radius: 10,
-                  backgroundColor: Colors.red,
-                  child: Text(
-                    controller.selectedToolsCount.toString(),
-                    style: TextStyle(color: Colors.white, fontSize: 12),
-                  ),
-                )
-                    : SizedBox.shrink()),
-              ],
+            child: IconButton(
+              onPressed: () =>{
+                showSelectedToolsDialog(),
+              },
+              icon: Badge(
+                label: Obx(() => Text('${controller.selectedAdditionalTools.length}')),
+                child: Icon(Icons.shopping_cart_checkout_outlined, color: Colors.white),
+              ),
             ),
-          )
-        ],
+          )],
         toolbarHeight: context.height * 0.1,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
