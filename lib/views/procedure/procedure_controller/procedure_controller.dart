@@ -245,8 +245,8 @@ class ProcedureController extends GetxController {
       final response = await apiServices.getProceduresPaged(
         pageSize: itemsPerPage.value,
         pageNum: currentPage.value,
-        doctorId: 'your_doctor_id',
-        assistantId: 'your_assistant_id',
+        doctorId: '', // يمكنك تعديلها إذا كنت تريد تصفية حسب الطبيب
+        assistantId: '', // يمكنك تعديلها إذا كنت تريد تصفية حسب المساعد
       );
 
       if (response.isNotEmpty) {
@@ -257,7 +257,7 @@ class ProcedureController extends GetxController {
         hasMore.value = false;
       }
     } catch (e) {
-      Get.snackbar('Error'.tr, 'Failed to load procedures'.tr);
+      Get.snackbar('Error'.tr, 'Failed to load procedures: ${e.toString()}'.tr);
     } finally {
       isLoading.value = false;
     }

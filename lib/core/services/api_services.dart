@@ -5,9 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as dio;
 import 'package:ouzoun/models/procedure_model.dart';
-
 import '../../Routes/app_routes.dart';
-import '../../models/additionalTool_model.dart';
 
 class ApiServices  {
 final Dio dio=Dio();
@@ -232,18 +230,18 @@ static const String baseUrl="http://ouzon.somee.com/api";
   Future<List<Procedure>> getProceduresPaged({
     required int pageSize,
     required int pageNum,
-    required String doctorId,
-    required String assistantId,
+    String? doctorId,
+    String? assistantId,
   }) async {
     try {
       final token = GetStorage().read('auth_token');
       final response = await dio.get(
-        '$baseUrl/api/Procedures/GetProceduresPaged',
+        'http://www.ouzon.somee.com/api/procedures/paged',
         queryParameters: {
           'pageSize': pageSize,
           'pageNum': pageNum,
-          'DoctorId': doctorId,
-          'AssistantId': assistantId,
+          if (doctorId != null && doctorId.isNotEmpty) 'doctorId': doctorId,
+          if (assistantId != null && assistantId.isNotEmpty) 'assistantId': assistantId,
         },
         options: Options(
           headers: {

@@ -79,6 +79,14 @@ Widget buildProcedureCard(Procedure procedure, BuildContext context) {
                 fontSize: 15,
               )
           ),
+          SizedBox(height: 8),
+          Text(
+              'Clinic : ${procedure.doctor.clinic?.name ?? 'Unknown'}',
+              style: TextStyle(
+                fontFamily: "Montserrat",
+                fontSize: 15,
+              )
+          ),
           SizedBox(height: 16),
           CustomButton(
             onTap: () async {
