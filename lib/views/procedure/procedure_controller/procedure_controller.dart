@@ -245,8 +245,8 @@ class ProcedureController extends GetxController {
       final response = await apiServices.getProceduresPaged(
         pageSize: itemsPerPage.value,
         pageNum: currentPage.value,
-        doctorId: '', // يمكنك تعديلها إذا كنت تريد تصفية حسب الطبيب
-        assistantId: '', // يمكنك تعديلها إذا كنت تريد تصفية حسب المساعد
+        doctorId: '',
+        assistantId: '',
       );
 
       if (response.isNotEmpty) {

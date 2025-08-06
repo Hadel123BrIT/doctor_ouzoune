@@ -1,56 +1,113 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-
 import '../../../core/constants/app_colors.dart';
 import '../procedure_controller/procedure_controller.dart';
 
+
 void showFilterDialog(BuildContext context) {
   final ProcedureController controller = Get.find();
+  final border = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
+    borderSide: BorderSide(color: Colors.grey.shade300),
+  );
 
   showDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
         title: Text("Filter Procedures",
-          style: TextStyle(fontFamily:'Montserrat'),
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // حقل اسم الطبيب
+              SizedBox(height: 10),
               TextField(
+                cursorColor: AppColors.primaryBlue,
                 decoration: InputDecoration(
-                  labelText: 'Doctor Name',
-                  labelStyle: TextStyle(fontFamily: 'Montserrat'),
+                  hintText: 'Search by doctor name...',
+                  hintStyle: TextStyle(fontFamily: 'Montserrat',
+                  fontSize: 14,
+                  ),
+                  border: border,
+                  enabledBorder: border,
+                  focusedBorder: border.copyWith(
+                    borderSide: BorderSide(color: AppColors.primaryGreen),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 ),
                 onChanged: (value) => controller.searchQuery.value = value,
               ),
-
-              // حقل اسم العيادة
+              SizedBox(height: 14),
               TextField(
+                cursorColor: AppColors.primaryBlue,
                 decoration: InputDecoration(
-                  labelText: 'Clinic Name',
-                  labelStyle: TextStyle(fontFamily: 'Montserrat'),
+                  hintText: 'Search by assistance name...',
+                  hintStyle: TextStyle(fontFamily: 'Montserrat',
+                    fontSize: 14,
+                  ),
+                  border: border,
+                  enabledBorder: border,
+                  focusedBorder: border.copyWith(
+                    borderSide: BorderSide(color: AppColors.primaryGreen),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                ),
+                onChanged: (value) => controller.searchQuery.value = value,
+              ),
+              SizedBox(height: 14),
+              TextField(
+                cursorColor: AppColors.primaryBlue,
+                decoration: InputDecoration(
+                  hintText: 'Search by clinic name...',
+                  hintStyle: TextStyle(fontFamily: 'Montserrat',
+                  fontSize: 14,
+                  ),
+                  border: border,
+                  enabledBorder: border,
+                  focusedBorder: border.copyWith(
+                    borderSide: BorderSide(color: AppColors.primaryGreen),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 ),
                 onChanged: (value) => controller.clinicNameFilter.value = value,
               ),
-
-              // حقل عنوان العيادة
+              SizedBox(height: 14),
               TextField(
+                cursorColor: AppColors.primaryGreen,
                 decoration: InputDecoration(
-                  labelText: 'Clinic Address',
-                  labelStyle: TextStyle(fontFamily: 'Montserrat'),
+                  hintText: 'Search by clinic address...',
+                  hintStyle: TextStyle(fontFamily: 'Montserrat',
+                  fontSize: 14,
+                  ),
+                  border: border,
+                  enabledBorder: border,
+                  focusedBorder: border.copyWith(
+                    borderSide: BorderSide(color: AppColors.primaryGreen),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 ),
                 onChanged: (value) => controller.clinicAddressFilter.value = value,
               ),
-
-              // حقل عدد المساعدين الأدنى
+              SizedBox(height: 14),
               TextField(
+                cursorColor: AppColors.primaryGreen,
                 decoration: InputDecoration(
-                  labelText: 'Min Assistants',
-                  labelStyle: TextStyle(fontFamily: 'Montserrat'),
+                  hintText: 'Minimum assistants...',
+                  hintStyle: TextStyle(fontFamily: 'Montserrat',
+                  fontSize: 14,
+                  ),
+                  border: border,
+                  enabledBorder: border,
+                  focusedBorder: border.copyWith(
+                    borderSide: BorderSide(color: AppColors.primaryGreen),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
@@ -59,12 +116,20 @@ void showFilterDialog(BuildContext context) {
                   }
                 },
               ),
-
-              // حقل عدد المساعدين الأقصى
+              SizedBox(height: 14),
               TextField(
+                cursorColor: AppColors.primaryGreen,
                 decoration: InputDecoration(
-                  labelText: 'Max Assistants',
-                  labelStyle: TextStyle(fontFamily: 'Montserrat'),
+                  hintText: 'Maximum assistants...',
+                  hintStyle: TextStyle(fontFamily: 'Montserrat',
+                  fontSize: 14,
+                  ),
+                  border: border,
+                  enabledBorder: border,
+                  focusedBorder: border.copyWith(
+                    borderSide: BorderSide(color: AppColors.primaryGreen),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
@@ -73,50 +138,64 @@ void showFilterDialog(BuildContext context) {
                   }
                 },
               ),
-
-              // حقل تاريخ البداية
-              ListTile(
-                title: Text(
-                  'From Date: ${controller.fromDate.value?.toLocal().toString().split(' ')[0] ?? 'Not selected'}',
-                  style: TextStyle(fontFamily: 'Montserrat'),
+              SizedBox(height: 14),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                trailing: Icon(Icons.calendar_today),
-                onTap: () async {
-                  final selectedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                  );
-                  if (selectedDate != null) {
-                    controller.fromDate.value = selectedDate;
-                  }
-                },
+                child: ListTile(
+                  title: Text(
+                    controller.fromDate.value?.toLocal().toString().split(' ')[0] ?? 'Select from date',
+                    style: TextStyle(fontFamily: 'Montserrat',
+                    fontSize: 14
+                    ),
+                  ),
+                  trailing: Icon(Icons.calendar_today, color: AppColors.primaryGreen),
+                  onTap: () async {
+                    final selectedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                    );
+                    if (selectedDate != null) {
+                      controller.fromDate.value = selectedDate;
+                    }
+                  },
+                ),
               ),
-
-              // حقل تاريخ النهاية
-              ListTile(
-                title: Text(
-                  'To Date: ${controller.toDate.value?.toLocal().toString().split(' ')[0] ?? 'Not selected'}',
-                  style: TextStyle(fontFamily: 'Montserrat'),
+              SizedBox(height: 14),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                trailing: Icon(Icons.calendar_today),
-                onTap: () async {
-                  final selectedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                  );
-                  if (selectedDate != null) {
-                    controller.toDate.value = selectedDate;
-                  }
-                },
+                child: ListTile(
+                  title: Text(
+                    controller.toDate.value?.toLocal().toString().split(' ')[0] ?? 'Select to date',
+                    style: TextStyle(fontFamily: 'Montserrat',
+                    fontSize: 14
+                    ),
+                  ),
+                  trailing: Icon(Icons.calendar_today, color: AppColors.primaryGreen),
+                  onTap: () async {
+                    final selectedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                    );
+                    if (selectedDate != null) {
+                      controller.toDate.value = selectedDate;
+                    }
+                  },
+                ),
               ),
             ],
           ),
         ),
-        actions: [
+         actions: [
           TextButton(
             onPressed: () {
               controller.resetFilters();
@@ -124,7 +203,7 @@ void showFilterDialog(BuildContext context) {
             },
             child: Text("Reset",
               style: TextStyle(
-                fontFamily:'Montserrat',
+                fontFamily: 'Montserrat',
                 color: Colors.grey,
               ),
             ),
@@ -133,7 +212,7 @@ void showFilterDialog(BuildContext context) {
             onPressed: () => Get.back(),
             child: Text("Cancel",
               style: TextStyle(
-                fontFamily:'Montserrat',
+                fontFamily: 'Montserrat',
                 color: Colors.grey,
               ),
             ),
@@ -145,11 +224,16 @@ void showFilterDialog(BuildContext context) {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryGreen,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: Text("Apply",
               style: TextStyle(
-                fontFamily:'Montserrat',
+                fontFamily: 'Montserrat',
                 color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

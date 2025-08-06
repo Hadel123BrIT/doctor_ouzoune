@@ -56,7 +56,7 @@ Widget buildProcedureCard(Procedure procedure, BuildContext context) {
           ),
           SizedBox(height: 8),
           Text(
-              ' ${procedure.doctor?.userName ?? 'No doctor assigned'}',
+              ' Doctor : ${procedure.doctor?.userName ?? 'No doctor assigned'}',
               style: TextStyle(
                 fontFamily: "Montserrat",
                 fontSize: 15,

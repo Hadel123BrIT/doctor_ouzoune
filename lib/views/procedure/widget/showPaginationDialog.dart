@@ -78,7 +78,7 @@ Future<void> showPaginationDialog(BuildContext context) async {
 
   if (pageSize > 0 && pageNum > 0) {
   controller.itemsPerPage.value = pageSize;
-  controller.currentPage.value = 1; // نبدأ دائماً من الصفحة الأولى عند تغيير الإعدادات
+  controller.currentPage.value = 1;
   await controller.fetchProceduresPaged();
   Get.back();
   } else {
@@ -98,7 +98,7 @@ Future<void> showPaginationDialog(BuildContext context) async {
   style: ElevatedButton.styleFrom(
   backgroundColor: AppColors.primaryGreen,
   foregroundColor: Colors.white,
-  minimumSize: Size(double.infinity, 50), // لجعل الزر أوسع
+  minimumSize: Size(double.infinity, 50),
   ),
   ),
   ],
