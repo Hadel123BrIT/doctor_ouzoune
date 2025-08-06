@@ -65,7 +65,7 @@ class Procedure {
       case 2: return Colors.orange;
       case 3: return Colors.green;
       case 4: return Colors.red;
-      case 7: return Colors.yellow;
+      case 7: return Colors.blue;
       default: return Colors.grey;
     }
   }

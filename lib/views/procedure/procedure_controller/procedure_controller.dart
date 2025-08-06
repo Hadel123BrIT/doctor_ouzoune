@@ -268,14 +268,20 @@ class ProcedureController extends GetxController {
   // get one procedure details
   Future<void> fetchProcedureDetails(int procedureId) async {
     try {
-      isLoading.value = true;
-      final procedure = await apiServices.getProcedureDetails(procedureId);
-      selectedProcedure.value = procedure;
+      isLoading(true);
+      final responseData = await apiServices.getProcedureDetails(procedureId);
+
+      if (responseData != null) {
+        selectedProcedure.value = Procedure.fromJson(responseData);
+      } else {
+        throw Exception('No data received');
+      }
+    } on DioException catch (e) {
+      Get.snackbar('Error'.tr, 'Failed to load procedure details: ${e.message}'.tr);
     } catch (e) {
-      Get.snackbar('Error'.tr, 'Failed to load procedure details'.tr);
-      rethrow;
+      Get.snackbar('Error'.tr, 'Unexpected error: ${e.toString()}'.tr);
     } finally {
-      isLoading.value = false;
+      isLoading(false);
     }
   }
 
@@ -284,7 +290,7 @@ class ProcedureController extends GetxController {
   List<Procedure> get filteredProcedures {
     return proceduresList.where((procedure) {
       final matchesSearch = procedure.doctor.userName
-          .toLowerCase()
+          ?.toLowerCase()
           .contains(searchQuery.value.toLowerCase());
 
       final matchesStatus = statusFilter.value == 0 ||
@@ -293,7 +299,7 @@ class ProcedureController extends GetxController {
       final matchesKitFilter = !showMainKitsOnly.value ||
           procedure.kits.any((kit) => kit.isMainKit);
 
-      return matchesSearch && matchesStatus && matchesKitFilter;
+      return matchesSearch! && matchesStatus && matchesKitFilter;
     }).toList();
   }
 

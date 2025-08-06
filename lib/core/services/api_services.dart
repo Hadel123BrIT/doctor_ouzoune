@@ -184,37 +184,44 @@ static const String baseUrl="http://ouzon.somee.com/api";
 //-----------------------------------------------------------------
 
   // fetch one procedure
-  Future<Procedure> getProcedureDetails(int procedureId) async {
+  Future<Map<String, dynamic>> getProcedureDetails(int procedureId) async {
+    print('1. Starting getProcedureDetails for ID: $procedureId');
     try {
-      final box = GetStorage();
-      final token = box.read('--------------------------user_token');
 
-      if (token == null) {
-        throw Exception('No authentication token found');
-      }
+
+      final url = '$baseUrl/procedures/$procedureId';
+      print('4. Making request to: $url');
 
       final response = await dio.get(
-        '$baseUrl/api/Procedures/GetProcedure/$procedureId',
+        url,
         options: Options(
           headers: {
-            'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
           },
         ),
       );
 
+      print('5. Response received. Status: ${response.statusCode}');
+      print('6. Response data: ${response.data}');
+
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return Procedure.fromJson(response.data);
+        print("**********done************");
+        return response.data as Map<String, dynamic>;
       } else {
+        print('7. Failed with status: ${response.statusCode}');
         throw Exception('Failed to load procedure details');
       }
     } on DioException catch (e) {
+      print('8. DioError: ${e.message}');
+      print('9. DioError response: ${e.response?.data}');
       if (e.response?.statusCode == 401) {
+        print('10. Unauthorized - redirecting to login');
         Get.offAllNamed(AppRoutes.login);
         throw Exception('Session expired, please login again');
       }
       throw Exception('Network error: ${e.message}');
     } catch (e) {
+      print('11. General error: $e');
       throw Exception('Unexpected error: $e');
     }
   }

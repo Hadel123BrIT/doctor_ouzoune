@@ -8,7 +8,7 @@ import '../../../models/kit_model.dart';
 import '../../../models/additionalTool_model.dart';
 import '../../../models/procedure_model.dart';
 
-Widget buildHeaderCard(BuildContext context, bool isDarkMode, Color textColor,Procedure procedure) {
+Widget buildHeaderCard(BuildContext context, bool isDarkMode, Color textColor, Procedure procedure) {
   return Card(
     elevation: 4,
     shape: RoundedRectangleBorder(
@@ -24,7 +24,7 @@ Widget buildHeaderCard(BuildContext context, bool isDarkMode, Color textColor,Pr
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Procedure #${procedure.id}',
+                'Procedure #${procedure.id ?? 'N/A'}',
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 20,
@@ -33,18 +33,24 @@ Widget buildHeaderCard(BuildContext context, bool isDarkMode, Color textColor,Pr
                 ),
               ),
               Chip(
-                label: Text(procedure.statusText,
+                label: Text(
+                  procedure.statusText ?? 'Unknown',
                   style: TextStyle(fontFamily: 'Montserrat', color: Colors.white),
                 ),
-                backgroundColor: procedure.statusColor,
+                backgroundColor: procedure.statusColor ?? Colors.grey,
               ),
             ],
           ),
           Divider(color: Colors.grey[400], height: 20),
-          buildDetailRow('Doctor', procedure.doctor.userName, textColor),
-          buildDetailRow('Date', DateFormat('dd-MM-yyyy').format(procedure.date), textColor),
-          buildDetailRow('Time', DateFormat('HH:mm').format(procedure.date), textColor),
-          buildDetailRow('Assistants', '${procedure.numberOfAssistants}', textColor),
+          buildDetailRow('Doctor', procedure.doctor?.userName ?? 'No doctor', textColor),
+          buildDetailRow('Date', procedure.date != null
+              ? DateFormat('dd-MM-yyyy').format(procedure.date!)
+              : 'N/A', textColor),
+          buildDetailRow('Time', procedure.date != null
+              ? DateFormat('HH:mm').format(procedure.date!)
+              : 'N/A', textColor),
+          buildDetailRow('Assistants', '${procedure.numberOfAssistants ?? 0}', textColor),
+          buildDetailRow('Clinic', procedure.doctor.clinic?.name ?? 'No clinic', textColor),
         ],
       ),
     ),
@@ -95,7 +101,7 @@ Widget buildSectionTitle(String title) {
   );
 }
 
-Widget buildAssistantsList(Procedure procedure , bool isDarkMode) {
+Widget buildAssistantsList(Procedure procedure, bool isDarkMode) {
   return Card(
     elevation: 2,
     shape: RoundedRectangleBorder(
@@ -112,16 +118,16 @@ Widget buildAssistantsList(Procedure procedure , bool isDarkMode) {
           leading: CircleAvatar(
             backgroundColor: AppColors.primaryGreen,
             child: Text(
-              assistant.userName[0],
+              assistant.userName.isNotEmpty ? assistant.userName[0] : '?',
               style: TextStyle(color: Colors.white),
             ),
           ),
           title: Text(
-            assistant.userName,
+            assistant.userName ?? 'Unknown',
             style: TextStyle(fontFamily: 'Montserrat'),
           ),
           subtitle: Text(
-            assistant.phoneNumber!,
+            assistant.phoneNumber ?? 'No phone',
             style: TextStyle(fontFamily: 'Montserrat', color: Colors.grey),
           ),
         )).toList(),
@@ -130,7 +136,7 @@ Widget buildAssistantsList(Procedure procedure , bool isDarkMode) {
   );
 }
 
-Widget buildToolsList(List<AdditionalTool> tools,isDarkMode) {
+Widget buildToolsList(List<AdditionalTool> tools, bool isDarkMode) {
   return Card(
     elevation: 2,
     shape: RoundedRectangleBorder(
@@ -142,10 +148,10 @@ Widget buildToolsList(List<AdditionalTool> tools,isDarkMode) {
     ),
     child: Column(
       children: tools.map((tool) => ExpansionTile(
-        iconColor: Colors.white,
-        collapsedIconColor: Colors.white,
+        iconColor: AppColors.primaryGreen,
+        collapsedIconColor: AppColors.primaryGreen,
         title: Text(
-          tool.name!,
+          tool.name ?? 'Unnamed tool',
           style: TextStyle(fontFamily: 'Montserrat'),
         ),
         children: [
@@ -153,7 +159,7 @@ Widget buildToolsList(List<AdditionalTool> tools,isDarkMode) {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
-                buildToolDetailRow('Quantity', '${tool.quantity}'),
+                buildToolDetailRow('Quantity', '${tool.quantity ?? 0}'),
                 SizedBox(height: 10),
               ],
             ),
@@ -199,13 +205,13 @@ Widget buildKitCard(Kit kit, BuildContext context) {
       ),
     ),
     child: ExpansionTile(
-      iconColor: Colors.white,
-      collapsedIconColor: Colors.white,
+      iconColor: AppColors.primaryGreen,
+      collapsedIconColor: AppColors.primaryGreen,
       leading: kit.isMainKit
           ? Icon(Icons.medical_services, color: Colors.green)
           : Icon(Icons.construction, color: Colors.blue),
       title: Text(
-        kit.name,
+        kit.name ?? 'Unnamed kit',
         style: TextStyle(
           fontFamily: 'Montserrat',
           fontWeight: FontWeight.bold,
@@ -213,7 +219,8 @@ Widget buildKitCard(Kit kit, BuildContext context) {
         ),
       ),
       subtitle: kit.isMainKit
-          ? Text('Surgical Kit', style: TextStyle(color: Colors.green, fontFamily: 'Montserrat'))
+          ? Text('Surgical Kit',
+          style: TextStyle(color: Colors.green, fontFamily: 'Montserrat'))
           : null,
       children: [
         Padding(
@@ -222,12 +229,12 @@ Widget buildKitCard(Kit kit, BuildContext context) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               buildSectionTitle('Implants (${kit.implants.length})'),
-              ...kit.implants.map((implant) => buildImplantItem(implant,isDarkMode)).toList(),
+              ...kit.implants.map((implant) => buildImplantItem(implant, isDarkMode)).toList(),
 
               SizedBox(height: 10),
 
               buildSectionTitle('Tools (${kit.tools.length})'),
-              ...kit.tools.map((tool) => buildToolItem(tool,isDarkMode)).toList(),
+              ...kit.tools.map((tool) => buildToolItem(tool, isDarkMode)).toList(),
 
               SizedBox(height: 10),
             ],
@@ -238,8 +245,7 @@ Widget buildKitCard(Kit kit, BuildContext context) {
   );
 }
 
-Widget buildImplantItem(Implant implant,isDarkMode) {
-
+Widget buildImplantItem(Implant implant, bool isDarkMode) {
   return Card(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12),
@@ -254,13 +260,14 @@ Widget buildImplantItem(Implant implant,isDarkMode) {
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       leading: Icon(Icons.medication, color: AppColors.primaryGreen),
       title: Text(
-        implant.brand,
+        implant.brand ?? 'Unknown brand',
         style: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold),
       ),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(implant.description, style: TextStyle(fontFamily: 'Montserrat',color: Colors.grey)),
+          Text(implant.description ?? 'No description',
+              style: TextStyle(fontFamily: 'Montserrat', color: Colors.grey)),
           SizedBox(height: 4),
         ],
       ),
@@ -268,7 +275,7 @@ Widget buildImplantItem(Implant implant,isDarkMode) {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Qty: ${implant.quantity}',
+            'Qty: ${implant.quantity ?? 0}',
             style: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold),
           ),
         ],

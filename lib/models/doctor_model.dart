@@ -1,11 +1,11 @@
 import 'clinic_model.dart';
 
 class Doctor {
-  final String id;
-  final String userName;
-  final String email;
-  final String phoneNumber;
-  final String role;
+  final String? id;
+  final String? userName;
+  final String? email;
+  final String? phoneNumber;
+  final String? role;
   final Clinic? clinic;
   final double? rate;
 

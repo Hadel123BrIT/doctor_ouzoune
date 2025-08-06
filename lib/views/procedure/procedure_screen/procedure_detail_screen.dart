@@ -44,7 +44,8 @@ class ProcedureDetailScreen extends StatelessWidget {
             bottom: Radius.circular(context.width * 0.06),
           ),
         ),
-        title: Text("Procedure Details", style: Theme.of(context).textTheme.titleSmall),
+        title: Text("Procedure Details",
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white)),
         backgroundColor: AppColors.primaryGreen,
         centerTitle: true,
       ),
@@ -53,30 +54,24 @@ class ProcedureDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Card
             buildHeaderCard(context, isDarkMode, textColor, procedure!),
             SizedBox(height: 20),
 
-            // Assistants Section
             if (procedure!.assistants.isNotEmpty) ...[
               buildSectionTitle('Assistants (${procedure!.assistants.length})'),
               buildAssistantsList(procedure!, isDarkMode),
               SizedBox(height: 20),
             ],
 
-            // Additional Tools Section
             if (procedure!.tools.isNotEmpty) ...[
               buildSectionTitle('Additional Tools (${procedure!.tools.length})'),
               buildToolsList(procedure!.tools, isDarkMode),
               SizedBox(height: 20),
             ],
 
-            // Kits Section
             if (procedure!.kits.isNotEmpty) ...[
               buildSectionTitle('Kits (${procedure!.kits.length})'),
-              ...procedure!.kits.map((kit) => kit != null
-                  ? buildKitCard(kit, context)
-                  : SizedBox()).toList(),
+              ...procedure!.kits.map((kit) => buildKitCard(kit, context)).toList(),
             ],
 
             if (procedure!.assistants.isEmpty &&

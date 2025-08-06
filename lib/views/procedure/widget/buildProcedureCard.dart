@@ -81,11 +81,19 @@ Widget buildProcedureCard(Procedure procedure, BuildContext context) {
           ),
           SizedBox(height: 16),
           CustomButton(
-            onTap: () {
-              if (procedure != null) {
-                Get.to(() => ProcedureDetailScreen(procedure: procedure));
-              } else {
-                Get.snackbar('Error', 'Cannot view details for this procedure');
+            onTap: () async {
+              try {
+                if (procedure != null) {
+                  final controller = Get.find<ProcedureController>();
+                  await controller.fetchProcedureDetails(procedure.id);
+                  if (controller.selectedProcedure.value != null) {
+                    Get.to(() => ProcedureDetailScreen(procedure: controller.selectedProcedure.value));
+                  } else {
+                    Get.snackbar('Error'.tr, 'Procedure details not available'.tr);
+                  }
+                }
+              } catch (e) {
+                Get.snackbar('Error'.tr, 'Failed to load details: ${e.toString()}'.tr);
               }
             },
             text: "View details".tr,

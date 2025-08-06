@@ -432,7 +432,6 @@ Widget buildProceduresList() {
         ),
       );
     }
-    //Empty
     if (controller.proceduresList.isEmpty) {
       return Center(
         child: Column(
@@ -452,20 +451,15 @@ Widget buildProceduresList() {
         ),
       );
     }
-  //loading
     return RefreshIndicator(
       onRefresh: () async {
         await controller.fetchAllProcedures();
       },
       child: ListView.builder(
-        padding: EdgeInsets.all(8),
         itemCount: controller.filteredProcedures.length,
         itemBuilder: (context, index) {
           final procedure = controller.filteredProcedures[index];
-          return Padding(
-            padding: EdgeInsets.symmetric(vertical: 4),
-            child: buildProcedureCard(procedure, context),
-          );
+          return buildProcedureCard(procedure, context);
         },
       ),
     );
