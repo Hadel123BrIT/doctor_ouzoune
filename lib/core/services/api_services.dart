@@ -133,49 +133,62 @@ static const String baseUrl="http://ouzon.somee.com/api";
     String? doctorName,
     String? clinicName,
     String? clinicAddress,
+    int? status,
     List<String>? requestBody,
-    String? token,
+    required String token,
   }) async {
     try {
-      final queryParams = {
-        if (from != null)
-          'from': from.toIso8601String(),
-        if (to != null)
-          'to': to.toIso8601String(),
-        if (minNumberOfAssistants != null)
-          'minNumberOfAssistants': minNumberOfAssistants.toString(),
-        if (maxNumberOfAssistants != null)
-          'maxNumberOfAssistants': maxNumberOfAssistants.toString(),
-        if (doctorName != null)
-          'doctorName': doctorName,
-        if (clinicName != null)
-          'clinicName': clinicName,
-        if (clinicAddress != null)
-          'clinicAddress': clinicAddress,
-      };
+      final queryParams = <String, dynamic>{};
+
+
+      if (from != null) queryParams['from'] = from.toIso8601String();
+      if (to != null) queryParams['to'] = to.toIso8601String();
+      if (minNumberOfAssistants != null) {
+        queryParams['minNumberOfAssistants'] = minNumberOfAssistants;
+      }
+      if (maxNumberOfAssistants != null) {
+        queryParams['maxNumberOfAssistants'] = maxNumberOfAssistants;
+      }
+      if (doctorName != null && doctorName.isNotEmpty) {
+        queryParams['doctorName'] = doctorName;
+      }
+      if (clinicName != null && clinicName.isNotEmpty) {
+        queryParams['clinicName'] = clinicName;
+      }
+      if (clinicAddress != null && clinicAddress.isNotEmpty) {
+        queryParams['clinicAddress'] = clinicAddress;
+      }
+      if (status != null && status > 0) {
+        queryParams['status'] = status;
+      }
+
+      print('Sending query params: $queryParams');
+
       final response = await dio.post(
         '$baseUrl/procedures/FilteredProcedure',
         queryParameters: queryParams,
         data: requestBody ?? [],
         options: Options(
           headers: {
-            if (token != null)
-              'Authorization': 'Bearer $token',
+            'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
           },
         ),
       );
-      print('Full Response: ${response.data}');
-      if (response.statusCode == 200) {
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return (response.data as List).map((p) => Procedure.fromJson(p)).toList();
       } else {
         throw Exception('Failed with status: ${response.statusCode}');
-
       }
     } on DioException catch (e) {
-      print('*****************Error: ${e.response?.data}');
-      print(e.toString());
-      rethrow;
+      if (e.response?.statusCode == 401) {
+        Get.offAllNamed(AppRoutes.login);
+        Get.snackbar('Session Expired', 'Please login again');
+      } else {
+        Get.snackbar('Error', e.response?.data['message'] ?? e.message);
+      }
+      return [];
     }
   }
 
@@ -195,6 +208,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
         options: Options(
           headers: {
             'Content-Type': 'application/json',
+
           },
         ),
       );

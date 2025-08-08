@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../models/procedure_model.dart';
 import '../procedure_controller/procedure_controller.dart';
 
 Future<void> showPaginationDialog(BuildContext context) async {

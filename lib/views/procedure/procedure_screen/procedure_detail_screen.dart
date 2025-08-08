@@ -57,13 +57,13 @@ class ProcedureDetailScreen extends StatelessWidget {
             buildHeaderCard(context, isDarkMode, textColor, procedure!),
             SizedBox(height: 20),
 
-            if (procedure!.assistants.isNotEmpty) ...[
-              buildSectionTitle('Assistants (${procedure!.assistants.length})'),
+            if (procedure!.assistants!.isNotEmpty) ...[
+              buildSectionTitle('Assistants (${procedure!.assistants?.length})'),
               buildAssistantsList(procedure!, isDarkMode),
               SizedBox(height: 20),
             ],
 
-            if (procedure!.tools.isNotEmpty) ...[
+            if (procedure!.tools!.isNotEmpty) ...[
               buildSectionTitle('Additional Tools (${procedure!.tools.length})'),
               buildToolsList(procedure!.tools, isDarkMode),
               SizedBox(height: 20),

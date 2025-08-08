@@ -50,7 +50,7 @@ Widget buildHeaderCard(BuildContext context, bool isDarkMode, Color textColor, P
               ? DateFormat('HH:mm').format(procedure.date!)
               : 'N/A', textColor),
           buildDetailRow('Assistants', '${procedure.numberOfAssistants ?? 0}', textColor),
-          buildDetailRow('Clinic', procedure.doctor.clinic?.name ?? 'No clinic', textColor),
+          buildDetailRow('Clinic', procedure.doctor?.clinic?.name ?? 'No clinic', textColor),
         ],
       ),
     ),
@@ -114,7 +114,7 @@ Widget buildAssistantsList(Procedure procedure, bool isDarkMode) {
     child: Padding(
       padding: EdgeInsets.all(12),
       child: Column(
-        children: procedure.assistants.map((assistant) => ListTile(
+        children: procedure.assistants!.map((assistant) => ListTile(
           leading: CircleAvatar(
             backgroundColor: AppColors.primaryGreen,
             child: Text(

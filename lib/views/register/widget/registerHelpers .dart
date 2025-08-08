@@ -7,6 +7,7 @@ import 'package:ouzoun/Core/Services/media_query_service.dart';
 import 'package:ouzoun/Routes/app_routes.dart';
 import 'package:ouzoun/Widgets/custom_button.dart';
 import 'package:ouzoun/Widgets/custom_text_form_field.dart' hide CustomTextFormField;
+import 'package:ouzoun/views/register/widget/registerValidators%20.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../widgets/custom_text_form_field.dart';
 import '../../login/login_screen.dart';
@@ -51,7 +52,8 @@ class RegisterHelpers {
       prefixIcon: Icon(Icons.person,
           color: Colors.grey[500]
       ),
-      validator: (val) => val?.isEmpty ?? true ? "Name must not be empty".tr : null,
+      validator: (val) => val?.isEmpty ?? true ? "Name must not be empty".tr
+          : null,
       myController: controller,
       hintText: "Enter your Name".tr,
       obscureText: false,
@@ -109,7 +111,7 @@ class RegisterHelpers {
       prefixIcon: Icon(Icons.phone,
           color: Colors.grey[500]
       ),
-      validator: (val) => val?.isEmpty ?? true ? "Phone must not be empty".tr : null,
+      validator: RegisterValidators.validatePhone,
       myController: controller,
       hintText: "Enter your phone".tr,
       obscureText: false,
@@ -121,7 +123,7 @@ class RegisterHelpers {
       prefixIcon: Icon(Icons.email,
           color: Colors.grey[500]
       ),
-      validator: (val) => val?.isEmpty ?? true ? "Email must not be empty".tr : null,
+      validator: RegisterValidators.validateEmail,
       myController: controller,
       hintText: "Enter your Email".tr,
       obscureText: false,
@@ -137,7 +139,7 @@ class RegisterHelpers {
         Icons.remove_red_eye_outlined,
         color: Colors.grey[500],
       ),
-      validator: (val) => val?.isEmpty ?? true ? "Password must not be empty".tr : null,
+      validator: RegisterValidators.validatePassword,
       obscureText: true,
       myController: controller,
       hintText: 'Enter Your Password'.tr,
@@ -185,12 +187,13 @@ class RegisterHelpers {
     );
   }
 
-  static Widget buildSignUpButton(RegisterController controller) {
+  static Widget buildSignUpButton(RegisterController controller,) {
     return Obx(
           () => CustomButton(
         onTap: () async {
           if (controller.isLoading.value) return;
-          await controller.register();
+           // if (controller.formKey.currentState?.validate() ?? false) {
+             await controller.register();
 
         },
         text: controller.isLoading.value ? 'Loading...'.tr : 'Sign Up'.tr,
@@ -198,6 +201,7 @@ class RegisterHelpers {
       ),
     );
   }
+
 
   static Widget buildLoginLink(BuildContext context) {
     return Container(

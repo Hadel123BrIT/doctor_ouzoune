@@ -7,7 +7,7 @@ import '../Core/Services/media_query_service.dart';
 import '../Models/draw_item_model.dart';
 import '../core/constants/app_images.dart';
 import '../views/about_us/about_us_screen.dart';
-import '../views/setting/setting_screen/setting_screen.dart';
+import '../views/setting/setting/setting_screen.dart';
 import 'custom_view_item_list.dart';
 
 

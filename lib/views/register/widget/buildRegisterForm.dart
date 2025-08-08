@@ -34,7 +34,7 @@ Widget buildRegisterForm(BuildContext context) {
               RegisterHelpers.buildPasswordField(controller.passwordController),
               RegisterHelpers.buildForgotPasswordLink(context),
               SizedBox(height: context.height * 0.02),
-              RegisterHelpers.buildSignUpButton(controller),
+              RegisterHelpers.buildSignUpButton(controller,),
               SizedBox(height: context.height * 0.03),
               RegisterHelpers.buildLoginLink(context),
             ],

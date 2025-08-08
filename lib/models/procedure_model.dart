@@ -52,21 +52,21 @@ class Procedure {
 
   String get statusText {
     switch (status) {
-      case 2: return "Pending";
-      case 3: return "Accepted";
-      case 4: return "Rejected";
-      case 7: return "Custom Status";
-      default: return "Unknown";
+      case 1: return "Request_Sent";
+      case 2: return "In_Progress";
+      case 3: return "Done";
+      case 4: return "Declined";
+      default: return "Request_Sent";
     }
   }
 
   Color get statusColor {
     switch (status) {
-      case 2: return Colors.orange;
+      case 1: return Colors.orange;
+      case 2: return Colors.blue;
       case 3: return Colors.green;
       case 4: return Colors.red;
-      case 7: return Colors.blue;
-      default: return Colors.grey;
+      default: return Colors.orange;
     }
   }
 }

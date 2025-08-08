@@ -23,7 +23,7 @@ class ProceduresScreen extends StatelessWidget {
       appBar: AppBar(
         actions: [
           IconButton(
-            onPressed: () => showPaginationDialog(context),
+            onPressed: () => showPaginationDialog(context,),
             icon: Icon(Icons.tune, color: Colors.white),
           ),
         ],

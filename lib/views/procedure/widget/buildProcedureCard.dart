@@ -81,7 +81,7 @@ Widget buildProcedureCard(Procedure procedure, BuildContext context) {
           ),
           SizedBox(height: 8),
           Text(
-              'Clinic : ${procedure.doctor.clinic?.name ?? 'Unknown'}',
+              'Clinic : ${procedure.doctor?.clinic?.name ?? 'Unknown'}',
               style: TextStyle(
                 fontFamily: "Montserrat",
                 fontSize: 15,
@@ -93,7 +93,7 @@ Widget buildProcedureCard(Procedure procedure, BuildContext context) {
               try {
                 if (procedure != null) {
                   final controller = Get.find<ProcedureController>();
-                  await controller.fetchProcedureDetails(procedure.id);
+                  await controller.fetchProcedureDetails(procedure.id!);
                   if (controller.selectedProcedure.value != null) {
                     Get.to(() => ProcedureDetailScreen(procedure: controller.selectedProcedure.value));
                   } else {

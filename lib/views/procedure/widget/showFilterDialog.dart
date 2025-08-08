@@ -30,23 +30,6 @@ void showFilterDialog(BuildContext context) {
               TextField(
                 cursorColor: AppColors.primaryBlue,
                 decoration: InputDecoration(
-                  hintText: 'Search by doctor name...',
-                  hintStyle: TextStyle(fontFamily: 'Montserrat',
-                  fontSize: 14,
-                  ),
-                  border: border,
-                  enabledBorder: border,
-                  focusedBorder: border.copyWith(
-                    borderSide: BorderSide(color: AppColors.primaryGreen),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                ),
-                onChanged: (value) => controller.searchQuery.value = value,
-              ),
-              SizedBox(height: 14),
-              TextField(
-                cursorColor: AppColors.primaryBlue,
-                decoration: InputDecoration(
                   hintText: 'Search by assistance name...',
                   hintStyle: TextStyle(fontFamily: 'Montserrat',
                     fontSize: 14,
@@ -59,40 +42,6 @@ void showFilterDialog(BuildContext context) {
                   contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 ),
                 onChanged: (value) => controller.searchQuery.value = value,
-              ),
-              SizedBox(height: 14),
-              TextField(
-                cursorColor: AppColors.primaryBlue,
-                decoration: InputDecoration(
-                  hintText: 'Search by clinic name...',
-                  hintStyle: TextStyle(fontFamily: 'Montserrat',
-                  fontSize: 14,
-                  ),
-                  border: border,
-                  enabledBorder: border,
-                  focusedBorder: border.copyWith(
-                    borderSide: BorderSide(color: AppColors.primaryGreen),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                ),
-                onChanged: (value) => controller.clinicNameFilter.value = value,
-              ),
-              SizedBox(height: 14),
-              TextField(
-                cursorColor: AppColors.primaryGreen,
-                decoration: InputDecoration(
-                  hintText: 'Search by clinic address...',
-                  hintStyle: TextStyle(fontFamily: 'Montserrat',
-                  fontSize: 14,
-                  ),
-                  border: border,
-                  enabledBorder: border,
-                  focusedBorder: border.copyWith(
-                    borderSide: BorderSide(color: AppColors.primaryGreen),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                ),
-                onChanged: (value) => controller.clinicAddressFilter.value = value,
               ),
               SizedBox(height: 14),
               TextField(
@@ -136,6 +85,60 @@ void showFilterDialog(BuildContext context) {
                   if (value.isNotEmpty) {
                     controller.maxAssistants.value = int.parse(value);
                   }
+                },
+              ),
+              SizedBox(height: 14),
+              DropdownButtonFormField<int>(
+                decoration: InputDecoration(
+                  hintText: 'Select status',
+                  hintStyle: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 14,
+                  ),
+                  border: border,
+                  enabledBorder: border,
+                  focusedBorder: border.copyWith(
+                    borderSide: BorderSide(color: AppColors.primaryGreen),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                ),
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
+                dropdownColor: Colors.white,
+                icon: Icon(Icons.arrow_drop_down, color: AppColors.primaryGreen),
+                value: controller.statusFilter.value > 0 ? controller.statusFilter.value : null,
+                items: [
+                  DropdownMenuItem(value: null, child: Text('All Statuses',
+                    style:  TextStyle(fontFamily: 'Montserrat',
+                      fontSize: 14,
+                    ),
+                  )),
+                  DropdownMenuItem(value: 1, child: Text('Status 1',
+                    style:  TextStyle(fontFamily: 'Montserrat',
+                      fontSize: 14,
+                    ),
+                  )),
+                  DropdownMenuItem(value: 2, child: Text('Status 2',
+                    style:  TextStyle(fontFamily: 'Montserrat',
+                      fontSize: 14,
+                    ),
+                  )),
+                  DropdownMenuItem(value: 3, child: Text('Status 3',
+                    style:  TextStyle(fontFamily: 'Montserrat',
+                      fontSize: 14,
+                    ),
+                  )),
+                  DropdownMenuItem(value: 4, child: Text('Status 4',
+                    style:  TextStyle(fontFamily: 'Montserrat',
+                      fontSize: 14,
+                    ),
+                  )),
+                ],
+                onChanged: (value) {
+                  controller.statusFilter.value = value ?? 0;
                 },
               ),
               SizedBox(height: 14),
@@ -192,6 +195,7 @@ void showFilterDialog(BuildContext context) {
                   },
                 ),
               ),
+
             ],
           ),
         ),

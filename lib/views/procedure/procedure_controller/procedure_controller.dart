@@ -19,7 +19,6 @@ class ProcedureController extends GetxController {
   final procedureTime = Rx<TimeOfDay?>(null);
   final RxList<Procedure> proceduresList = <Procedure>[].obs;
   final RxString searchQuery = ''.obs;
-  final RxInt statusFilter = 0.obs;
   final RxBool showMainKitsOnly = false.obs;
   final RxBool isLoading = false.obs;
   final Rx<Procedure?> selectedProcedure = Rx<Procedure?>(null);
@@ -29,9 +28,10 @@ class ProcedureController extends GetxController {
   final RxString clinicNameFilter = ''.obs;
   final RxString clinicAddressFilter = ''.obs;
   final RxInt minAssistants = 0.obs;
-  final RxInt maxAssistants = 10.obs;
+  final RxInt maxAssistants = 0.obs;
   final Rx<DateTime?> fromDate = Rx<DateTime?>(null);
   final Rx<DateTime?> toDate = Rx<DateTime?>(null);
+  final statusFilter = 0.obs;
 
   @override
   void onInit() {
@@ -207,17 +207,22 @@ class ProcedureController extends GetxController {
   Future<void> fetchAllProcedures() async {
     isLoading.value = true;
     try {
-      final box = GetStorage();
-      final token = box.read('auth_token');
+      final token = GetStorage().read('auth_token') as String?;
+
+      if (token == null || token.isEmpty) {
+        Get.offAllNamed(AppRoutes.login);
+        return;
+      }
 
       final procedures = await apiServices.postFilteredProcedures(
         from: fromDate.value,
         to: toDate.value,
-        minNumberOfAssistants: minAssistants.value,
-        maxNumberOfAssistants: maxAssistants.value,
-        doctorName: searchQuery.value.isEmpty ? null : searchQuery.value,
-        clinicName: clinicNameFilter.value.isEmpty ? null : clinicNameFilter.value,
-        clinicAddress: clinicAddressFilter.value.isEmpty ? null : clinicAddressFilter.value,
+        minNumberOfAssistants: minAssistants.value > 0 ? minAssistants.value : null,
+        maxNumberOfAssistants: maxAssistants.value > 0 ? maxAssistants.value : null,
+        doctorName: searchQuery.value.isNotEmpty ? searchQuery.value : null,
+        clinicName: clinicNameFilter.value.isNotEmpty ? clinicNameFilter.value : null,
+        clinicAddress: clinicAddressFilter.value.isNotEmpty ? clinicAddressFilter.value : null,
+        status: statusFilter.value > 0 ? statusFilter.value : null,
         requestBody: [],
         token: token,
       );
@@ -225,6 +230,7 @@ class ProcedureController extends GetxController {
       proceduresList.assignAll(procedures);
     } catch (e) {
       Get.snackbar('Error', e.toString());
+      print('Error details: ${e.toString()}');
     } finally {
       isLoading.value = false;
     }
@@ -233,7 +239,10 @@ class ProcedureController extends GetxController {
 //---------------------------------------------------------------------
 
   //Fetch Procedure by Pages
-  Future<void> fetchProceduresPaged({bool loadMore = false}) async {
+  Future<void> fetchProceduresPaged({
+    bool loadMore = false,
+     String? doctorId,
+  }) async {
     try {
       if (!loadMore) {
         currentPage.value = 1;
@@ -245,7 +254,7 @@ class ProcedureController extends GetxController {
       final response = await apiServices.getProceduresPaged(
         pageSize: itemsPerPage.value,
         pageNum: currentPage.value,
-        doctorId: '',
+        doctorId: doctorId ?? "", // استخدام القيمة الممررة أو empty string
         assistantId: '',
       );
 
@@ -321,7 +330,7 @@ class ProcedureController extends GetxController {
     maxAssistants.value = 10;
     fromDate.value = null;
     toDate.value = null;
-
+    statusFilter.value=0;
     fetchAllProcedures();
   }
   @override

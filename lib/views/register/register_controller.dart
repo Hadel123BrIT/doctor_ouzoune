@@ -34,6 +34,9 @@ class RegisterController extends GetxController {
       Get.snackbar('Error'.tr, 'Please select a location'.tr);
       return;
     }
+    if (passwordController.text.length < 8) {
+      throw 'Password must be at least 8 characters';
+    }
 
     isLoading(true);
 

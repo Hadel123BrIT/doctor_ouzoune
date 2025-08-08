@@ -56,10 +56,9 @@ class Getsearch extends StatelessWidget {
               onPressed: (){
                 showFilterDialog(context);
               },
-              icon: SvgPicture.asset(AppAssets.procedureFilter,
+              icon: Icon(Icons.filter,
               color: Colors.grey,
-                width: 24,
-                height: 24,
+
               ),
             ),
           ),
