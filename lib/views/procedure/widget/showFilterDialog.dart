@@ -114,6 +114,7 @@ void showFilterDialog(BuildContext context) {
                   DropdownMenuItem(value: null, child: Text('All Statuses',
                     style:  TextStyle(fontFamily: 'Montserrat',
                       fontSize: 14,
+                      color: Colors.grey
                     ),
                   )),
                   DropdownMenuItem(value: 1, child: Text('Status 1',

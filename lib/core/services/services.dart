@@ -2,12 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-class AuthService extends GetxService {
-  final Dio _dio = Dio();
-  final GetStorage _storage = GetStorage();
-  final String _baseUrl = 'https://your-api.com/auth';
+import '../../Routes/app_routes.dart';
 
-  // متغيرات تفاعلية لحالة المصادقة
+class AuthService extends GetxService {
+  final Dio dio = Dio();
+  final GetStorage storage = GetStorage();
+  static const String baseUrl="http://ouzon.somee.com/api";
+
   final RxBool isLoggedIn = false.obs;
   final RxString authToken = ''.obs;
   final RxString errorMessage = ''.obs;
@@ -15,27 +16,48 @@ class AuthService extends GetxService {
   @override
   void onInit() {
     super.onInit();
-    _dio.options.baseUrl = _baseUrl;
-    _loadAuthData();
+    dio.options.baseUrl = baseUrl;
+    loadAuthData();
+    checkAuthAndRedirect();
   }
 
-  // تحميل بيانات المصادقة من التخزين المحلي
-  void _loadAuthData() {
-    authToken.value = _storage.read('auth_token') ?? '';
+  void loadAuthData() {
+    authToken.value = storage.read('auth_token') ?? '';
     isLoggedIn.value = authToken.isNotEmpty;
   }
 
-  // تسجيل الدخول
+  Future<void> checkAuthAndRedirect() async {
+    if (authToken.isNotEmpty) {
+      try {
+        final response = await dio.get(
+          '${baseUrl}/verify-token',
+          options: Options(headers: {
+            'Authorization': 'Bearer ${authToken.value}'
+          }),
+        );
+
+        if (response.statusCode == 200 ||response.statusCode == 201 ) {
+          Get.offAllNamed(AppRoutes.homepage);
+        } else {
+          await logout();
+        }
+      } catch (e) {
+        await logout();
+      }
+    }
+  }
+
   Future<bool> login(String email, String password) async {
     try {
-      final response = await _dio.post(
-        '/login',
+      final response = await dio.post(
+        '$baseUrl/users/login',
         data: {'email': email, 'password': password},
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 ||response.statusCode == 201 ) {
         final token = response.data['token'];
         _saveAuthData(token);
+        Get.offAllNamed(AppRoutes.homepage);
         return true;
       }
       return false;
@@ -45,17 +67,17 @@ class AuthService extends GetxService {
     }
   }
 
-  // تسجيل مستخدم جديد
   Future<bool> register(Map<String, dynamic> userData) async {
     try {
-      final response = await _dio.post(
-        '/register',
+      final response = await dio.post(
+        '$baseUrl/users/register',
         data: userData,
       );
 
       if (response.statusCode == 201) {
         final token = response.data['token'];
         _saveAuthData(token);
+        Get.offAllNamed(AppRoutes.homepage);
         return true;
       }
       return false;
@@ -65,23 +87,21 @@ class AuthService extends GetxService {
     }
   }
 
-  // تسجيل الخروج
   Future<void> logout() async {
-    await _storage.remove('auth_token');
+    await storage.remove('auth_token');
     authToken.value = '';
     isLoggedIn.value = false;
-    _dio.options.headers.remove('Authorization');
+    dio.options.headers.remove('Authorization');
+    Get.offAllNamed(AppRoutes.login);
   }
 
-  // حفظ بيانات المصادقة
   void _saveAuthData(String token) {
-    _storage.write('auth_token', token);
+    storage.write('auth_token', token);
     authToken.value = token;
     isLoggedIn.value = true;
-    _dio.options.headers['Authorization'] = 'Bearer $token';
+    dio.options.headers['Authorization'] = 'Bearer $token';
   }
 
-  // معالجة الأخطاء
   String _handleError(DioException e) {
     if (e.response?.statusCode == 401) {
       return 'Invalid credentials';
@@ -91,20 +111,6 @@ class AuthService extends GetxService {
       return 'Connection timeout';
     } else {
       return 'An error occurred. Please try again.';
-    }
-  }
-
-  // التحقق من المصادقة عند بدء التشغيل
-  Future<void> checkAuth() async {
-    if (authToken.isNotEmpty) {
-      try {
-        final response = await _dio.get('/verify-token');
-        if (response.statusCode != 200) {
-          await logout();
-        }
-      } catch (e) {
-        await logout();
-      }
     }
   }
 }

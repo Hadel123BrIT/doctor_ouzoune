@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:ouzoun/views/doctor_choices/doctor_choices_screens/first_page_choices.dart';
 import 'package:ouzoun/views/homePage/homePage_screen/homePage_screen.dart';
 import 'package:ouzoun/views/splash/splash_screens/splash_screen.dart';
+import 'core/services/services.dart';
 import 'firebase_options.dart';
 import 'routes/app_pages.dart';
 import 'core/constants/theme.dart';
@@ -17,6 +18,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await GetStorage.init();
+  Get.put(AuthService());
   runApp(const MyApp());
 }
 

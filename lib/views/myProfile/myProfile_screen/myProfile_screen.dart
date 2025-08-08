@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:ouzoun/Widgets/custom_button.dart';
 import '../../../core/constants/app_colors.dart';
 import '../myProfile_controller/myProfile_controller.dart';
@@ -16,7 +15,7 @@ class MyProfileScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.primaryGreen,
-      body: Stack(
+      body: Obx(() => Stack(
         children: [
           Positioned(
             top: 0,
@@ -27,10 +26,11 @@ class MyProfileScreen extends StatelessWidget {
               color: AppColors.primaryGreen,
               child: Center(
                 child: Text(
-                  'My Personal  Profile',
+                  'My Personal Profile',
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -71,32 +71,11 @@ class MyProfileScreen extends StatelessWidget {
                           width: 3,
                         ),
                         image: const DecorationImage(
-                          image: AssetImage('assets/images/doctor_placeholder.png'),
+                          image: AssetImage('assets/images/logo_App.jpg'),
                           fit: BoxFit.cover,
                         ),
                       ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              padding: EdgeInsets.all(context.width * 0.02),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryGreen,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                                size: context.width * 0.06,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
-
                     SizedBox(height: context.height * 0.03),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: context.width * 0.05),
@@ -106,52 +85,49 @@ class MyProfileScreen extends StatelessWidget {
                             context,
                             icon: Icons.person,
                             title: 'Name',
-                            value: controller.nameController.text,
+                            value: controller.userName.value,
                           ),
+                          SizedBox(height: 10),
                           buildProfileItem(
                             context,
                             icon: Icons.email,
-                            title: 'Email address',
-                            value: controller.emailController.text,
+                            title: 'Email',
+                            value: controller.email.value,
                           ),
-                          buildProfileItem(
-                            context,
-                            icon: Icons.lock,
-                            title: 'Password',
-                            value: controller.passwordController.text,
-                          ),
+                          SizedBox(height: 10),
                           buildProfileItem(
                             context,
                             icon: Icons.phone,
                             title: 'Phone',
-                            value: controller.phoneController.text,
+                            value: controller.phoneNumber.value,
                           ),
-
+                          SizedBox(height: 10),
                           buildProfileItem(
                             context,
-                            icon: Icons.location_on,
-                            title: 'Location',
-                            value: controller.locationController.text,
+                            icon: Icons.star,
+                            title: 'Rating',
+                            value: '${controller.rate.value}/5',
                           ),
-
+                          SizedBox(height: 10),
                           buildProfileItem(
                             context,
                             icon: Icons.business,
                             title: 'Clinic Name',
-                            value: controller.clinicNameController.text,
+                            value: controller.clinicName.value,
                           ),
-
+                          SizedBox(height: 10),
                           buildProfileItem(
                             context,
-                            icon: Icons.home,
-                            title: 'Address',
-                            value: controller.addressController.text,
+                            icon: Icons.location_on,
+                            title: 'Clinic Address',
+                            value: controller.clinicAddress.value,
                           ),
-
                           SizedBox(height: context.height * 0.03),
-                          CustomButton(onTap: (){},
-                              text: "Update my profile",
-                              color: AppColors.primaryGreen),
+                          CustomButton(
+                            onTap: controller.updateProfile,
+                            text: "Update my profile",
+                            color: AppColors.primaryGreen,
+                          ),
                           SizedBox(height: context.height * 0.05),
                         ],
                       ),
@@ -162,8 +138,7 @@ class MyProfileScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      )),
     );
   }
-
 }

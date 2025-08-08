@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:ouzoun/views/homePage/homePage_screen/homePage_screen.dart';
+import 'package:ouzoun/views/myProfile/myProfile_screen/myProfile_screen.dart';
 import '../Core/Services/media_query_service.dart';
 import '../Models/draw_item_model.dart';
+import '../Routes/app_routes.dart';
+import '../core/constants/app_colors.dart';
 import '../core/constants/app_images.dart';
+import '../core/services/services.dart';
 import '../views/about_us/about_us_screen.dart';
 import '../views/setting/setting/setting_screen.dart';
 import 'custom_view_item_list.dart';
@@ -24,10 +29,10 @@ class _CustomDrawerState extends State<CustomDrawer> with SingleTickerProviderSt
       Get.to(HomePageScreen());
     }, ),
     DrawItemModel(text: 'MYPROFILE', icon: Icons.person,function: (){
-    // Get.to(DoctorProfilePage());
+      Get.to(MyProfileScreen());
     }),
     DrawItemModel(text: 'MYORDER', icon: Icons.receipt_long,function: (){
-      // Get.to(DoctorProfilePage());
+
     }),
     DrawItemModel(text: 'ABOUT US', icon: Icons.info,function: (){
       Get.to(AboutUsScreen());
@@ -37,9 +42,63 @@ class _CustomDrawerState extends State<CustomDrawer> with SingleTickerProviderSt
       Get.to(SettingsScreen());
     }),
 
-    DrawItemModel(text: 'LOGOUT', icon: Icons.logout,function: ()async{
+    DrawItemModel(
+      text: 'LOGOUT',
+      icon: Icons.logout,
+      function: () async {
+        final authService = Get.find<AuthService>();
+        final box = GetStorage();
+        final confirm = await Get.dialog(
+          AlertDialog(
+            title: Text('تأكيد تسجيل الخروج'),
+            content: Text('هل أنت متأكد أنك تريد تسجيل الخروج؟'),
+            actions: [
+              TextButton(
+                onPressed: () => Get.back(result: false),
+                child: Text('إلغاء'),
+              ),
+              ElevatedButton(
+                onPressed: () => Get.back(result: true),
+                child: Text('تسجيل الخروج'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryGreen,
+                ),
+              ),
+            ],
+          ),
+        );
 
-  }),
+        if (confirm == true) {
+          try {
+            // 1. تسجيل الخروج من الخادم
+            await authService.logout();
+
+            // 2. مسح البيانات المحلية
+            await box.erase(); // أو await box.remove('auth_token');
+
+            // 3. إعادة التوجيه لصفحة تسجيل الدخول
+            Get.offAllNamed(AppRoutes.login);
+
+            // 4. إظهار رسالة نجاح
+            Get.snackbar(
+              'تم تسجيل الخروج',
+              'تم تسجيل خروجك بنجاح',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: AppColors.primaryGreen,
+              colorText: Colors.white,
+            );
+          } catch (e) {
+            Get.snackbar(
+              'خطأ',
+              'حدث خطأ أثناء تسجيل الخروج: ${e.toString()}',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+            );
+          }
+        }
+      },
+    ),
 
   ];
 

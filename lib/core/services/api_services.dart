@@ -276,4 +276,52 @@ static const String baseUrl="http://ouzon.somee.com/api";
     }
   }
   //--------------------------------------------------------------------
+  //fetch my profile
+  Future<Map<String, dynamic>> getMyProfile() async {
+    try {
+      final token = GetStorage().read('auth_token');
+      final response = await dio.get(
+        '$baseUrl/users/current',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print("yes");
+        print(response.data);
+        return response.data;
+      }
+      throw Exception('Failed to load profile');
+    } on DioException catch (e) {
+      throw Exception('Error: ${e.message}');
+    }
+  }
+  //-------------------------------------------------
+  // update my profile
+  Future<Map<String, dynamic>> updateMyProfile(Map<String, dynamic> data) async {
+    try {
+      final token = GetStorage().read('auth_token');
+      final response = await dio.put(
+        '$baseUrl/api/Account/update-profile',
+        data: data,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      }
+      throw Exception('Failed to update profile');
+    } on DioException catch (e) {
+      throw Exception('Error: ${e.message}');
+    }
+  }
 }

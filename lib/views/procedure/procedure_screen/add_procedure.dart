@@ -36,8 +36,8 @@ class AddProcedure extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            buildPatientNameField(context),
-            SizedBox(height: Get.height * 0.03),
+            // buildPatientNameField(context),
+            // SizedBox(height: Get.height * 0.03),
             buildNeedsAssistanceDropdown(context),
             SizedBox(height: Get.height * 0.03),
             buildAssistantsCountDropdown(context),
