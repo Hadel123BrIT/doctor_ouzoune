@@ -9,6 +9,7 @@ import '../../../Widgets/custom_button.dart';
 import '../../../Widgets/custom_drawer.dart';
 import '../../../core/constants/app_colors.dart';
 import '../Kits_Controller/kits_controller.dart';
+import '../widget/BuildSurgicalCard.dart';
 import '../widget/buildToolCard.dart';
 
 class SurgicalKits extends StatelessWidget {
@@ -144,7 +145,7 @@ class SurgicalKits extends StatelessWidget {
                       child: SlideAnimation(
                         verticalOffset: 50.0,
                         child: FadeInAnimation(
-                          child:  BuildToolCard(
+                          child:  BuildSurgicalCard(
                             showQuantityDetail: true,
                             isAppear: false,
                             context: context,

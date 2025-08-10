@@ -9,7 +9,7 @@ import '../core/constants/app_colors.dart';
 class NavigationController extends GetxController {
   final tabIndex = 2.obs;
   final icons = [
-    Icons.settings,
+    Icons.rate_review,
     Icons.person,
     Icons.home,
     Icons.receipt_long,
@@ -17,7 +17,7 @@ class NavigationController extends GetxController {
   ];
 
   final routes = [
-    '/settings',
+    '/rate',
     '/profile',
     '/homepage',
     '/get_all_procedure',

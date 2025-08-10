@@ -72,36 +72,50 @@ Future<void> showPaginationDialog(BuildContext context) async {
           ),
           ),
         ),
-  ElevatedButton(
-  onPressed: () async {
-  final pageNum = int.tryParse(pageNumberController.text) ?? 1;
-  final pageSize = int.tryParse(pageSizeController.text) ?? 3;
+        ElevatedButton(
+          onPressed: () async {
+            final pageNum = int.tryParse(pageNumberController.text) ?? 1;
+            final pageSize = int.tryParse(pageSizeController.text) ?? 3;
 
-  if (pageSize > 0 && pageNum > 0) {
-  controller.itemsPerPage.value = pageSize;
-  controller.currentPage.value = 1;
-  await controller.fetchProceduresPaged();
-  Get.back();
-  } else {
-  Get.snackbar(
-  'Error'.tr,
-  'Please enter valid numbers greater than 0'.tr,
-  snackPosition: SnackPosition.BOTTOM,
-  );
-  }
-  },
-  child: Text(
-  'Apply'.tr,
-  style: TextStyle(
-  fontFamily: 'Montserrat',
-  ),
-  ),
-  style: ElevatedButton.styleFrom(
-  backgroundColor: AppColors.primaryGreen,
-  foregroundColor: Colors.white,
-  minimumSize: Size(double.infinity, 50),
-  ),
-  ),
+            if (pageSize > 0 && pageNum > 0) {
+              final ProcedureController controller = Get.find();
+
+
+              String? doctorId;
+              if (controller.selectedProcedure.value != null) {
+                doctorId = controller.selectedProcedure.value!.doctor.id;
+              } else if (controller.proceduresList.isNotEmpty) {
+                doctorId = controller.proceduresList.first.doctor.id;
+              }
+
+              controller.itemsPerPage.value = pageSize;
+              controller.currentPage.value = 1;
+
+              await controller.fetchProceduresPaged(
+                doctorId: doctorId,
+              );
+
+              Get.back();
+            } else {
+              Get.snackbar(
+                'Error'.tr,
+                'Please enter valid numbers greater than 0'.tr,
+                snackPosition: SnackPosition.BOTTOM,
+              );
+            }
+          },
+          child: Text(
+            'Apply'.tr,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primaryGreen,
+            foregroundColor: Colors.white,
+            minimumSize: Size(double.infinity, 50),
+          ),
+        )
   ],
     ),
   );

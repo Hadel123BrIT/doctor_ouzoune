@@ -5,6 +5,7 @@ import 'package:get/get_instance/src/bindings_interface.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:ouzoun/Routes/app_routes.dart';
 import 'package:ouzoun/views/procedure/procedure_screen/add_procedure.dart';
+import 'package:ouzoun/views/rate/rate_screen/rate_screen.dart';
 import '../models/procedure_model.dart';
 import '../views/doctor_choices/doctor_choices_screens/first_page_choices.dart';
 import '../views/doctor_choices/doctor_choices_screens/second_page_choices.dart';
@@ -121,6 +122,10 @@ class AppPages {
         final procedure = Get.arguments as Procedure;
         return ProcedureDetailScreen(procedure: procedure);
       },
+    ),
+    GetPage(
+      name: AppRoutes.rate,
+      page: () =>RateScreen( ),
     ),
   ];
 }

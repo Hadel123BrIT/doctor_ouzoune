@@ -294,95 +294,96 @@ Widget buildKitsToolsButtonsRow(BuildContext context) {
 
 
     //Additional tools
-    Obx(() => Container(
-  width: double.infinity,
-  height: 200,
-  decoration: BoxDecoration(
-  borderRadius: BorderRadius.circular(10),
-  border: Border.all(
-  color: isDarkMode ? Colors.grey[700]! : Colors.grey[400]!,
-  width: 2,
-  ),
-  ),
-  child: controller.selectedTools.isEmpty
-  ? ElevatedButton(
-      onPressed: () {
-        Get.toNamed(AppRoutes.additional_kit);
-        controller.updateSelectedTools();
-        controller.update();
-      },
-      child: Text(
-        'Tap to choose Additional Tools',
-        style: TextStyle(
-          color: Colors.grey,
-          fontSize: 15,
-          fontFamily: 'Montserrat',
+      Obx(() => Container(
+        width: double.infinity,
+        height: 200,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isDarkMode ? Colors.grey[700]! : Colors.grey[400]!,
+            width: 2,
+          ),
         ),
-      ),
-  style: ElevatedButton.styleFrom(
-  backgroundColor: isDarkMode ? Theme.of(context).cardColor : Colors.white,
-  shape: RoundedRectangleBorder(
-  borderRadius: BorderRadius.circular(10),
-  ),
-  )
-    )  : Padding(
-  padding: EdgeInsets.all(16),
-  child: Column(
-  crossAxisAlignment: CrossAxisAlignment.stretch,
-  children: [
-  Expanded(
-  child: ListView.builder(
-  itemCount: controller.selectedTools.length,
-  itemBuilder: (context, index) {
-  final tool = controller.selectedTools[index];
-  return Padding(
-  padding: EdgeInsets.symmetric(vertical: 4),
-  child: Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-  Text(
-  tool['name'],
-  style: TextStyle(
-  fontSize: 15,
-  fontFamily: 'Montserrat',
-  color: isDarkMode ? Colors.white : Colors.black,
-  ),
-  ),
-  Text(
-  'x ${tool['quantity']}',
-  style: TextStyle(
-  fontSize: 15,
-  fontFamily: 'Montserrat',
-  fontWeight: FontWeight.bold,
-  color: AppColors.primaryGreen,
-  ),
-  ),
-  ],
-  ),
-  );
-  },
-  ),
-  ),
-  Align(
-  alignment: Alignment.bottomRight,
-  child: TextButton(
-  onPressed: () async {
-  await Get.toNamed(AppRoutes.additional_kit);
-  },
-  child: Text(
-  'Edit Selection',
-  style: TextStyle(
-  color: AppColors.primaryGreen,
-  fontSize: 15,
-  fontFamily: 'Montserrat',
-  ),
-  ),
-  ),
-  ),
-  ],
-  ),
-  ),
-  )),
+        child: controller.selectedTools.isEmpty
+            ? ElevatedButton(
+          onPressed: () async {
+            await Get.toNamed(AppRoutes.additional_kit);
+            controller.updateToolsSelection();
+          },
+          child: Text(
+            'Tap to choose Additional Tools',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 15,
+              fontFamily: 'Montserrat',
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: isDarkMode ? Theme.of(context).cardColor : Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        )
+            : Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: Obx(() => ListView.builder(
+                  itemCount: controller.selectedTools.length,
+                  itemBuilder: (context, index) {
+                    final tool = controller.selectedTools[index];
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            tool['name'],
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'Montserrat',
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                          ),
+                          Text(
+                            'x ${tool['quantity']}',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primaryGreen,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                )),
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: TextButton(
+                  onPressed: () async {
+                    await Get.toNamed(AppRoutes.additional_kit);
+                    controller.updateToolsSelection();
+                  },
+                  child: Text(
+                    'Edit Selection',
+                    style: TextStyle(
+                      color: AppColors.primaryGreen,
+                      fontSize: 15,
+                      fontFamily: 'Montserrat',
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      )),
 
 
     SizedBox(height: 20),

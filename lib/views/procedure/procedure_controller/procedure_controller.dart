@@ -161,10 +161,7 @@ class ProcedureController extends GetxController {
 
   //Post Procedure
   Future<void> postProcedure() async {
-    if (patientNameController.text.isEmpty) {
-      Get.snackbar('Error'.tr, 'Patient name is required'.tr);
-      return;
-    }
+  
     if (procedureDate.value == null || procedureTime.value == null) {
       Get.snackbar('Error'.tr, 'Procedure date and time are required'.tr);
       return;
@@ -227,6 +224,16 @@ class ProcedureController extends GetxController {
         token: token,
       );
 
+      print('====== Fetched Procedures (${procedures.length}) ======');
+      for (var i = 0; i < procedures.length; i++) {
+        print('Procedure #${i + 1}:');
+        print('  ID: ${procedures[i].id}');
+        print('  Status: ${procedures[i].status}');
+        print('  Date: ${procedures[i].date}');
+        print('  Doctor: ${procedures[i].doctor.userName} (ID: ${procedures[i].doctor.id})');
+        print('  Number of Assistants: ${procedures[i].numberOfAssistants}');
+        print('----------------------------------');
+      }
       proceduresList.assignAll(procedures);
     } catch (e) {
       Get.snackbar('Error', e.toString());
@@ -241,7 +248,7 @@ class ProcedureController extends GetxController {
   //Fetch Procedure by Pages
   Future<void> fetchProceduresPaged({
     bool loadMore = false,
-     String? doctorId,
+    String? doctorId,
   }) async {
     try {
       if (!loadMore) {
@@ -251,10 +258,15 @@ class ProcedureController extends GetxController {
 
       isLoading.value = true;
 
+      String? targetDoctorId = doctorId;
+      if (targetDoctorId == null && proceduresList.isNotEmpty) {
+        targetDoctorId = proceduresList.first.doctor.id;
+      }
+
       final response = await apiServices.getProceduresPaged(
         pageSize: itemsPerPage.value,
         pageNum: currentPage.value,
-        doctorId: doctorId ?? "", // استخدام القيمة الممررة أو empty string
+        doctorId: targetDoctorId ?? "",
         assistantId: '',
       );
 
@@ -262,11 +274,17 @@ class ProcedureController extends GetxController {
         proceduresList.addAll(response);
         currentPage.value++;
         hasMore.value = response.length >= itemsPerPage.value;
+        print('Fetched procedures for doctor IDs:');
+        for (var proc in response) {
+          print('- Procedure ${proc.id} -> Doctor ${proc.doctor.id}');
+        }
       } else {
         hasMore.value = false;
+        print('No procedures found for doctorId: $targetDoctorId');
       }
     } catch (e) {
       Get.snackbar('Error'.tr, 'Failed to load procedures: ${e.toString()}'.tr);
+      print('Error fetching procedures: $e');
     } finally {
       isLoading.value = false;
     }

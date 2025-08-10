@@ -39,7 +39,7 @@ class Procedure {
       numberOfAssistants: json['numberOfAssistants'] as int? ?? 0,
       assistantIds: List<String>.from(json['assistantIds'] as List? ?? []),
       categoryId: json['categoryId'] as int? ?? 0,
-      status: json['status'] as int? ?? 1,
+      status: json['status'] as int? ?? 0,
       date: json['date'] != null
           ? DateTime.tryParse(json['date'] as String) ?? DateTime.now()
           : DateTime.now(),

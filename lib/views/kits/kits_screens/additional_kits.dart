@@ -6,6 +6,7 @@ import '../../../Core/Services/media_query_service.dart';
 import '../../../Widgets/custom_drawer.dart';
 import '../../../Widgets/custom_text.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../models/additionalTool_model.dart';
 import '../Kits_Controller/kits_controller.dart';
 import '../widget/buildToolCard.dart';
 import '../widget/buildDetailItem.dart';
@@ -19,7 +20,6 @@ class AdditionalKits extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final additionalTools = controller.additionalTools;
 
     return Scaffold(
       key: scaffoldKey,
@@ -28,19 +28,17 @@ class AdditionalKits extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => scaffoldKey.currentState?.openDrawer(),
-          icon: Icon(Icons.menu, color: Colors.white),
+          icon: const Icon(Icons.menu, color: Colors.white),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: IconButton(
-              onPressed: () =>{
-                showSelectedToolsDialog(),
-              },
-              icon: Badge(
-                label: Obx(() => Text('${controller.selectedAdditionalTools.length}')),
-                child: Icon(Icons.shopping_cart_checkout_outlined, color: Colors.white),
-              ),
+              onPressed: () => showSelectedToolsDialog(controller.selectedAdditionalTools),
+              icon: Obx(() => Badge(
+                label: Text('${controller.selectedAdditionalTools.length}'),
+                child: const Icon(Icons.shopping_cart_checkout_outlined, color: Colors.white),
+              )),
             ),
           )],
         toolbarHeight: context.height * 0.1,
@@ -53,22 +51,27 @@ class AdditionalKits extends StatelessWidget {
         backgroundColor: AppColors.primaryGreen,
         centerTitle: true,
       ),
-      body: Padding(
-        padding:  EdgeInsets.symmetric(horizontal: context.width * 0.04, vertical: context.height * 0.02,
-        ),
-        child: Column(
-          children: [
-            // Welcome message
-            buildWelcomeMessage(context, isDarkMode),
-            // Tools list
-            Expanded(
-              child: buildToolsList(context, additionalTools),
-            ),
-            // Savث button
-            buildSaveButton(context),
-          ],
-        ),
-      ),
+      body: Obx(() {
+        if (controller.additionalTools.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: context.width * 0.04,
+            vertical: context.height * 0.02,
+          ),
+          child: Column(
+            children: [
+              buildWelcomeMessage(context, isDarkMode),
+              Expanded(
+                child: buildToolsList(context),
+              ),
+              buildSaveButton(context),
+            ],
+          ),
+        );
+      }),
     );
   }
 
@@ -107,44 +110,37 @@ class AdditionalKits extends StatelessWidget {
     );
   }
 
-  Widget buildToolsList(BuildContext context, List<Map<String, dynamic>> tools) {
-    return AnimationLimiter(
-      child: SingleChildScrollView(
-        child: Column(
-          children: List.generate(
-            tools.length,
-                (index) => AnimationConfiguration.staggeredList(
-              position: index,
-              duration: const Duration(milliseconds: 500),
-              child: SlideAnimation(
-                verticalOffset: 50.0,
-                child: FadeInAnimation(
-                  child: Obx(() => BuildToolCard(
-                    showQuantityDetail: false,
-                    isAppear: true,
-                    context: context,
-                    imagePath: tools[index]['image'],
-                    toolName: tools[index]['name'],
-                    length: tools[index]['length'],
-                    width: tools[index]['width'],
-                    thickness: tools[index]['thickness'],
-                    selectedQuantity: controller.additionalToolQuantities[index],
-                    onQuantitySelected: (quantity) {
-                      controller.updateAdditionalToolQuantity(index, quantity);
-                    },
-                  )),
+  Widget buildToolsList(BuildContext context) {
+    return Obx(() => AnimationLimiter(
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const ClampingScrollPhysics(),
+        itemCount: controller.additionalTools.length,
+        itemBuilder: (context, index) {
+          return AnimationConfiguration.staggeredList(
+            position: index,
+            duration: const Duration(milliseconds: 500),
+            child: SlideAnimation(
+              verticalOffset: 50.0,
+              child: FadeInAnimation(
+                child: BuildToolCard(
+                  tool: controller.additionalTools[index],
+                  selectedQuantity: controller.additionalToolQuantities[index],
+                  onQuantitySelected: (quantity) {
+                    controller.updateAdditionalToolQuantity(index, quantity);
+                  },
                 ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
-    );
+    ));
   }
 
   Widget buildSaveButton(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: CustomButton(
         onTap: () {
           final selectedIds = controller.getSelectedToolsIds();
@@ -155,6 +151,4 @@ class AdditionalKits extends StatelessWidget {
       ),
     );
   }
-
-
 }

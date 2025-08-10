@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as dio;
 import 'package:ouzoun/models/procedure_model.dart';
 import '../../Routes/app_routes.dart';
+import '../../models/additionalTool_model.dart';
 
 class ApiServices  {
 final Dio dio=Dio();
@@ -139,8 +140,6 @@ static const String baseUrl="http://ouzon.somee.com/api";
   }) async {
     try {
       final queryParams = <String, dynamic>{};
-
-
       if (from != null) queryParams['from'] = from.toIso8601String();
       if (to != null) queryParams['to'] = to.toIso8601String();
       if (minNumberOfAssistants != null) {
@@ -177,16 +176,25 @@ static const String baseUrl="http://ouzon.somee.com/api";
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return (response.data as List).map((p) => Procedure.fromJson(p)).toList();
+        if (response.data is List && response.data.isNotEmpty && response.data[0] is String) {
+          print('No data found: ${response.data[0]}');
+          return [];
+        }
+        if (response.data is List) {
+          return (response.data as List).map((p) => Procedure.fromJson(p)).toList();
+        }
+        print('Unexpected response format: ${response.data}');
+        return [];
       } else {
         throw Exception('Failed with status: ${response.statusCode}');
       }
     } on DioException catch (e) {
+      print('Error: ${e.response?.data}');
       if (e.response?.statusCode == 401) {
         Get.offAllNamed(AppRoutes.login);
         Get.snackbar('Session Expired', 'Please login again');
       } else {
-        Get.snackbar('Error', e.response?.data['message'] ?? e.message);
+        Get.snackbar('Error', e.response?.data.toString() ?? e.message!);
       }
       return [];
     }
@@ -322,6 +330,33 @@ static const String baseUrl="http://ouzon.somee.com/api";
       throw Exception('Failed to update profile');
     } on DioException catch (e) {
       throw Exception('Error: ${e.message}');
+    }
+  }
+
+  //-----------------------------------------------------
+  // getAdditionalTools
+  Future<List<AdditionalTool>> getAdditionalTools() async {
+    try {
+      final token = GetStorage().read('auth_token');
+      final response = await dio.get(
+        'http://ouzon.somee.com/api/tools',
+        options: Options(
+          headers: {
+            if (token != null)
+              'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return (response.data as List)
+            .map((tool) => AdditionalTool.fromJson(tool))
+            .toList();
+      }
+      return [];
+    } on DioException catch (e) {
+      throw Exception('Failed to load tools: ${e.message}');
     }
   }
 }

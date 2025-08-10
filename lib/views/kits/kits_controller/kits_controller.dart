@@ -1,62 +1,9 @@
 import 'package:get/get.dart';
 
+import '../../../core/services/api_services.dart';
+import '../../../models/additionalTool_model.dart';
+
 class KitsController extends GetxController {
-  final List<Map<String, dynamic>> additionalTools = [
-    {
-      "id":1,
-      'name': 'Dental Drill',
-      'image': 'assets/images/forceps.png',
-      'length': '15 cm',
-      'width': '3 cm',
-      'thickness': '2 cm',
-      'quantity': "0",
-    },
-    {
-      "id":2,
-      'name': 'Surgical Scissors',
-      'image': 'assets/images/mouth-mirror.png',
-      'length': '12 cm',
-      'width': '4 cm',
-      'thickness': '0.5 cm',
-      'quantity': "3",
-    },
-    {
-      "id":3,
-      'name': 'Bone File',
-      'image': 'assets/images/probe.png',
-      'length': '18 cm',
-      'width': '2 cm',
-      'thickness': '0.8 cm',
-      'quantity': "2",
-    },
-    {
-      "id": 4,
-      'name': 'Retractor',
-      'image': 'assets/images/tooth.png',
-      'length': '20 cm',
-      'width': '5 cm',
-      'thickness': '1 cm',
-      'quantity': "1",
-    },
-    {
-      "id":5,
-      'name': 'Dental Drill',
-      'image': 'assets/images/forceps.png',
-      'length': '15 cm',
-      'width': '3 cm',
-      'thickness': '2 cm',
-      'quantity': "4",
-    },
-    {
-      "id": 6,
-      'name': 'Surgical Scissors',
-      'image': 'assets/images/mouth-mirror.png',
-      'length': '12 cm',
-      'width': '4 cm',
-      'thickness': '0.5 cm',
-      'quantity': "5",
-    },
-  ];
   final List<Map<String, dynamic>> surgicalKits = [
     {
       'name': 'Dental Drill',
@@ -321,8 +268,9 @@ class KitsController extends GetxController {
       ]
     }
   ];
+  final RxList<AdditionalTool> additionalTools = <AdditionalTool>[].obs;
   final RxList<int> additionalToolQuantities = <int>[].obs;
-  final RxList<Map<String, dynamic>> selectedAdditionalTools = <Map<String, dynamic>>[].obs;
+  final RxList<AdditionalTool> selectedAdditionalTools = <AdditionalTool>[].obs;
   final RxList<int> toolQuantities = <int>[].obs;
   final RxMap<String, bool> tools = <String, bool>{}.obs;
   final RxInt selectedToolsCount = 0.obs;
@@ -343,8 +291,8 @@ class KitsController extends GetxController {
   void initializeToolQuantities() {
     toolQuantities.value = List.filled(surgicalKits.length, 0);
     surgicalToolQuantities.value = List.filled(surgicalKits.length, 0);
-    additionalToolQuantities.value = List.filled(additionalTools.length, 0);
-    updateSelectedTools();
+    fetchAdditionalTools();
+    //updateSelectedTools();
   }
 
 
@@ -359,14 +307,12 @@ class KitsController extends GetxController {
   }
 
 
-  void updateSelectedTools() {
-    selectedTools.clear();
-    for (int i = 0; i < additionalToolQuantities.length; i++) {
+
+  void updateToolsSelection() {
+    selectedAdditionalTools.clear();
+    for (int i = 0; i < additionalTools.length; i++) {
       if (additionalToolQuantities[i] > 0) {
-        selectedTools.add({
-          ...additionalTools[i],
-          'quantity': additionalToolQuantities[i].toString(),
-        });
+        selectedAdditionalTools.add(additionalTools[i]);
       }
     }
   }
@@ -374,14 +320,21 @@ class KitsController extends GetxController {
 
 
 
-
   // Function For Additional tools
+  Future<void> fetchAdditionalTools() async {
+    try {
+      final tools = await ApiServices().getAdditionalTools();
+      additionalTools.assignAll(tools);
+      additionalToolQuantities.assignAll(List.filled(tools.length, 0));
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load tools: ${e.toString()}');
+    }
+  }
+
   void updateAdditionalToolQuantity(int toolIndex, int newQuantity) {
     if (toolIndex >= 0 && toolIndex < additionalTools.length) {
       additionalToolQuantities[toolIndex] = newQuantity;
       _updateSelectedAdditionalTools();
-      updateSelectedTools();
-      update();
     }
   }
 
@@ -389,13 +342,20 @@ class KitsController extends GetxController {
     selectedAdditionalTools.clear();
     for (int i = 0; i < additionalToolQuantities.length; i++) {
       if (additionalToolQuantities[i] > 0) {
-        selectedAdditionalTools.add({
-          ...additionalTools[i],
-          'quantity': additionalToolQuantities[i],
-        });
+        selectedAdditionalTools.add(additionalTools[i]);
       }
     }
   }
+
+  List<Map<String, dynamic>> getSelectedToolsForApi() {
+    return selectedAdditionalTools.map((tool) {
+      return {
+        'toolId': tool.id,
+        'quantity': additionalToolQuantities[additionalTools.indexOf(tool)],
+      };
+    }).toList();
+  }
+
 
 
 
@@ -526,22 +486,23 @@ class KitsController extends GetxController {
   int getToolIdByName(String toolName) {
     if (toolName == 'No tools') return 0;
 
-    for (var implant in implants) {
-      for (var tool in implant['tools']) {
+    // تحويل implants إلى List<Map<String, dynamic>>
+    for (var implant in implants.cast<Map<String, dynamic>>()) {
+      for (var tool in (implant['tools'] as List).cast<Map<String, dynamic>>()) {
         if (tool['name'] == toolName && tool['id'] != null) {
-          return tool['id'];
+          return tool['id'] as int;
         }
       }
     }
 
-    // البحث في الأدوات العامة إذا لم يتم العثور في أدوات الزرعات
-    for (var tool in [...additionalTools, ...surgicalKits]) {
+    // تحويل additionalTools و surgicalKits إلى List<Map<String, dynamic>>
+    for (var tool in [...additionalTools.cast<Map<String, dynamic>>(), ...surgicalKits.cast<Map<String, dynamic>>()]) {
       if (tool['name'] == toolName && tool['id'] != null) {
-        return tool['id'];
+        return tool['id'] as int;
       }
     }
 
-    return 0; // إذا لم يتم العثور
+    return 0;
   }
 
   bool isImplantFullKit(String implantId) {

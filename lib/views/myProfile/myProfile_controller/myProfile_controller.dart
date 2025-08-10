@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-
 import '../../../core/services/api_services.dart';
 
 class MyProfileController extends GetxController {

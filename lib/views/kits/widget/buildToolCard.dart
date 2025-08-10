@@ -4,118 +4,78 @@ import 'package:get/get.dart';
 import '../../../Core/Services/media_query_service.dart';
 import '../../../Widgets/custom_text.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../models/additionalTool_model.dart';
 import 'buildDetailItem.dart';
 import 'showQuantityDialog.dart';
 
-Widget BuildToolCard({
-  required bool isAppear,
-  required BuildContext context,
-  required String imagePath,
-  required String toolName,
-  required String length,
-  required String width,
-  required String thickness,
-  dynamic quantity,
-  bool showQuantityDetail = false,
-  required Function(int) onQuantitySelected,
-  int? selectedQuantity,
-}) {
-  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+class BuildToolCard extends StatelessWidget {
+  final AdditionalTool tool;
+  final int selectedQuantity;
+  final Function(int) onQuantitySelected;
 
-  return GestureDetector(
-    onTap: () {
+  const BuildToolCard({
+    required this.tool,
+    required this.selectedQuantity,
+    required this.onQuantitySelected,
+  });
 
-    },
-    child: Card(
-      margin: EdgeInsets.symmetric(vertical: context.height * 0.01),
-      color: isDarkMode ? Theme.of(context).cardColor : Colors.white,
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(context.width * 0.025),
-        side: BorderSide(
-          color: isDarkMode ? Colors.grey[700]! : Colors.grey[400]!,
-          width: 2,
-        ),
-      ),
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    return Card(
       child: Padding(
-        padding: EdgeInsets.all(context.width * 0.03),
+        padding: EdgeInsets.all(12),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Tool Image
             Container(
-              width: context.width * 0.2,
-              height: context.width * 0.2,
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(context.width * 0.02),
-                color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-              ),
-              child: Center(
-                child: Image.asset(
-                  imagePath,
-                  width: context.width * 0.15,
-                  height: context.width * 0.15,
-                  color:  null,
-                ),
+                color:AppColors.primaryGreen,
+                borderRadius: BorderRadius.circular(8),
               ),
             ),
-            SizedBox(width: context.width * 0.04),
-            // Tool Details
+            SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomText(
-                    fontFamily: "Montserrat",
-                    fontSize: context.width * 0.045,
-                    isBold: true,
-                    color: isDarkMode ? Colors.white : Colors.black,
-                    text: toolName.tr, textAlign: TextAlign.start,
+                  Text(
+                    maxLines: 1,
+                     overflow: TextOverflow.ellipsis,
+                    tool.name ?? 'Unnamed Tool',
+                    style: TextStyle(
+                      fontFamily: "Montserrat",
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
-                  SizedBox(height: context.height * 0.01),
+                  SizedBox(height: 8),
                   Row(
                     children: [
-                      BuildDetailItem(context, "Length", length),
+                      BuildDetailItem(context, "Length", "${tool.width}"),
                       SizedBox(width: context.width * 0.02),
-                      BuildDetailItem(context, "Width", width),
+                      BuildDetailItem(context, "Width", "${tool.width}"),
                       SizedBox(width: context.width * 0.02),
-                      BuildDetailItem(context, "Thickness", thickness),
-                      if (showQuantityDetail) SizedBox(width: context.width * 0.02),
+                      BuildDetailItem(context, "Width", "${tool.height}"),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
-
-            // Quantity Section
-            if(isAppear)
             Column(
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryGreen,
-                    borderRadius: BorderRadius.circular(context.width * 0.02),
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.width * 0.03,
-                    vertical: context.height * 0.005,
-                  ),
-                  child: Text(
-                    selectedQuantity != null && selectedQuantity > 0
-                        ? 'Qty: $selectedQuantity'
-                        : 'Add',
-                    style: TextStyle(
-                      fontFamily: "Montserrat",
-                      color: Colors.white,
-                      fontSize: context.width * 0.035,
-                      fontWeight: FontWeight.bold,
-                    ),
+                Text(
+                  selectedQuantity > 0 ? 'Qty: $selectedQuantity' : 'Add',
+                  style: TextStyle(color: AppColors.primaryGreen,
+                    fontFamily: "Montserrat",
                   ),
                 ),
                 SizedBox(height: context.height * 0.01),
                 GestureDetector(
                   onTap: () async {
-                    final quantity = await ShowQuantityDialog(toolName);
+                    final quantity = await ShowQuantityDialog( tool.name ?? 'Tool');
                     if (quantity != null) {
                       onQuantitySelected(quantity);
                     }
@@ -126,13 +86,8 @@ Widget BuildToolCard({
                       color: AppColors.primaryGreen,
                     ),
                     padding: EdgeInsets.all(context.width * 0.02),
-                    child: Icon(
-                      selectedQuantity == null || selectedQuantity == 0
-                          ? Icons.add
-                          : Icons.edit,
-                      color: Colors.white,
-                      size: context.width * 0.05,
-                    ),
+                    child: Icon(selectedQuantity > 0 ? Icons.edit : Icons.add),
+
                   ),
                 ),
               ],
@@ -140,6 +95,6 @@ Widget BuildToolCard({
           ],
         ),
       ),
-    ),
-  );
+    );
+  }
 }
