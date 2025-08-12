@@ -22,6 +22,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
     required String address,
     required double longitude,
     required double latitude,
+    String? deviceToken,
     String role = 'User',
   }) async {
     try {
@@ -37,6 +38,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
           "longtitude": longitude,
           'latitude': latitude,
           "role": role,
+          'deviceToken': deviceToken,
         },
         options: Options(
           receiveTimeout: Duration(seconds: 30),
@@ -65,12 +67,13 @@ static const String baseUrl="http://ouzon.somee.com/api";
 
 
   //LoginUser
-  Future<Response> loginUser({required String email,required String password}) async {
+  Future<Response> loginUser({required String email,required String password,String? deviceToken,}) async {
   try{
     final response=await dio.post("$baseUrl/users/login",
     data: {
         'email': email,
         'password': password,
+      'deviceToken': deviceToken,
         },
       options: Options(
       headers: {

@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ouzoun/core/services/api_services.dart';
 import '../../Routes/app_routes.dart';
+import '../../core/services/firebase_service.dart';
 class RegisterController extends GetxController {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
@@ -17,6 +19,8 @@ class RegisterController extends GetxController {
   var selectedLocation = Rxn<LatLng>();
   var errorMessage="".obs;
   final ApiServices apiServices=ApiServices();
+  final FirebaseService _firebaseService = Get.put(FirebaseService());
+
 
   void updateLocation(LatLng coords, String address) {
     selectedLocation.value = coords;
@@ -41,6 +45,7 @@ class RegisterController extends GetxController {
     isLoading(true);
 
     try {
+      String? deviceToken = await FirebaseMessaging.instance.getToken();
       final response = await apiServices.registerUser(
         userName: nameController.text,
         email: emailController.text,
@@ -50,6 +55,7 @@ class RegisterController extends GetxController {
         address: addressController.text,
         longitude: selectedLocation.value!.longitude,
         latitude: selectedLocation.value!.latitude,
+        deviceToken: deviceToken,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

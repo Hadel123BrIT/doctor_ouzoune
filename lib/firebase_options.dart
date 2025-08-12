@@ -83,4 +83,5 @@ class DefaultFirebaseOptions {
     authDomain: 'ouzon-2ce7d.firebaseapp.com',
     storageBucket: 'ouzon-2ce7d.firebasestorage.app',
   );
+
 }
