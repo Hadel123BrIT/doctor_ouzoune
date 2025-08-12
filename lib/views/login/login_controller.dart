@@ -30,7 +30,6 @@ class LoginController extends GetxController {
           await box.write('--------------------------user_token', token);
           await GetStorage().write('auth_token', token.toString());
           print('تم تخزين التوكن: ${GetStorage().read('auth_token')}');
-          //device token
           print('device token ${await FirebaseMessaging.instance.getToken()}');
           Get.snackbar('Success', 'Login successful',
             margin: EdgeInsets.all(15),
