@@ -33,6 +33,10 @@ migrate_working_dir/
 .pub/
 /build/
 
+# ملفات JSON الحساسة (مثل مفاتيح Firebase)
+assets/*.json
+assets/**/*.json
+
 # Symbolication related
 app.*.symbols
 
