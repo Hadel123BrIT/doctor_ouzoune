@@ -232,6 +232,7 @@ class ProcedureController extends GetxController {
         print('  Date: ${procedures[i].date}');
         print('  Doctor: ${procedures[i].doctor.userName} (ID: ${procedures[i].doctor.id})');
         print('  Number of Assistants: ${procedures[i].numberOfAssistants}');
+        print('  Ids of Assistants: ${procedures[i].assistantIds}');
         print('----------------------------------');
       }
       proceduresList.assignAll(procedures);
@@ -300,9 +301,11 @@ class ProcedureController extends GetxController {
 
       if (responseData != null) {
         selectedProcedure.value = Procedure.fromJson(responseData);
+        print( selectedProcedure.value);
       } else {
         throw Exception('No data received');
       }
+
     } on DioException catch (e) {
       Get.snackbar('Error'.tr, 'Failed to load procedure details: ${e.message}'.tr);
     } catch (e) {

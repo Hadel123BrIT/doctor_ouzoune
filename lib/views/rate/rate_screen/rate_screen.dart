@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:ouzoun/widgets/custom_button.dart';
 
 import '../../../Routes/app_routes.dart';
 import '../../../Widgets/custom_drawer.dart';
@@ -39,15 +40,53 @@ class RateScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Rate Your Assistant'.tr,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 20),
+            Obx(() => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Select Assistant', style: TextStyle(fontSize: 18,
+                    fontFamily: 'Montserrat',
+                )),
+                SizedBox(height: 10),
+                if (controller.selectedAssistantName.isNotEmpty)
+                  ListTile(
+                    title: Text(controller.selectedAssistantName.value),
+                    trailing: Icon(Icons.check_circle, color: Colors.green),
+                    tileColor: Colors.grey[200],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                SizedBox(height: 10),
+                Obx(() => ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: controller.assistantsList.length,
+                  itemBuilder: (context, index) {
+                    final assistant = controller.assistantsList[index];
+                    return Card(
+                      child: ListTile(
+                        title: Text(assistant['name']),
+                        subtitle: Text(assistant['specialization']),
+                        trailing: controller.assistantId.value == assistant['id']
+                            ? Icon(Icons.check, color: Colors.green)
+                            : null,
+                        onTap: () => controller.selectAssistant(
+                            assistant['id'],
+                            assistant['name']
+                        ),
+                      ),
+                    );
+                  },
+                )),
+                SizedBox(height: 30),
+              ],
+            )),
 
-            // نجمة التقييم
+            Text('Rate Your Assistant', style: TextStyle(fontSize: 18,
+                fontFamily: 'Montserrat'
+            )),
+            SizedBox(height: 10),
             Obx(() => Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(5, (index) {
@@ -57,61 +96,40 @@ class RateScreen extends StatelessWidget {
                     size: 40,
                     color: AppColors.primaryGreen,
                   ),
-                  onPressed: () {
-                    controller.rate.value = index + 1.0;
-                  },
+                  onPressed: () => controller.rate.value = index + 1.0,
                 );
               }),
             )),
 
-            const SizedBox(height: 30),
-
-            // حقل الملاحظات
-            Text(
-              'Add a Note (Optional)'.tr,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 10),
+            // قسم الملاحظات
+            SizedBox(height: 30),
+            Text('Add a Note (Optional)', style: TextStyle(fontSize: 18,
+                fontFamily: 'Montserrat'
+            )),
+            SizedBox(height: 20),
             TextField(
               controller: controller.noteController,
               maxLines: 5,
               decoration: InputDecoration(
-                hintText: 'Write your feedback here...'.tr,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: AppColors.primaryGreen),
+                hintText: 'Write your feedback here...',
+                hintStyle: TextStyle(
+                    fontFamily: 'Montserrat',
+                  color: Colors.grey
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: AppColors.primaryGreen, width: 2),
-                ),
+                border: OutlineInputBorder(),
               ),
             ),
 
-            const SizedBox(height: 40),
+            SizedBox(height: 40),
+            CustomButton(
+              onTap: () {
+                controller.isLoading.value ? null : controller.submitRating();
+              },
+              text: 'Submit Rating',
+              color: AppColors.primaryGreen,
+            ),
 
-            // زر التقديم
-            Obx(() => SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: controller.isLoading.value ? null : () => controller.submitRating(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryGreen,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: controller.isLoading.value
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : Text(
-                  'Submit Rating'.tr,
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-              ),
-            )),
-          ],
+            ],
         ),
       ),
     );

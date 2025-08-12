@@ -60,7 +60,9 @@ static const String baseUrl="http://ouzon.somee.com/api";
       throw Exception('An unexpected error occurred: $e');
     }
   }
-//------------------------------------------------------------------------
+
+
+
 
   //LoginUser
   Future<Response> loginUser({required String email,required String password}) async {
@@ -90,7 +92,10 @@ static const String baseUrl="http://ouzon.somee.com/api";
   }
 }
 
-//---------------------------------------------------------------------------
+
+
+
+
   //add procedure
   Future<Response> addProcedure(
       Map<String, dynamic> procedureData, {
@@ -123,7 +128,11 @@ static const String baseUrl="http://ouzon.somee.com/api";
     }
   }
 
-//----------------------------------------------------------------------
+
+
+
+
+
 
   //fetchAllProcedures
   Future<List<Procedure>> postFilteredProcedures({
@@ -200,7 +209,10 @@ static const String baseUrl="http://ouzon.somee.com/api";
     }
   }
 
-//-----------------------------------------------------------------
+
+
+
+
 
   // fetch one procedure
   Future<Map<String, dynamic>> getProcedureDetails(int procedureId) async {
@@ -246,7 +258,10 @@ static const String baseUrl="http://ouzon.somee.com/api";
     }
   }
 
-//--------------------------------------------------------------------
+
+
+
+
 
   //fetch procedure by paged
   Future<List<Procedure>> getProceduresPaged({
@@ -283,7 +298,13 @@ static const String baseUrl="http://ouzon.somee.com/api";
       throw Exception('Failed to load paged procedures: ${e.message}');
     }
   }
-  //--------------------------------------------------------------------
+
+
+
+
+
+
+
   //fetch my profile
   Future<Map<String, dynamic>> getMyProfile() async {
     try {
@@ -308,7 +329,13 @@ static const String baseUrl="http://ouzon.somee.com/api";
       throw Exception('Error: ${e.message}');
     }
   }
-  //-------------------------------------------------
+
+
+
+
+
+
+
   // update my profile
   Future<Map<String, dynamic>> updateMyProfile(Map<String, dynamic> data) async {
     try {
@@ -333,7 +360,14 @@ static const String baseUrl="http://ouzon.somee.com/api";
     }
   }
 
-  //-----------------------------------------------------
+
+
+
+
+
+
+
+
   // getAdditionalTools
   Future<List<AdditionalTool>> getAdditionalTools() async {
     try {
@@ -357,6 +391,104 @@ static const String baseUrl="http://ouzon.somee.com/api";
       return [];
     } on DioException catch (e) {
       throw Exception('Failed to load tools: ${e.message}');
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+  Future<Response> submitRating({
+    required String note,
+    required double rate,
+    required String assistantId,
+    String? procedureId,
+    required String token,
+  }) async {
+    try {
+      final dio = Dio();
+
+      final response = await dio.post(
+        "http://ouzon.somee.com/api/Ratings",
+        data: {
+          "note": note,
+          "rate": rate,
+          "assistantId": assistantId,
+          if (procedureId != null) "procedureId": procedureId,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      return response;
+    } on DioException catch (e) {
+
+      if (e.response != null) {
+        throw Exception(e.response?.data['message'] ?? 'Failed to submit rating');
+      } else {
+        throw Exception('Network error: ${e.message}');
+      }
+    }
+  }
+
+
+
+
+  //select assistance
+  Future<List<Map<String, dynamic>>> getAssistantsFromProcedures(String token) async {
+    try {
+      final dio = Dio();
+
+      final response = await dio.post(
+        "http://ouzon.somee.com/api/procedures/FilteredProcedure",
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+        data: [],
+      );
+
+      if (response.statusCode == 200) {
+
+        final procedures = response.data as List;
+        final assistants = <Map<String, dynamic>>[];
+
+        for (var procedure in procedures) {
+          if (procedure['assistants'] != null) {
+            for (var assistant in procedure['assistants']) {
+
+              if (!assistants.any((a) => a['id'] == assistant['id'])) {
+                assistants.add({
+                  'id': assistant['id'],
+                  'name': assistant['userName'],
+                  'email': assistant['email'],
+                  'phone': assistant['phoneNumber'],
+                  'clinic': assistant['clinic']?['name'] ?? '',
+                });
+              }
+            }
+          }
+        }
+
+        return assistants;
+      } else {
+        throw Exception('Failed to load procedures');
+      }
+    } on DioException catch (e) {
+      throw Exception('Failed to load assistants: ${e.message}');
     }
   }
 }

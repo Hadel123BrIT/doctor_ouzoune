@@ -2,31 +2,40 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-
+import '../../../Routes/app_routes.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/services/api_services.dart';
 
 class RateController extends GetxController {
+  final ApiServices apiServices = Get.put(ApiServices());
   final noteController = TextEditingController();
   final assistantId = ''.obs;
+  final selectedAssistantName = ''.obs;
+  final assistantsList = <Map<String, dynamic>>[].obs;
   final rate = 0.0.obs;
   final isLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    // يمكنك الحصول على assistantId من المعلمات عند الانتقال إلى هذه الصفحة
-    assistantId.value = Get.arguments['assistantId'] ?? '';
+    loadAssistants();
+  }
+
+
+
+  void selectAssistant(String id, String name) {
+    assistantId.value = id;
+    selectedAssistantName.value = name;
   }
 
   Future<void> submitRating() async {
+    if (assistantId.isEmpty) {
+      Get.snackbar('Error', 'Please select an assistant');
+      return;
+    }
+
     if (rate.value == 0) {
-      Get.snackbar(
-        'Error'.tr,
-        'Please select a rating'.tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar('Error', 'Please select a rating');
       return;
     }
 
@@ -34,47 +43,39 @@ class RateController extends GetxController {
       isLoading.value = true;
       final token = GetStorage().read('auth_token');
 
-      final response = await Dio().post(
-        "http://ouzon.somee.com/api/Ratings",
-        data: {
-          "note": noteController.text,
-          "rate": rate.value,
-          "assistantId": assistantId.value,
-        },
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
-          },
-        ),
+      final response = await apiServices.submitRating(
+        note: noteController.text,
+        rate: rate.value,
+        assistantId: assistantId.value,
+        token: token,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.back(); // العودة للصفحة السابقة بعد التقييم
-        Get.snackbar(
-          'Success'.tr,
-          'Rating submitted successfully'.tr,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppColors.primaryGreen,
-          colorText: Colors.white,
-        );
+        Get.back();
+        Get.snackbar('Success', 'Rating submitted successfully');
       }
-    } on DioException catch (e) {
-      Get.snackbar(
-        'Error'.tr,
-        e.response?.data['message'] ?? 'Failed to submit rating',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
     } finally {
       isLoading.value = false;
     }
   }
 
-  @override
-  void onClose() {
-    noteController.dispose();
-    super.onClose();
+  Future<void> loadAssistants() async {
+    try {
+      isLoading.value = true;
+      final token = GetStorage().read('auth_token');
+
+      final assistants = await apiServices.getAssistantsFromProcedures(token);
+      assistantsList.assignAll(assistants);
+
+      if (assistants.isEmpty) {
+        Get.snackbar('Info', 'No assistants found in procedures');
+      }
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
+    }
   }
 }
