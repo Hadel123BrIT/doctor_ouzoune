@@ -53,7 +53,9 @@ class AdditionalKits extends StatelessWidget {
       ),
       body: Obx(() {
         if (controller.additionalTools.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(
+            color: AppColors.primaryGreen,
+          ));
         }
 
         return Padding(

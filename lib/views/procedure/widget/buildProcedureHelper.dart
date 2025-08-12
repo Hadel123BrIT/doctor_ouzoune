@@ -308,10 +308,9 @@ Widget buildKitsToolsButtonsRow(BuildContext context) {
             ? ElevatedButton(
           onPressed: () async {
             await Get.toNamed(AppRoutes.additional_kit);
-            controller.updateToolsSelection();
+            controller.updateSelectedTools();
           },
-          child: Text(
-            'Tap to choose Additional Tools',
+          child: Text('Tap to choose Additional Tools',
             style: TextStyle(
               color: Colors.grey,
               fontSize: 15,
@@ -331,44 +330,33 @@ Widget buildKitsToolsButtonsRow(BuildContext context) {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: Obx(() => ListView.builder(
+                child: ListView.builder(
                   itemCount: controller.selectedTools.length,
                   itemBuilder: (context, index) {
                     final tool = controller.selectedTools[index];
-                    return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            tool['name'],
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'Montserrat',
-                              color: isDarkMode ? Colors.white : Colors.black,
-                            ),
-                          ),
-                          Text(
-                            'x ${tool['quantity']}',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primaryGreen,
-                            ),
-                          ),
-                        ],
+                    return ListTile(
+                      title: Text(tool['name'],
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Montserrat',
+                        ),
+                      ),
+                      trailing: Text('x ${tool['quantity']}',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Montserrat',
+                        ),
                       ),
                     );
                   },
-                )),
+                ),
               ),
               Align(
                 alignment: Alignment.bottomRight,
                 child: TextButton(
                   onPressed: () async {
                     await Get.toNamed(AppRoutes.additional_kit);
-                    controller.updateToolsSelection();
+                    controller.updateSelectedTools();
                   },
                   child: Text(
                     'Edit Selection',
@@ -386,7 +374,7 @@ Widget buildKitsToolsButtonsRow(BuildContext context) {
       )),
 
 
-    SizedBox(height: 20),
+      SizedBox(height: 20),
 
 
 

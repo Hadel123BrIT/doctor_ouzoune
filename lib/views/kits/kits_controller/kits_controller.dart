@@ -355,7 +355,19 @@ class KitsController extends GetxController {
       };
     }).toList();
   }
-
+  void updateSelectedTools() {
+    selectedTools.clear();
+    for (int i = 0; i < additionalTools.length; i++) {
+      if (additionalToolQuantities[i] > 0) {
+        selectedTools.add({
+          'id': additionalTools[i].id,
+          'name': additionalTools[i].name,
+          'quantity': additionalToolQuantities[i],
+        });
+      }
+    }
+    update();
+  }
 
 
 
