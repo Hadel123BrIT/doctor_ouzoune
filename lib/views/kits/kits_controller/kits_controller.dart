@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../core/services/api_services.dart';
+import '../../../models/Implant_model.dart';
 import '../../../models/additionalTool_model.dart';
+import '../../../models/kit_model.dart';
 
 class KitsController extends GetxController {
   final List<Map<String, dynamic>> surgicalKits = [
@@ -54,220 +57,8 @@ class KitsController extends GetxController {
       'quantity': "5",
     },
   ];
-  final List<Map<String, dynamic>> implants = [
-    {
-      "id": 1,
-      'name': 'Nobel Biocare',
-      'height': '10 mm',
-      'width': '3.5 mm',
-      'radius': '3.5 mm',
-      'brand': "Implant Tech",
-      'quantity': 15,
-      'description': 'High Quality Premium implant for anterior region',
-      'image': 'assets/images/implant1.png',
-      'tools': [
-        {
-          'id': 101,
-          'name': 'Dental Drill',
-          'image': 'assets/images/dental_drill.png',
-          'length': '15 cm',
-          'width': '3 cm',
-          'thickness': '2 cm',
-          'quantity': "0",
-        },
-        {
-          'id': 102,
-          'name': 'Surgical Guide',
-          'image': 'assets/images/surgical_guide.png',
-          'length': '12 cm',
-          'width': '4 cm',
-          'thickness': '0.5 cm',
-          'quantity': "0",
-        },
-        {
-          'id': 103,
-          'name': 'Healing Abutment',
-          'image': 'assets/images/healing_abutment.png',
-          'length': '8 cm',
-          'width': '2 cm',
-          'thickness': '1 cm',
-          'quantity': "0",
-        },
-        {
-          'id': 104,
-          'name': 'No tools',
-        }
-      ]
-    },
-    {
-      "id": 2,
-      'name': 'Straumann',
-      'height': '12 mm',
-      'width': '4.1 mm',
-      'radius': '4.1 mm',
-      'brand': "Implant Tech",
-      'quantity': 8,
-      'description': 'Roxolid SLActive surface for doctor and his operation',
-      'image': 'assets/images/implant2.png',
-      'tools': [
-        {
-          'id': 201,
-          'name': 'Dental Drill',
-          'image': 'assets/images/dental_drill.png',
-          'length': '15 cm',
-          'width': '3 cm',
-          'thickness': '2 cm',
-          'quantity': "0",
-        },
-        {
-          'id': 202,
-          'name': 'Torque Wrench',
-          'image': 'assets/images/torque_wrench.png',
-          'length': '18 cm',
-          'width': '5 cm',
-          'thickness': '1.5 cm',
-          'quantity': "0",
-        },
-        {
-          'id': 203,
-          'name': 'Scan Body',
-          'image': 'assets/images/scan_body.png',
-          'length': '10 cm',
-          'width': '2.5 cm',
-          'thickness': '1 cm',
-          'quantity': "0",
-        },
-        {
-          'id': 204,
-          'name': 'No tools',
-        }
-      ]
-    },
-    {
-      "id": 3,
-      'name': 'BioHorizons',
-      'height': '11.5 mm',
-      'width': '4.6 mm',
-      'radius': '4.6 mm',
-      'brand': "Implant Tech",
-      'quantity': 10,
-      'description': 'Laser-Lok microchannel technology',
-      'image': 'assets/images/implant3.png',
-      'tools': [
-        {
-          'id': 301,
-          'name': 'Dental Drill',
-          'image': 'assets/images/dental_drill.png',
-          'length': '15 cm',
-          'width': '3 cm',
-          'thickness': '2 cm',
-          'quantity': "0",
-        },
-        {
-          'id': 302,
-          'name': 'Prosthetic Kit',
-          'image': 'assets/images/prosthetic_kit.png',
-          'length': '20 cm',
-          'width': '15 cm',
-          'thickness': '3 cm',
-          'quantity': "0",
-        },
-        {
-          'id': 303,
-          'name': 'Impression Coping',
-          'image': 'assets/images/impression_coping.png',
-          'length': '8 cm',
-          'width': '2 cm',
-          'thickness': '1 cm',
-          'quantity': "0",
-        },
-        {
-          'id': 304,
-          'name': 'No tools',
-        }
-      ]
-    },
-    {
-      "id": 4,
-      'name': 'Nobel Biocare',
-      'height': '10 mm',
-      'width': '3.5 mm',
-      'radius': '3.5 mm',
-      'brand': "Implant Tech",
-      'quantity': 15,
-      'description': 'High Quality Premium implant for anterior region',
-      'image': 'assets/images/implant1.png',
-      'tools': [
-        {
-          'id': 401,
-          'name': 'Dental Drill',
-          'image': 'assets/images/dental_drill.png',
-          'length': '15 cm',
-          'width': '3 cm',
-          'thickness': '2 cm',
-          'quantity': "0",
-        },
-        {
-          'id': 402,
-          'name': 'Surgical Guide',
-          'image': 'assets/images/surgical_guide.png',
-          'length': '12 cm',
-          'width': '4 cm',
-          'thickness': '0.5 cm',
-          'quantity': "0",
-        },
-        {
-          'id': 403,
-          'name': 'No tools',
-        }
-
-      ]
-    },
-    {
-      "id": 5,
-      'name': 'Straumann',
-      'height': '12 mm',
-      'width': '4.1 mm',
-      'radius': '4.1 mm',
-      'brand': "Implant Tech",
-      'quantity': 8,
-      'description': 'Roxolid SLActive surface',
-      'image': 'assets/images/implant2.png',
-      'tools': [
-        {
-          'id': 501,
-          'name': 'Dental Drill',
-          'image': 'assets/images/dental_drill.png',
-          'length': '15 cm',
-          'width': '3 cm',
-          'thickness': '2 cm',
-          'quantity': "0",
-        },
-        {
-          'id': 502,
-          'name': 'Abutment',
-          'image': 'assets/images/abutment.png',
-          'length': '10 cm',
-          'width': '3 cm',
-          'thickness': '1.5 cm',
-          'quantity': "0",
-        },
-        {
-          'id': 503,
-          'name': 'Cover Screw',
-          'image': 'assets/images/cover_screw.png',
-          'length': '5 cm',
-          'width': '2 cm',
-          'thickness': '1 cm',
-          'quantity': "0",
-        },
-        {
-          'id': 504,
-          'name': 'No tools',
-        }
-      ]
-    }
-  ];
+  final RxList<Implant> implants = <Implant>[].obs;
+  final RxList<Kit> kits = <Kit>[].obs;
   final RxList<AdditionalTool> additionalTools = <AdditionalTool>[].obs;
   final RxList<int> additionalToolQuantities = <int>[].obs;
   final RxList<AdditionalTool> selectedAdditionalTools = <AdditionalTool>[].obs;
@@ -277,15 +68,91 @@ class KitsController extends GetxController {
   final RxList<int> surgicalToolQuantities = <int>[].obs;
   final RxList<Map<String, dynamic>> selectedSurgicalTools = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> selectedTools = <Map<String, dynamic>>[].obs;
-  final RxMap<String, Map<String, dynamic>> selectedImplants = <String, Map<String, dynamic>>{}.obs;
   final RxMap<String, List<String>>selectedToolsForImplants = <String, List<String>>{}.obs;
-  final RxMap<String, Map<String, dynamic>> selectedImplantDetails = <String, Map<String, dynamic>>{}.obs;
-  final RxList<Map<String, dynamic>> selectedPartialImplants = <Map<String, dynamic>>[].obs;
+  final RxMap<String, Implant> selectedImplantDetails = <String, Implant>{}.obs;
+  final RxList<Implant> selectedPartialImplants = <Implant>[].obs;
+  final RxMap<String, Implant> selectedImplants = <String, Implant>{}.obs;
+  final RxBool isLoading = true.obs;
   @override
   void onInit() {
     super.onInit();
-    initializeToolQuantities();
+    fetchAllData();
   }
+
+  Future<void> fetchAllData() async {
+    try {
+      isLoading(true);
+      await Future.wait([
+        fetchImplants(),
+        fetchKits(),
+        fetchAdditionalTools(),
+      ]);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load data: ${e.toString()}');
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  Future<void> fetchImplants() async {
+    try {
+      final data = await ApiServices().getImplants();
+      if (data.isEmpty) {
+        Get.snackbar('Info', 'No implants found');
+      }
+      implants.assignAll(data);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to load implants: ${e.toString()}',
+        duration: Duration(seconds: 5),
+      );
+      implants.clear();
+      rethrow;
+    }
+  }
+
+  Future<void> fetchKits() async {
+    try {
+      final response = await ApiServices().getKits();
+      debugPrint('Raw API response: ${response.toString()}');
+
+      // تحقق من البيانات قبل التحويل
+      for (var kitJson in response) {
+        debugPrint('Kit JSON: $kitJson');
+        debugPrint('Tools in JSON: ${kitJson.tools}');
+      }
+
+      kits.assignAll(response.map((json) => Kit.fromJson(json as Map<String, dynamic>)));
+
+      // تحقق بعد التحويل
+      for (final kit in kits) {
+        debugPrint('Parsed Kit - ID: ${kit.id}, Tools: ${kit.tools.length}');
+        for (var tool in kit.tools) {
+          debugPrint('Tool: ${tool.name}, ID: ${tool.id}');
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching kits: $e');
+      Get.snackbar('Error', 'Failed to load kits: ${e.toString()}');
+      kits.clear();
+    }
+  }
+
+  Future<void> fetchAdditionalTools() async {
+    try {
+      final data = await ApiServices().getAdditionalTools();
+      additionalTools.assignAll(data);
+      additionalToolQuantities.assignAll(List.filled(data.length, 0));
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load tools: ${e.toString()}');
+      additionalTools.clear();
+    }
+  }
+
+
+
+
 
   // Initialize
   void initializeToolQuantities() {
@@ -306,6 +173,95 @@ class KitsController extends GetxController {
     return ids;
   }
 
+  String getImplantNameByKitId(int kitId) {
+    try {
+      final implant = implants.firstWhere(
+            (implant) => implant.kitId == kitId,
+        orElse: () => Implant(
+          id: 0,
+          radius: 0,
+          width: 0,
+          height: 0,
+          quantity: 0,
+          brand: 'Unknown',
+          description: 'Not found',
+          imagePath: '',
+          kitId: 0,
+        ),
+      );
+      return '${implant.brand} (${implant.description})';
+    } catch (e) {
+      return 'Unknown Implant';
+    }
+  }
+
+  List<String> getAllSurgicalToolsNames() {
+    return surgicalKits.map((tool) => tool['name'].toString()).toList();
+  }
+
+  String getImplantName(int kitId) {
+    try {
+      if (kits.isEmpty) return 'No Kits Loaded';
+      if (kitId == null) return 'No Kit Assigned';
+
+      final kit = kits.firstWhere(
+            (k) => k.id == kitId,
+
+      );
+
+      return kit?.name ?? 'Kit $kitId Not Found';
+    } catch (e) {
+      print('Error in getImplantName: $e');
+      return 'Error Getting Name';
+    }
+  }
+
+  List<String?> getKitToolNames(int kitId) {
+    try {
+      if (kits.isEmpty) {
+        debugPrint('Kits list is empty');
+        return ['No kits available'];
+      }
+
+      final kit = kits.firstWhere(
+            (k) => k.id == kitId,
+
+      );
+
+      if (kit.tools.isEmpty) {
+        debugPrint('No tools found for kit $kitId');
+        return ['No tools required'];
+      }
+
+      return kit.tools.map((tool) {
+        debugPrint('Found tool: ${tool.name} for kit $kitId');
+        return tool.name;
+      }).toList();
+    } catch (e) {
+      debugPrint('Error in getKitToolNames: $e');
+      return ['Error loading tools'];
+    }
+  }
+
+  List<AdditionalTool> getKitTools(int kitId) {
+    try {
+      if (kits.isEmpty) {
+        debugPrint('Kits list is empty');
+        return [];
+      }
+
+      final kit = kits.firstWhere(
+            (k) => k.id == kitId,
+
+      );
+
+      debugPrint('Found ${kit.tools?.length ?? 0} tools for kit $kitId');
+      return kit.tools ?? []; // تأكد من عدم إرجاع null
+    } catch (e) {
+      debugPrint('Error in getKitTools: $e');
+      return [];
+    }
+  }
 
 
   void updateToolsSelection() {
@@ -320,16 +276,6 @@ class KitsController extends GetxController {
 
 
 
-  // Function For Additional tools
-  Future<void> fetchAdditionalTools() async {
-    try {
-      final tools = await ApiServices().getAdditionalTools();
-      additionalTools.assignAll(tools);
-      additionalToolQuantities.assignAll(List.filled(tools.length, 0));
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to load tools: ${e.toString()}');
-    }
-  }
 
   void updateAdditionalToolQuantity(int toolIndex, int newQuantity) {
     if (toolIndex >= 0 && toolIndex < additionalTools.length) {
@@ -381,9 +327,7 @@ class KitsController extends GetxController {
     update();
   }
 
-  List<String> getAllSurgicalToolsNames() {
-    return surgicalKits.map((tool) => tool['name'] as String).toList();
-  }
+
 
   bool hasSelectedSurgicalTools() {
     return surgicalToolQuantities.any((quantity) => quantity > 0);
@@ -396,7 +340,7 @@ class KitsController extends GetxController {
 
 
   // Function For Implants kits
-  void toggleImplantSelection(String implantId, Map<String, dynamic> implantData) {
+  void toggleImplantSelection(String implantId, Implant implantData) {
     if (selectedImplants.containsKey(implantId)) {
       selectedImplants.remove(implantId);
     } else {
@@ -440,9 +384,7 @@ class KitsController extends GetxController {
     return selectedToolsForImplants[implantId]?.contains(toolName) ?? false;
   }
 
-  List<String> getToolsForImplant(String implantId) {
-    return selectedToolsForImplants[implantId] ?? [];
-  }
+
 
   void toggleTool(String toolName) {
     tools[toolName] = !(tools[toolName] ?? false);
@@ -460,37 +402,70 @@ class KitsController extends GetxController {
 
   // Function For PartialImplants
 
-  void addPartialImplant(String implantId, String implantName, {List<String>? tools}) {
-    selectedPartialImplants.removeWhere((item) => item['implantId'] == implantId);
-    selectedPartialImplants.add({
-      'implantId': implantId,
-      'implantName': implantName,
-      'tools': tools ?? [],
-    });
+  void addPartialImplant(Implant implant, {List<String>? tools}) {
+    // البحث عن الـKit المرتبط بالزرعة
+    final associatedKit = kits.firstWhere(
+          (k) => k.id == implant.kitId,
+      orElse: () => Kit(
+        id: 0,
+        name: 'Unknown Kit',
+        isMainKit: false,
+        implantCount: 0,
+        toolCount: 0,
+        implants: [],
+        tools: [],
+      ),
+    );
+
+    // إنشاء كائن Implant جديد مع البيانات المحدثة
+    final updatedImplant = Implant(
+      id: implant.id,
+      radius: implant.radius,
+      width: implant.width,
+      height: implant.height,
+      quantity: implant.quantity,
+      brand: implant.brand,
+      description: implant.description,
+      imagePath: implant.imagePath,
+      kitId: implant.kitId,
+      //tools: tools ?? associatedKit.tools.map((t) => t.name).toList(),
+    );
+
+    // إزالة الزرعة إذا كانت موجودة مسبقاً
+    selectedPartialImplants.removeWhere((item) => item.id == implant.id);
+
+    // إضافة الزرعة المحدثة
+    selectedPartialImplants.add(updatedImplant);
+
     update();
   }
 
   void removePartialImplant(String implantId) {
-    selectedPartialImplants.removeWhere((item) => item['implantId'] == implantId);
-    selectedPartialImplants.refresh();
+    selectedPartialImplants.removeWhere((implant) => implant.id.toString() == implantId);
+    update();
   }
 
+  bool isImplantPartial(String implantId) {
+    return selectedPartialImplants.any((implant) => implant.id.toString() == implantId);
+  }
 
   void clearPartialImplants() {
     selectedPartialImplants.clear();
     selectedPartialImplants.refresh();
   }
 
-  Map<String, dynamic>? getImplantDetails(String implantId) {
+
+
+  List<dynamic> getToolsForImplant(int implantId) {
     try {
-      return implants.firstWhere(
-            (implant) => implant['id'].toString() == implantId,
+      final kit = kits.firstWhere(
+            (k) => k.implants.any((imp) => imp.id == implantId),
       );
+      return kit.tools;
     } catch (e) {
-      return null;
+      return [];
     }
   }
-
 
 
 
@@ -521,9 +496,7 @@ class KitsController extends GetxController {
     return selectedImplants.containsKey(implantId);
   }
 
-  bool isImplantPartial(String implantId) {
-    return selectedPartialImplants.any((item) => item['implantId'] == implantId);
-  }
+
 
 
   Map<String, dynamic> prepareProcedureData() {
@@ -532,10 +505,10 @@ class KitsController extends GetxController {
         'toolId': tool['id'],
         'quantity': int.parse(tool['quantity']),
       }).toList(),
-      'kitIds': selectedImplants.keys.map((id) => int.parse(id)).toList(),
-      'implantTools': selectedPartialImplants.map((item) => {
-        'implantId': int.parse(item['implantId']),
-        'toolIds': (item['tools'] as List<String>).map((toolName) =>
+      'kitIds': selectedImplants.keys.map(int.parse).toList(),
+      'implantTools': selectedPartialImplants.map((implant) => {
+        'implantId': implant.id,
+        'toolIds': (implant.tools as List<String>).map((toolName) =>
             getToolIdByName(toolName)
         ).toList(),
       }).toList(),

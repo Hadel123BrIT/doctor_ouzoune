@@ -6,7 +6,9 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as dio;
 import 'package:ouzoun/models/procedure_model.dart';
 import '../../Routes/app_routes.dart';
+import '../../models/Implant_model.dart';
 import '../../models/additionalTool_model.dart';
+import '../../models/kit_model.dart';
 
 class ApiServices  {
 final Dio dio=Dio();
@@ -464,7 +466,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
         data: [],
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
 
         final procedures = response.data as List;
         final assistants = <Map<String, dynamic>>[];
@@ -494,4 +496,56 @@ static const String baseUrl="http://ouzon.somee.com/api";
       throw Exception('Failed to load assistants: ${e.message}');
     }
   }
+
+
+  Future<List<Implant>> getImplants() async {
+    try {
+      final token = await GetStorage().read('auth_token');
+      final response = await dio.get(
+        '$baseUrl/implants',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      print('Implants API Response: ${response.data}');
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data is List ? response.data : response.data['data'];
+        return data.map((json) => Implant.fromJson(json)).toList();
+      }
+      throw Exception('Failed with status ${response.statusCode}');
+    } on DioException catch (e) {
+      print('Dio Error: ${e.response?.data}');
+      throw e;
+    }
+  }
+
+  Future<List<Kit>> getKits() async {
+    try {
+      final token = GetStorage().read('auth_token');
+      final response = await dio.get(
+        '$baseUrl/kits',
+        options: Options(
+          headers: {
+            if (token != null)
+              'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data;
+        return (response.data as List).map((json) => Kit.fromJson(json)).toList();
+      }
+      return [];
+    } on DioException catch (e) {
+      throw Exception('Failed to load tools: ${e.message}');
+  }}
+
+
+
 }

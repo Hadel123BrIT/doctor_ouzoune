@@ -58,7 +58,7 @@ class BuildToolCard extends StatelessWidget {
                       SizedBox(width: context.width * 0.02),
                       BuildDetailItem(context, "Width", "${tool.width}"),
                       SizedBox(width: context.width * 0.02),
-                      BuildDetailItem(context, "Width", "${tool.height}"),
+                      BuildDetailItem(context, "Height", "${tool.height}"),
                     ],
                   ),
                 ],

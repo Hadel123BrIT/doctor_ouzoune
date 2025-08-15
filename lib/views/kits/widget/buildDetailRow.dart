@@ -7,6 +7,8 @@ Widget BuildDetailRow(String label, String value) {
     child: Row(
       children: [
         Text(
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
           label,
           style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -17,6 +19,8 @@ Widget BuildDetailRow(String label, String value) {
         ),
         SizedBox(width: 5),
         Text(
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
           value,
           style: TextStyle(
               fontSize: 14,

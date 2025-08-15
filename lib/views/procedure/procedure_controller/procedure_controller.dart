@@ -5,6 +5,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as dio;
 import 'package:ouzoun/routes/app_routes.dart';
 import '../../../core/services/api_services.dart';
+import '../../../models/additionalTool_model.dart';
+import '../../../models/kit_model.dart';
 import '../../../models/procedure_model.dart';
 import '../../kits/Kits_Controller/kits_controller.dart';
 
@@ -142,16 +144,42 @@ class ProcedureController extends GetxController {
   }
 
   List<Map<String, dynamic>> getPartialImplantsData() {
-    return kitsController.selectedPartialImplants.map((item) {
-      List<int> toolIds = [];
-      if (!(item['tools'] as List<String>).contains('No tools')) {
-        toolIds = (item['tools'] as List<String>)
-            .map((toolName) => kitsController.getToolIdByName(toolName))
-            .toList();
+    return kitsController.selectedPartialImplants.map((implant) {
+      final kit = kitsController.kits.firstWhere(
+            (k) => k.id == implant.kitId,
+        orElse: () => Kit(
+          id: 0,
+          name: 'Unknown Kit',
+          isMainKit: false,
+          implantCount: 0,
+          toolCount: 0,
+          implants: [],
+          tools: [],
+        ),
+      );
+
+      List<int>? toolIds = [];
+      if (implant.tools != null && !implant.tools!.contains('No tools')) {
+        toolIds = implant.tools!.map((toolName) {
+
+          final tool = kit.tools.firstWhere(
+                (t) => t.name == toolName,
+            orElse: () => AdditionalTool(
+              id: 0,
+              name: '',
+              width: 0,
+              height: 0,
+              thickness: 0,
+              quantity: 0,
+              categoryId: 0,
+            ),
+          );
+          return tool.id;
+        }).where((id) => id != 0).cast<int>().toList(); // تصفية الأدوات غير المعروفة
       }
 
       return {
-        "implantId": int.parse(item['implantId']),
+        "implantId": implant.id,
         "toolIds": toolIds,
       };
     }).toList();
@@ -161,7 +189,6 @@ class ProcedureController extends GetxController {
 
   //Post Procedure
   Future<void> postProcedure() async {
-  
     if (procedureDate.value == null || procedureTime.value == null) {
       Get.snackbar('Error'.tr, 'Procedure date and time are required'.tr);
       return;
@@ -179,6 +206,9 @@ class ProcedureController extends GetxController {
         token: token,
       );
 
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.data}');
+      print('Headers: ${response.headers}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.toNamed(AppRoutes.homepage);
         Get.snackbar('Success'.tr, 'Procedure added successfully'.tr);
@@ -186,15 +216,20 @@ class ProcedureController extends GetxController {
       }
 
       else {
-        final errorMsg = response.data['message'] ??
-            response.data['error'] ??
-            'Failed with status ${response.statusCode}';
-        Get.snackbar('Error'.tr, errorMsg.toString().tr);
+        if (response.data is Map<String, dynamic>) {
+          final errorMsg = response.data['message'] ??
+              response.data['error'] ??
+              'Failed with status ${response.statusCode}';
+          Get.snackbar('Error'.tr, errorMsg
+              .toString()
+              .tr);
+        } else if (response.data is String) {
+          Get.snackbar('Error'.tr, response.data.tr);
+        }
       }
     } catch (e) {
-      Get.snackbar('************************************Error'.tr, 'An error occurred: ${e.toString()}'.tr);
-      print(e.toString());
-      print('--------------------------------Full error details: $e');
+      print('Error type: ${e.runtimeType}');
+      Get.snackbar('Error'.tr, 'An error occurred: ${e.toString()}'.tr);
     }
   }
 

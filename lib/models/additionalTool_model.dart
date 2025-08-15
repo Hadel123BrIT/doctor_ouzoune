@@ -42,4 +42,15 @@ class AdditionalTool {
     'kitId': kitId,
     'categoryId': categoryId,
   };
+
+  factory AdditionalTool.empty() => AdditionalTool(
+    id: 0,
+    name: 'Unnamed Tool',
+    width: 0,
+    height: 0,
+    thickness: 0,
+    quantity: 0,
+    kitId: null,
+    categoryId: null,
+  );
 }

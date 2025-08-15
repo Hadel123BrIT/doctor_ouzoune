@@ -7,12 +7,13 @@ import 'package:ouzoun/views/kits/Kits_Controller/kits_controller.dart';
 import '../../../Core/Services/media_query_service.dart';
 import '../../../Widgets/custom_button.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../models/Implant_model.dart';
 import 'buildDetailRow.dart';
 
-Widget BuildImplantCard(BuildContext context, Map<String, dynamic> implant) {
+Widget BuildImplantCard(BuildContext context, Implant implant) {
   KitsController controller=Get.put(KitsController());
   final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-  final implantId = implant['id']?.toString() ?? UniqueKey().toString();
+  final implantId = implant.id.toString();
   return  Container(
     margin: EdgeInsets.symmetric(vertical: context.height * 0.01),
     decoration: BoxDecoration(
@@ -58,7 +59,7 @@ Widget BuildImplantCard(BuildContext context, Map<String, dynamic> implant) {
                         color: AppColors.primaryGreen,
                         borderRadius: BorderRadius.circular(10),
                         image: DecorationImage(
-                          image: AssetImage(implant['image']),
+                          image: AssetImage(implant.imagePath!),
                           fit: BoxFit.contain,
                         ),
                       ),
@@ -69,22 +70,22 @@ Widget BuildImplantCard(BuildContext context, Map<String, dynamic> implant) {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                            implant['name'],
+                            controller.getImplantName(implant.kitId ?? 0),
                             style: Theme.of(context).textTheme.bodySmall
                         ),
                         SizedBox(height: context.height * 0.01),
                         Row(
                           children: [
-                            BuildDetailRow('height:', implant['height']),
+                            BuildDetailRow('height:', "${implant.height}"),
                             SizedBox(width: 20),
-                            BuildDetailRow('width:', implant['width']),
+                            BuildDetailRow('width:', "${implant.width}"),
                           ],
                         ),
                         Row(
                           children: [
-                            BuildDetailRow('radius:', implant['radius']),
+                            BuildDetailRow('radius:', "${implant.radius}"),
                             SizedBox(width: 20),
-                            BuildDetailRow('quantity:', '${implant['quantity']}'),
+                            BuildDetailRow('quantity:', '${implant.height}'),
                           ],
                         ),
                         SizedBox(height: context.height * 0.01),
@@ -95,7 +96,7 @@ Widget BuildImplantCard(BuildContext context, Map<String, dynamic> implant) {
                 Text(
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  implant['description'],
+                  " description : ${implant.description!}",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
@@ -106,7 +107,8 @@ Widget BuildImplantCard(BuildContext context, Map<String, dynamic> implant) {
                 SizedBox(height: 12),
                 CustomButton(
                     onTap: (){
-                      Get.toNamed(AppRoutes.detail_kit, arguments: implant);
+                      Get.toNamed(AppRoutes.detail_kit,
+                          arguments: implant);
                     },
                     text: "View details",
                     color: AppColors.primaryGreen
