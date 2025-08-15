@@ -114,23 +114,13 @@ class KitsController extends GetxController {
 
   Future<void> fetchKits() async {
     try {
-      final response = await ApiServices().getKits();
-      debugPrint('Raw API response: ${response.toString()}');
+      final List<Kit> kitsData = await ApiServices().getKits();
+      debugPrint('Number of kits loaded: ${kitsData.length}');
 
-      // تحقق من البيانات قبل التحويل
-      for (var kitJson in response) {
-        debugPrint('Kit JSON: $kitJson');
-        debugPrint('Tools in JSON: ${kitJson.tools}');
-      }
+      kits.assignAll(kitsData);
 
-      kits.assignAll(response.map((json) => Kit.fromJson(json as Map<String, dynamic>)));
-
-      // تحقق بعد التحويل
       for (final kit in kits) {
-        debugPrint('Parsed Kit - ID: ${kit.id}, Tools: ${kit.tools.length}');
-        for (var tool in kit.tools) {
-          debugPrint('Tool: ${tool.name}, ID: ${tool.id}');
-        }
+        debugPrint('Kit ID: ${kit.id} has ${kit.tools.length} tools');
       }
     } catch (e) {
       debugPrint('Error fetching kits: $e');
@@ -255,8 +245,8 @@ class KitsController extends GetxController {
 
       );
 
-      debugPrint('Found ${kit.tools?.length ?? 0} tools for kit $kitId');
-      return kit.tools ?? []; // تأكد من عدم إرجاع null
+      debugPrint('Found ${kit.tools.length ?? 0} tools for kit $kitId');
+      return kit.tools ?? [];
     } catch (e) {
       debugPrint('Error in getKitTools: $e');
       return [];
