@@ -120,7 +120,7 @@ class ProcedureController extends GetxController {
       procedureTime.value!.minute,
     );
     return {
-      "numberOfAssistants": needsAssistance.value ? assistantsCount.value : 0,
+      "numberOfAssistants": assistantsCount ,
       "date": combinedDateTime.toIso8601String(),
       "categoryId": procedureType.value,
       "toolsIds": getAdditionalToolsData(),
@@ -269,7 +269,12 @@ class ProcedureController extends GetxController {
         print('  Number of Assistants: ${procedures[i].numberOfAssistants}');
         print('  Ids of Assistants: ${procedures[i].assistantIds}');
         print('----------------------------------');
+        if (procedures[i].numberOfAssistants != procedures[i].assistants.length) {
+          print('Warning: Mismatch in assistants count!');
+          print('Expected: ${procedures[i].numberOfAssistants}, Actual: ${procedures[i].assistants.length}');
+        }
       }
+
       proceduresList.assignAll(procedures);
     } catch (e) {
       Get.snackbar('Error', e.toString());

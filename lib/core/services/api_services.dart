@@ -195,6 +195,14 @@ static const String baseUrl="http://ouzon.somee.com/api";
           return [];
         }
         if (response.data is List) {
+          print('===== RAW PROCEDURES DATA =====');
+          for (var item in response.data as List) {
+            print(item);
+            if (item is Map) {
+              print('Assistants data in response: ${item['assistants']}');
+              print('Number of assistants in response: ${item['numberOfAssistants']}');
+            }
+          }
           return (response.data as List).map((p) => Procedure.fromJson(p)).toList();
         }
         print('Unexpected response format: ${response.data}');

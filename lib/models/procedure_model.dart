@@ -32,23 +32,39 @@ class Procedure {
     required this.assistants,
   });
 
+
+
   factory Procedure.fromJson(Map<String, dynamic> json) {
-    return Procedure(
-      id: json['id'] as int? ?? 0,
-      doctorId: json['doctorId'] as String? ?? '',
-      numberOfAssistants: json['numberOfAssistants'] as int? ?? 0,
-      assistantIds: List<String>.from(json['assistantIds'] as List? ?? []),
-      categoryId: json['categoryId'] as int? ?? 0,
-      status: json['status'] as int? ?? 0,
-      date: json['date'] != null
-          ? DateTime.tryParse(json['date'] as String) ?? DateTime.now()
-          : DateTime.now(),
-      doctor: Doctor.fromJson(json['doctor'] as Map<String, dynamic>),
-      tools: (json['tools'] as List?)?.map((x) => AdditionalTool.fromJson(x as Map<String, dynamic>)).toList() ?? [],
-      kits: (json['kits'] as List?)?.map((x) => Kit.fromJson(x as Map<String, dynamic>)).toList() ?? [],
-      assistants: (json['assistants'] as List?)?.map((x) => Assistant.fromJson(x as Map<String, dynamic>)).toList() ?? [],
-    );
+  // طباعة جميع مفاتيح JSON للتحقق
+  print('JSON keys in Procedure: ${json.keys.join(', ')}');
+
+  // تحديد القيمة الصحيحة لعدد المساعدين
+  final numAssistants = json['numberOfAsisstants'] ?? // مع 3 أحرف 's'
+  json['numberOfAssistants'] ?? // مع 4 أحرف 's'
+  0;
+
+  // تحديد assistantIds سواء كانت null أو غير موجودة
+  final assistantIds = json['assistantIds'] is List
+  ? List<String>.from(json['assistantIds'])
+      : <String>[];
+
+  return Procedure(
+  id: json['id'] as int? ?? 0,
+  doctorId: json['doctorId'] as String? ?? '',
+  numberOfAssistants: (numAssistants as int?) ?? 0,
+  assistantIds: assistantIds,
+  categoryId: json['categoryId'] as int? ?? 0,
+  status: json['status'] as int? ?? 0,
+  date: json['date'] != null
+  ? DateTime.tryParse(json['date'] as String) ?? DateTime.now()
+      : DateTime.now(),
+  doctor: Doctor.fromJson(json['doctor'] as Map<String, dynamic>),
+  tools: (json['tools'] as List?)?.map((x) => AdditionalTool.fromJson(x)).toList() ?? [],
+  kits: (json['kits'] as List?)?.map((x) => Kit.fromJson(x)).toList() ?? [],
+  assistants: (json['assistants'] as List?)?.map((x) => Assistant.fromJson(x)).toList() ?? [],
+  );
   }
+
 
   String get statusText {
     switch (status) {
