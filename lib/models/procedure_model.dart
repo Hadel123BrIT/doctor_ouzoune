@@ -35,34 +35,32 @@ class Procedure {
 
 
   factory Procedure.fromJson(Map<String, dynamic> json) {
-  // طباعة جميع مفاتيح JSON للتحقق
-  print('JSON keys in Procedure: ${json.keys.join(', ')}');
+    return Procedure(
+      id: json['id'],
+      doctorId: json['doctorId'],
+      categoryId: json['categoryId'],
+      numberOfAssistants: json['numberOfAsisstants'] ?? 0,
+      status: json['status'],
+      date: DateTime.parse(json['date']),
+      doctor: Doctor.fromJson(json['doctor']),
 
-  // تحديد القيمة الصحيحة لعدد المساعدين
-  final numAssistants = json['numberOfAsisstants'] ?? // مع 3 أحرف 's'
-  json['numberOfAssistants'] ?? // مع 4 أحرف 's'
-  0;
+      // التعديل الرئيسي هنا:
+      tools: List<AdditionalTool>.from(
+          (json['requiredTools'] ?? []).map((x) => AdditionalTool.fromJson(x))),
 
-  // تحديد assistantIds سواء كانت null أو غير موجودة
-  final assistantIds = json['assistantIds'] is List
-  ? List<String>.from(json['assistantIds'])
-      : <String>[];
-
-  return Procedure(
-  id: json['id'] as int? ?? 0,
-  doctorId: json['doctorId'] as String? ?? '',
-  numberOfAssistants: (numAssistants as int?) ?? 0,
-  assistantIds: assistantIds,
-  categoryId: json['categoryId'] as int? ?? 0,
-  status: json['status'] as int? ?? 0,
-  date: json['date'] != null
-  ? DateTime.tryParse(json['date'] as String) ?? DateTime.now()
-      : DateTime.now(),
-  doctor: Doctor.fromJson(json['doctor'] as Map<String, dynamic>),
-  tools: (json['tools'] as List?)?.map((x) => AdditionalTool.fromJson(x)).toList() ?? [],
-  kits: (json['kits'] as List?)?.map((x) => Kit.fromJson(x)).toList() ?? [],
-  assistants: (json['assistants'] as List?)?.map((x) => Assistant.fromJson(x)).toList() ?? [],
-  );
+      kits: [
+        ...(json['surgicalKits'] ?? []).map((x) => Kit.fromJson(x)),
+        ...(json['implantKits'] ?? []).map((x) => Kit.fromJson({
+          ...x,
+          'isImplantKit': true,
+        })),
+      ],
+      assistants: List<Assistant>.from(
+          (json['assistants'] ?? []).map((x) => Assistant.fromJson(x))),
+      assistantIds: (json['assistants'] as List<dynamic>?)
+          ?.map((a) => a['id'] as String)
+          .toList() ?? [],
+    );
   }
 
 

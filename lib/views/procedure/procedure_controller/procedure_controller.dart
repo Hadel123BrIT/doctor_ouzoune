@@ -71,7 +71,8 @@ class ProcedureController extends GetxController {
     }
   }
 
-  //------------------------------------------------------------
+
+
 
   //Select Time
   Future<void> selectTime(BuildContext context) async {
@@ -108,7 +109,9 @@ class ProcedureController extends GetxController {
     }
   }
 
-//-----------------------------------------------------------------
+
+
+
 
  //Fetch one  Procedure Information
   Map<String, dynamic> getProcedureData() {
@@ -175,7 +178,7 @@ class ProcedureController extends GetxController {
             ),
           );
           return tool.id;
-        }).where((id) => id != 0).cast<int>().toList(); // تصفية الأدوات غير المعروفة
+        }).where((id) => id != 0).cast<int>().toList();
       }
 
       return {
@@ -185,7 +188,12 @@ class ProcedureController extends GetxController {
     }).toList();
   }
 
-//--------------------------------------------------------------------
+
+
+
+
+
+
 
   //Post Procedure
   Future<void> postProcedure() async {
@@ -233,7 +241,10 @@ class ProcedureController extends GetxController {
     }
   }
 
-//--------------------------------------------------------------------
+
+
+
+
 
   // fetch for all procedures
   Future<void> fetchAllProcedures() async {
@@ -284,7 +295,11 @@ class ProcedureController extends GetxController {
     }
   }
 
-//---------------------------------------------------------------------
+
+
+
+
+
 
   //Fetch Procedure by Pages
   Future<void> fetchProceduresPaged({
@@ -331,25 +346,31 @@ class ProcedureController extends GetxController {
     }
   }
 
-//------------------------------------------------------------------------
+
+
+
 
   // get one procedure details
   Future<void> fetchProcedureDetails(int procedureId) async {
     try {
       isLoading(true);
-      final responseData = await apiServices.getProcedureDetails(procedureId);
+      final response = await apiServices.getProcedureDetails(procedureId);
 
-      if (responseData != null) {
-        selectedProcedure.value = Procedure.fromJson(responseData);
-        print( selectedProcedure.value);
-      } else {
-        throw Exception('No data received');
+      print('API Response: $response');
+
+      if (response != null) {
+        selectedProcedure.value = Procedure.fromJson(response);
+
+        // طباعة تفصيلية للبيانات
+        print('Procedure Details:');
+        print('- ID: ${selectedProcedure.value?.id}');
+        print('- AssisitancsId: ${selectedProcedure.value?.assistantIds}');
+        print('- Assistants: ${selectedProcedure.value?.assistants?.length ?? 0}');
+        print('- Tools: ${selectedProcedure.value?.tools?.length ?? 0}');
+        print('- Kits: ${selectedProcedure.value?.kits?.length ?? 0}');
       }
-
-    } on DioException catch (e) {
-      Get.snackbar('Error'.tr, 'Failed to load procedure details: ${e.message}'.tr);
     } catch (e) {
-      Get.snackbar('Error'.tr, 'Unexpected error: ${e.toString()}'.tr);
+      print('Error fetching procedure: $e');
     } finally {
       isLoading(false);
     }

@@ -137,8 +137,45 @@ Widget buildAssistantsList(Procedure procedure, bool isDarkMode) {
 }
 
 Widget buildToolsList(List<AdditionalTool> tools, bool isDarkMode) {
+  if (tools.isEmpty) {
+    return Padding(
+      padding: EdgeInsets.all(8),
+      child: Text(
+        'No tools available',
+        style: TextStyle(
+          fontStyle: FontStyle.italic,
+          color: Colors.grey,
+        ),
+      ),
+    );
+  }
+
   return Card(
     elevation: 2,
+    child: Column(
+      children: tools.map((tool) => ListTile(
+        leading: Icon(Icons.build, color: AppColors.primaryGreen),
+        title: Text(tool.name ?? 'Unnamed Tool'),
+        subtitle: Text('Qty: ${tool.quantity}'),
+      )).toList(),
+    ),
+  );
+}
+
+Widget buildSurgicalKitCard(Kit kit, BuildContext context, bool isDarkMode) {
+  debugPrint('--- Kit Debug Info ---');
+  debugPrint('ID: ${kit.id}, Name: ${kit.name}');
+  debugPrint('Is Main Kit: ${kit.isMainKit}');
+  debugPrint('Tools Count: ${kit.tools.length}');
+  debugPrint('Building Surgical Kit: ${kit.name}');
+  debugPrint('Tools count in build: ${kit.tools.length}');
+  if (kit.tools.isNotEmpty) {
+    debugPrint('First tool: ${kit.tools.first.name}');
+  }
+  debugPrint('----------------------');
+  return Card(
+    elevation: 2,
+    margin: EdgeInsets.only(top: 10),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12),
       side: BorderSide(
@@ -146,26 +183,45 @@ Widget buildToolsList(List<AdditionalTool> tools, bool isDarkMode) {
         width: 2,
       ),
     ),
-    child: Column(
-      children: tools.map((tool) => ExpansionTile(
-        iconColor: AppColors.primaryGreen,
-        collapsedIconColor: AppColors.primaryGreen,
-        title: Text(
-          tool.name ?? 'Unnamed tool',
-          style: TextStyle(fontFamily: 'Montserrat'),
+    child: ExpansionTile(
+      iconColor: Colors.green,
+      collapsedIconColor: Colors.green,
+      leading: Icon(Icons.medical_services, color: Colors.green),
+      title: Text(
+        kit.name,
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontWeight: FontWeight.bold,
+          color: isDarkMode ? Colors.white : Colors.black,
         ),
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                buildToolDetailRow('Quantity', '${tool.quantity ?? 0}'),
+      ),
+      subtitle: Text(
+        'Surgical Kit',
+        style: TextStyle(
+            color: Colors.green,
+            fontFamily: 'Montserrat'
+        ),
+      ),
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (kit.tools.isNotEmpty) ...[
+                buildSectionTitle('Tools (${kit.tools.length})'),
+                ...kit.tools.map((tool) => buildToolItem(tool, isDarkMode)),
                 SizedBox(height: 10),
               ],
-            ),
+              if (kit.implants.isNotEmpty) ...[
+                buildSectionTitle('Implants (${kit.implants.length})'),
+                ...kit.implants.map((implant) => buildImplantItem(implant, isDarkMode)),
+                SizedBox(height: 10),
+              ],
+            ],
           ),
-        ],
-      )).toList(),
+        ),
+      ],
     ),
   );
 }
@@ -192,8 +248,7 @@ Widget buildToolDetailRow(String label, String value) {
   );
 }
 
-Widget buildKitCard(Kit kit, BuildContext context) {
-  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+Widget buildKitCard(Kit kit, BuildContext context, bool isDarkMode) {
   return Card(
     elevation: 2,
     margin: EdgeInsets.only(top: 10),
@@ -201,42 +256,36 @@ Widget buildKitCard(Kit kit, BuildContext context) {
       borderRadius: BorderRadius.circular(12),
       side: BorderSide(
         color: isDarkMode ? Colors.grey[700]! : Colors.grey[400]!,
-        width: 3,
+        width: 2,
       ),
     ),
     child: ExpansionTile(
-      iconColor: AppColors.primaryGreen,
-      collapsedIconColor: AppColors.primaryGreen,
-      leading: kit.isMainKit
-          ? Icon(Icons.medical_services, color: Colors.green)
-          : Icon(Icons.construction, color: Colors.blue),
+      iconColor: AppColors.lightGreen,
+      collapsedIconColor: AppColors.lightGreen,
+      leading: Icon(Icons.construction, color: AppColors.lightGreen),
       title: Text(
-        kit.name ?? 'Unnamed kit',
+        "implant kits",
         style: TextStyle(
           fontFamily: 'Montserrat',
           fontWeight: FontWeight.bold,
-          color: isDarkMode ? Colors.white : AppColors.deepBlack,
         ),
       ),
-      subtitle: kit.isMainKit
-          ? Text('Surgical Kit',
-          style: TextStyle(color: Colors.green, fontFamily: 'Montserrat'))
-          : null,
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              buildSectionTitle('Implants (${kit.implants.length})'),
-              ...kit.implants.map((implant) => buildImplantItem(implant, isDarkMode)).toList(),
-
-              SizedBox(height: 10),
-
-              buildSectionTitle('Tools (${kit.tools.length})'),
-              ...kit.tools.map((tool) => buildToolItem(tool, isDarkMode)).toList(),
-
-              SizedBox(height: 10),
+              if (kit.implants.isNotEmpty) ...[
+                buildSectionTitle('Implants (${kit.implants.length})'),
+                ...kit.implants.map((implant) => buildImplantItem(implant, isDarkMode)),
+                SizedBox(height: 10),
+              ],
+              if (kit.tools.isNotEmpty) ...[
+                buildSectionTitle('tools with implant (${kit.tools.length})'),
+                ...kit.tools.map((tool) => buildToolItem(tool, isDarkMode)),
+                SizedBox(height: 10),
+              ],
             ],
           ),
         ),

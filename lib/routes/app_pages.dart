@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/bindings_interface.dart';
@@ -123,8 +124,15 @@ class AppPages {
     GetPage(
       name: AppRoutes.procedure_detail,
       page: () {
-        final procedure = Get.arguments as Procedure;
-        return ProcedureDetailScreen(procedure: procedure);
+        final args = Get.arguments;
+        if (args is Procedure) {
+          return ProcedureDetailScreen( procedureId: args.id,);
+        } else {
+          return Scaffold(
+            appBar: AppBar(title: Text('Error')),
+            body: Center(child: Text('Invalid procedure data')),
+          );
+        }
       },
     ),
     GetPage(
