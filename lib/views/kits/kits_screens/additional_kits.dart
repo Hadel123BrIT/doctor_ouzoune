@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:lottie/lottie.dart';
+import 'package:ouzoun/core/constants/app_images.dart';
 import 'package:ouzoun/widgets/custom_button.dart';
 import '../../../Core/Services/media_query_service.dart';
 import '../../../Widgets/custom_drawer.dart';
@@ -53,9 +55,15 @@ class AdditionalKits extends StatelessWidget {
       ),
       body: Obx(() {
         if (controller.additionalTools.isEmpty) {
-          return const Center(child: CircularProgressIndicator(
-            color: AppColors.primaryGreen,
-          ));
+          return Center(
+            child: Lottie.asset(
+               AppAssets.LoadingAnimation,
+                fit: BoxFit.cover,
+                repeat: true,
+                width: 200,
+              height: 200
+            ),
+          );
         }
 
         return Padding(
@@ -107,9 +115,39 @@ class AdditionalKits extends StatelessWidget {
               color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
             ),
           ),
-        ],
-      ),
-    );
+          SizedBox(height: context.height * 0.01),
+          Row(
+
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Note : ",
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontFamily: "Montserrat",
+                  fontSize: context.width * 0.035,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  "Do not exceed the available quantity...",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontFamily: "Montserrat",
+                    fontSize: context.width * 0.035,
+                    color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
+                  ),
+                ),
+              ),
+            ],
+          )
+
+    ],));
+
   }
 
   Widget buildToolsList(BuildContext context) {

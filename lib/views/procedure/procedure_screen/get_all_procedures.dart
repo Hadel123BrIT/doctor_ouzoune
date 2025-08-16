@@ -48,38 +48,6 @@ class ProceduresScreen extends StatelessWidget {
         padding:  EdgeInsets.symmetric(horizontal: context.width * 0.04, vertical: context.height * 0.02),
         child: Column(
           children: [
-            // Container(
-            //   width: double.infinity,
-            //   padding: EdgeInsets.all(context.width * 0.03),
-            //   margin: EdgeInsets.only(bottom: context.height * 0.02),
-            //   decoration: BoxDecoration(
-            //     color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-            //     borderRadius: BorderRadius.circular(10),
-            //   ),
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: [
-            //       Text(
-            //         "Hello Doctor,",
-            //         style: TextStyle(
-            //           fontFamily: "Montserrat",
-            //           fontSize: context.width * 0.045,
-            //           fontWeight: FontWeight.bold,
-            //           color: isDarkMode ? Colors.white : Colors.black,
-            //         ),
-            //       ),
-            //       SizedBox(height: context.height * 0.01),
-            //       Text(
-            //         "This page allows you to see all the transactions you have sent to the admin with their full details. You can also see the details of each transaction individually..",
-            //         style: TextStyle(
-            //           fontFamily: "Montserrat",
-            //           fontSize: context.width * 0.035,
-            //           color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
             buildSearchAndFilterBar(context),
             Expanded(child: buildProceduresList()),
             Obx(() => Text(

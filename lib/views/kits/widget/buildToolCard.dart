@@ -21,7 +21,6 @@ class BuildToolCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Card(
       child: Padding(
@@ -59,6 +58,8 @@ class BuildToolCard extends StatelessWidget {
                       BuildDetailItem(context, "Width", "${tool.width}"),
                       SizedBox(width: context.width * 0.02),
                       BuildDetailItem(context, "Height", "${tool.height}"),
+                      SizedBox(width: context.width * 0.02),
+                      BuildDetailItem(context, "qun", "${tool.quantity}", takeFirstDigit: true)
                     ],
                   ),
                 ],

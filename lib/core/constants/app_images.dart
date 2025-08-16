@@ -1,7 +1,7 @@
 class AppAssets {
 
   // Animations
-  static const String splashLoadingAnimation = 'assets/animations/loading_animation.json';
+  static const String LoadingAnimation = 'assets/animations/Animation - 1740348375718.json';
   static const String doctorForHomePage = 'assets/animations/doctorforhomepage.json';
 
   // Onboarding Screens (Dark Theme)

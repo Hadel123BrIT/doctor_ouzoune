@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:ouzoun/Widgets/custom_button.dart';
 import '../../../Core/Services/media_query_service.dart';
 import '../../../Widgets/custom_drawer.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_images.dart';
 import '../Kits_Controller/kits_controller.dart';
 import '../widget/buildDetailRow.dart';
 import '../widget/buildImplantCard.dart';
@@ -51,9 +53,15 @@ class Implantkits extends StatelessWidget {
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return Center(child: CircularProgressIndicator(
-            color: AppColors.primaryGreen,
-          ));
+          return Center(
+            child: Lottie.asset(
+                AppAssets.LoadingAnimation,
+                fit: BoxFit.cover,
+                repeat: true,
+                width: 200,
+                height: 200
+            ),
+          );
         }
         if (controller.implants.isEmpty) {
           return Center(child: Text('No implants available'));

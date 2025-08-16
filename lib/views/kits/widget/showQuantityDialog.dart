@@ -11,7 +11,8 @@ Future<int?> ShowQuantityDialog(String toolName) async {
 
   await Get.dialog(
     AlertDialog(
-      title: Text('Enter Quantity for $toolName', style: TextStyle( fontFamily: "Montserrat",color: AppColors.primaryGreen)),
+      title: Text('Enter Quantity for $toolName',
+          style: TextStyle( fontFamily: "Montserrat",color: AppColors.primaryGreen)),
       content: Container(
         width: 200,
         child: TextField(

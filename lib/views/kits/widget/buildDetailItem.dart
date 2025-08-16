@@ -1,8 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-Widget BuildDetailItem(BuildContext context, String title, dynamic value, {bool isNumeric = false}) {
+Widget BuildDetailItem(BuildContext context, String title, dynamic value, {bool takeFirstDigit = false}) {
   final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+  dynamic displayValue = value.toString();
+
+  if (takeFirstDigit && displayValue.isNotEmpty) {
+    displayValue = displayValue[0];
+  }
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.center,
@@ -16,7 +22,7 @@ Widget BuildDetailItem(BuildContext context, String title, dynamic value, {bool 
         ),
       ),
       Text(
-        value.toString(),
+        displayValue,
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 14,
