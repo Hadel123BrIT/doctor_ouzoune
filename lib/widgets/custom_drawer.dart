@@ -34,9 +34,9 @@ class _CustomDrawerState extends State<CustomDrawer> with SingleTickerProviderSt
     DrawItemModel(text: 'MYORDER', icon: Icons.receipt_long,function: (){
 
     }),
-    DrawItemModel(text: 'ABOUT US', icon: Icons.info,function: (){
-      Get.to(AboutUsScreen());
-    }),
+    // DrawItemModel(text: 'ABOUT US', icon: Icons.info,function: (){
+    //   Get.to(AboutUsScreen());
+    // }),
 
     DrawItemModel(text: 'SETTING', icon: Icons.settings,function: (){
       Get.to(SettingsScreen());
@@ -50,16 +50,37 @@ class _CustomDrawerState extends State<CustomDrawer> with SingleTickerProviderSt
         final box = GetStorage();
         final confirm = await Get.dialog(
           AlertDialog(
-            title: Text('تأكيد تسجيل الخروج'),
-            content: Text('هل أنت متأكد أنك تريد تسجيل الخروج؟'),
+            title: Center(
+              child: Text('Confirm logout',
+              style: TextStyle(
+                color: AppColors.primaryGreen,
+                  fontFamily: 'Montserrat',
+              ),
+              ),
+            ),
+            content: Text('Are you sure you want to log out?',
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+              ),
+            ),
             actions: [
               TextButton(
                 onPressed: () => Get.back(result: false),
-                child: Text('إلغاء'),
+                child: Text('Cancel',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontFamily: 'Montserrat',
+                  ),
+                ),
               ),
               ElevatedButton(
                 onPressed: () => Get.back(result: true),
-                child: Text('تسجيل الخروج'),
+                child: Text('Logout',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontFamily: 'Montserrat',
+                  ),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryGreen,
                 ),
@@ -70,27 +91,23 @@ class _CustomDrawerState extends State<CustomDrawer> with SingleTickerProviderSt
 
         if (confirm == true) {
           try {
-            // 1. تسجيل الخروج من الخادم
             await authService.logout();
 
-            // 2. مسح البيانات المحلية
-            await box.erase(); // أو await box.remove('auth_token');
+            await box.erase();
 
-            // 3. إعادة التوجيه لصفحة تسجيل الدخول
             Get.offAllNamed(AppRoutes.login);
 
-            // 4. إظهار رسالة نجاح
             Get.snackbar(
-              'تم تسجيل الخروج',
-              'تم تسجيل خروجك بنجاح',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: AppColors.primaryGreen,
+              'successfully',
+              'You have been successfully logged out.',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.grey,
               colorText: Colors.white,
             );
           } catch (e) {
             Get.snackbar(
-              'خطأ',
-              'حدث خطأ أثناء تسجيل الخروج: ${e.toString()}',
+              'Wrong',
+              'An error occurred while logging out :  ${e.toString()}',
               snackPosition: SnackPosition.BOTTOM,
               backgroundColor: Colors.red,
               colorText: Colors.white,

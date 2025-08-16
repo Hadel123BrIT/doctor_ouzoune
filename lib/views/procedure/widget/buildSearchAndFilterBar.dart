@@ -14,34 +14,7 @@ Widget buildSearchAndFilterBar(BuildContext context) {
     padding: EdgeInsets.symmetric( vertical: Get.height * 0.02),
     child: Column(
       children: [
-        Getsearch(),
-        // Row(
-        //   children: [
-        //     Expanded(
-        //       child: Obx(() => DropdownButtonFormField<int>(
-        //         value: controller.statusFilter.value,
-        //         items: [
-        //           DropdownMenuItem(value: 0, child: Text('All Statuses')),
-        //           DropdownMenuItem(value: 3, child: Text('Pending')),
-        //           DropdownMenuItem(value: 4, child: Text('Completed')),
-        //         ],
-        //         onChanged: (value) => controller.statusFilter.value = value!,
-        //         decoration: InputDecoration(
-        //           labelText: 'Status',
-        //           border: OutlineInputBorder(),
-        //         ),
-        //       )),
-        //     ),
-        //     SizedBox(width: 10),
-        //     Obx(() => FilterChip(
-        //       label: Text('Main Kits Only'),
-        //       selected: controller.showMainKitsOnly.value,
-        //       onSelected: (value) {
-        //         controller.showMainKitsOnly.value = value;
-        //       },
-        //     )),
-        //   ],
-        // ),
+        // Getsearch(),
       ],
     ),
   );

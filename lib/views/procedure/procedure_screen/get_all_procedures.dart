@@ -11,19 +11,25 @@ import '../../../models/procedure_model.dart';
 import '../procedure_controller/procedure_controller.dart';
 import '../widget/buildProceduresList.dart';
 import '../widget/buildSearchAndFilterBar.dart';
+import '../widget/showFilterDialog.dart';
 import '../widget/showPaginationDialog.dart';
 
 
 class ProceduresScreen extends StatelessWidget {
   final ProcedureController controller = Get.put(ProcedureController(),
+
   );
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         actions: [
           IconButton(
-            onPressed: () => showPaginationDialog(context,),
+            onPressed: () =>
+        showFilterDialog(context),
+
             icon: Icon(Icons.tune, color: Colors.white),
           ),
         ],
@@ -48,12 +54,49 @@ class ProceduresScreen extends StatelessWidget {
         padding:  EdgeInsets.symmetric(horizontal: context.width * 0.04, vertical: context.height * 0.02),
         child: Column(
           children: [
-            buildSearchAndFilterBar(context),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(context.width * 0.04),
+              margin: EdgeInsets.only(bottom: context.height * 0.01),
+              decoration: BoxDecoration(
+                color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Hello Doctor,",
+                    style: TextStyle(
+                      fontFamily: "Montserrat",
+                      fontSize: context.width * 0.045,
+                      fontWeight: FontWeight.bold,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: context.height * 0.01),
+                  Text(
+                    "On this page you can see all your procedures with date and their assistants...",
+                    style: TextStyle(
+                      fontFamily: "Montserrat",
+                      fontSize: context.width * 0.035,
+                      color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Expanded(child: buildProceduresList()),
-            Obx(() => Text(
-              'page  ${controller.currentPage} - show ${controller.itemsPerPage} element',
-              style: TextStyle(
-                  fontFamily:'Montserrat',
+            Obx(() => TextButton(
+              onPressed: (){
+                showPaginationDialog(context,);
+              },
+              child: Text(
+                'page  ${controller.currentPage} - show ${controller.itemsPerPage} element',
+                style: TextStyle(
+                    fontFamily:'Montserrat',
+                  color: Colors.white
+                ),
               ),
             ),
             ),
