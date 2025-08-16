@@ -8,12 +8,14 @@ import '../../../Core/Services/media_query_service.dart';
 import '../../../Widgets/custom_button.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../models/Implant_model.dart';
+import '../kits_screens/detail_kit.dart';
 import 'buildDetailRow.dart';
 
 Widget BuildImplantCard(BuildContext context, Implant implant) {
   KitsController controller=Get.put(KitsController());
   final isDarkMode = Theme.of(context).brightness == Brightness.dark;
   final implantId = implant.id.toString();
+  final implantName = controller.getImplantNameByKitId(implant.kitId ?? 0);
   return  Container(
     margin: EdgeInsets.symmetric(vertical: context.height * 0.01),
     decoration: BoxDecoration(
@@ -70,7 +72,7 @@ Widget BuildImplantCard(BuildContext context, Implant implant) {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                            controller.getImplantName(implant.kitId ?? 0),
+                            implantName,
                             style: Theme.of(context).textTheme.bodySmall
                         ),
                         SizedBox(height: context.height * 0.01),
@@ -106,9 +108,20 @@ Widget BuildImplantCard(BuildContext context, Implant implant) {
                 ),
                 SizedBox(height: 12),
                 CustomButton(
-                    onTap: (){
-                      Get.toNamed(AppRoutes.detail_kit,
-                          arguments: implant);
+                    onTap: () async {
+                      if (implant.kitId != null) {
+                        await controller.fetchKitById(implant.kitId!);
+                        if (controller.selectedKit.value != null) {
+                          Get.to(
+                                () => ImplantDetailScreen(
+                              implant: implant,
+
+                            ),
+                          );
+                        }
+                      } else {
+                        Get.snackbar('Error', 'No Kit assigned to this implant');
+                      }
                     },
                     text: "View details",
                     color: AppColors.primaryGreen

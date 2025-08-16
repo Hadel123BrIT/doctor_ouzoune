@@ -24,8 +24,8 @@ class RateController extends GetxController {
 
 
   void selectAssistant(String id, String name) {
-    assistantId.value = id;
-    selectedAssistantName.value = name;
+    assistantId.value = id ?? '';
+    selectedAssistantName.value = name ?? 'No Name';
   }
 
   Future<void> submitRating() async {
@@ -67,10 +67,16 @@ class RateController extends GetxController {
       final token = GetStorage().read('auth_token');
 
       final assistants = await apiServices.getAssistantsFromProcedures(token);
-      assistantsList.assignAll(assistants);
 
-      if (assistants.isEmpty) {
-        Get.snackbar('Info', 'No assistants found in procedures');
+
+      assistantsList.assignAll(assistants.where((assistant) =>
+      assistant != null &&
+          assistant['id'] != null &&
+          assistant['name'] != null
+      ).toList());
+
+      if (assistantsList.isEmpty) {
+        Get.snackbar('Info', 'No valid assistants found in procedures');
       }
     } catch (e) {
       Get.snackbar('Error', e.toString());

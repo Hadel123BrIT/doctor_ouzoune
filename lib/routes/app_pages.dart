@@ -8,6 +8,7 @@ import 'package:ouzoun/Routes/app_routes.dart';
 import 'package:ouzoun/views/procedure/procedure_screen/add_procedure.dart';
 import 'package:ouzoun/views/rate/rate_screen/rate_screen.dart';
 import '../models/Implant_model.dart';
+import '../models/kit_model.dart';
 import '../models/procedure_model.dart';
 import '../views/doctor_choices/doctor_choices_screens/first_page_choices.dart';
 import '../views/doctor_choices/doctor_choices_screens/second_page_choices.dart';
@@ -38,11 +39,23 @@ class AppPages {
     GetPage(
       name: AppRoutes.detail_kit,
       page: () {
-        final dynamic argument = Get.arguments;
-        final Implant implant = argument is Implant
-            ? argument
-            : Implant.fromJson(argument ?? {});
-        return ImplantDetailScreen(implant: implant);
+        // احصل على الـ arguments الممررة
+        final args = Get.arguments;
+
+        // تأكد من أن الـ arguments تحتوي على البيانات المطلوبة
+        if (args is Map<String, dynamic> &&
+            args['implant'] is Implant &&
+            args['kit'] is Kit) {
+          return ImplantDetailScreen(
+            implant: args['implant'],
+
+          );
+        } else {
+          // في حالة البيانات غير صالحة، ارجع إلى صفحة سابقة أو عرض رسالة خطأ
+          Get.back();
+          Get.snackbar('Error', 'Invalid data received');
+          return SizedBox.shrink(); // أو أي widget افتراضي آخر
+        }
       },
     ),
     GetPage(

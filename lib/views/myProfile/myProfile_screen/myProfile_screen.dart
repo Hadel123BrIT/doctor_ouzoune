@@ -102,12 +102,6 @@ class MyProfileScreen extends StatelessWidget {
                             value: controller.phoneNumber.value,
                           ),
                           SizedBox(height: 10),
-                          buildProfileItem(
-                            context,
-                            icon: Icons.star,
-                            title: 'Rating',
-                            value: '${controller.rate.value}/5',
-                          ),
                           SizedBox(height: 10),
                           buildProfileItem(
                             context,

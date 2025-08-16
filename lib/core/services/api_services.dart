@@ -461,7 +461,6 @@ static const String baseUrl="http://ouzon.somee.com/api";
   Future<List<Map<String, dynamic>>> getAssistantsFromProcedures(String token) async {
     try {
       final dio = Dio();
-
       final response = await dio.post(
         "http://ouzon.somee.com/api/procedures/FilteredProcedure",
         options: Options(
@@ -475,30 +474,36 @@ static const String baseUrl="http://ouzon.somee.com/api";
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-
         final procedures = response.data as List;
         final assistants = <Map<String, dynamic>>[];
+        final Set<String> addedAssistantIds = {}; // لتجنب التكرار
 
         for (var procedure in procedures) {
-          if (procedure['assistants'] != null) {
+          if (procedure['assistants'] != null && procedure['assistants'].isNotEmpty) {
             for (var assistant in procedure['assistants']) {
-
-              if (!assistants.any((a) => a['id'] == assistant['id'])) {
+              final assistantId = assistant['id']?.toString();
+              if (assistantId != null && !addedAssistantIds.contains(assistantId)) {
                 assistants.add({
-                  'id': assistant['id'],
-                  'name': assistant['userName'],
-                  'email': assistant['email'],
-                  'phone': assistant['phoneNumber'],
+                  'id': assistantId,
+                  'name': assistant['userName'] ?? 'Unknown',
+                  'specialization': assistant['specialization'] ?? 'No Specialization',
+                  'email': assistant['email'] ?? '',
+                  'phone': assistant['phoneNumber'] ?? '',
                   'clinic': assistant['clinic']?['name'] ?? '',
                 });
+                addedAssistantIds.add(assistantId);
               }
             }
           }
         }
 
+        if (assistants.isEmpty) {
+          print('No assistants found in any procedure');
+        }
+
         return assistants;
       } else {
-        throw Exception('Failed to load procedures');
+        throw Exception('Failed to load procedures: ${response.statusCode}');
       }
     } on DioException catch (e) {
       throw Exception('Failed to load assistants: ${e.message}');
@@ -553,6 +558,29 @@ static const String baseUrl="http://ouzon.somee.com/api";
     } on DioException catch (e) {
       throw Exception('Failed to load tools: ${e.message}');
   }}
+
+  Future<Kit> getKitById(int kitId) async {
+    try {
+      final token = GetStorage().read('auth_token');
+      final response = await dio.get(
+        'http://ouzon.somee.com/api/kits/$kitId',
+        options: Options(
+          headers: {
+            if (token != null) 'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return Kit.fromJson(response.data);
+      } else {
+        throw Exception('Failed to load kit: Status code ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Failed to load kit: ${e.message}');
+    }
+  }
 
 
 

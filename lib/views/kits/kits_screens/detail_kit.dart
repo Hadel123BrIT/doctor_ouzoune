@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ouzoun/Core/Services/media_query_service.dart';
-import 'package:ouzoun/Widgets/custom_button.dart' hide CustomButton;
 import 'package:ouzoun/models/additionalTool_model.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../models/Implant_model.dart';
+import '../../../models/kit_model.dart';
 import '../../../widgets/custom_button.dart';
 import '../Kits_Controller/kits_controller.dart';
 import '../widget/buildSpecItem.dart';
-import '../widget/buildToolItem.dart';
 
 class ImplantDetailScreen extends StatelessWidget {
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   final Implant implant;
   final KitsController controller = Get.find<KitsController>();
 
@@ -22,34 +20,37 @@ class ImplantDetailScreen extends StatelessWidget {
     final implantId = implant.id.toString();
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    final implantTools = controller.getKitTools(implant.kitId!).map((tool) =>
-        buildToolItem(context, implantId, tool.name ?? 'Unknown Tool')
-    ).toList();
+    return Obx(() {
+      final tools = controller.getKitTools();
+      final toolNames = controller.getKitToolNames();
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
+      return SafeArea(
+        child: Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.background,
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+              // Header with green background
               Align(
-                alignment: Alignment.topLeft,
-                child: Container(
-                  width: context.width * 0.5,
-                  height: context.height * 0.16,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryGreen,
-                    borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(context.width * 0.2),
-                    ),
+              alignment: Alignment.topLeft,
+              child: Container(
+                width: context.width * 0.5,
+                height: context.height * 0.16,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryGreen,
+                  borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(context.width * 0.2),
                   ),
                 ),
               ),
+              ),
+              // Main content
               Padding(
                 padding: EdgeInsets.all(context.width * 0.05),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Implant image and name
                     Center(
                       child: Column(
                         children: [
@@ -74,160 +75,87 @@ class ImplantDetailScreen extends StatelessWidget {
                           ),
                           SizedBox(height: context.height * 0.02),
                           Text(
-                              controller.getImplantName(implant.kitId!),
+                            controller.getImplantName(),
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           SizedBox(height: context.height * 0.01),
                         ],
                       ),
                     ),
-                    SizedBox(height: context.height * 0.03),
-                    Container(
-                      padding: EdgeInsets.all(context.width * 0.04),
-                      decoration: BoxDecoration(
-                        color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 5,
-                            spreadRadius: 1,
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Specifications",
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                          SizedBox(height: context.height * 0.01),
-                          Divider(color: AppColors.primaryGreen),
-                          SizedBox(height: context.height * 0.01),
-                          BuildSpecItem(context, "Height", implant.height),
-                          BuildSpecItem(context, "Width", implant.width),
-                          BuildSpecItem(context, "Radius", implant.radius),
-                        ],
-                      ),
+
+                    // Specifications section
+                    _buildSection(
+                      context,
+                      title: "Specifications",
+                      children: [
+                        BuildSpecItem(context, "Height", implant.height),
+                        BuildSpecItem(context, "Width", implant.width),
+                        BuildSpecItem(context, "Radius", implant.radius),
+                      ],
                     ),
-                    SizedBox(height: context.height * 0.03),
-                    Container(
-                      padding: EdgeInsets.all(context.width * 0.04),
-                      decoration: BoxDecoration(
-                        color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 5,
-                            spreadRadius: 1,
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Brand and Quantity",
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                          SizedBox(height: context.height * 0.01),
-                          Divider(color: AppColors.primaryGreen),
-                          SizedBox(height: context.height * 0.01),
-                          BuildSpecItem(context, "Brand", implant.brand),
-                          BuildSpecItem(
-                              context, "Quantity", '${implant.quantity}'),
-                        ],
-                      ),
+
+                    // Brand and Quantity section
+                    _buildSection(
+                      context,
+                      title: "Brand and Quantity",
+                      children: [
+                        BuildSpecItem(context, "Brand", implant.brand),
+                        BuildSpecItem(context, "Quantity", '${implant.quantity}'),
+                      ],
                     ),
-                    SizedBox(height: context.height * 0.03),
-                    Container(
-                      padding: EdgeInsets.all(context.width * 0.04),
-                      decoration: BoxDecoration(
-                        color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 5,
-                            spreadRadius: 1,
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Description",
-                            style: Theme.of(context).textTheme.headlineSmall,
+
+                    // Description section
+                    _buildSection(
+                      context,
+                      title: "Description",
+                      children: [
+                        Text(
+                          implant.description!,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontFamily: 'Montserrat',
                           ),
-                          SizedBox(height: context.height * 0.01),
-                          Divider(color: AppColors.primaryGreen),
-                          SizedBox(height: context.height * 0.01),
-                          Text(
-                              implant.description!,
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontFamily: 'Montserrat',
-                              )
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: context.height * 0.03),
-                    Container(
-                      padding: EdgeInsets.all(context.width * 0.04),
-                      decoration: BoxDecoration(
-                        color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 5,
-                            spreadRadius: 1,
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Required Tools",
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                          SizedBox(height: context.height * 0.01),
-                          Divider(color: AppColors.primaryGreen),
-                          SizedBox(height: context.height * 0.01),
-                          ..._buildKitToolsList(context, implant.kitId!),
-                        ],
-                      ),
+
+                    // Required Tools section
+                    _buildSection(
+                      context,
+                      title: "Required Tools",
+                      children: controller.isLoading.value
+                          ? [Center(child: CircularProgressIndicator())]
+                          : _buildKitToolsList(toolNames),
                     ),
+
+                    // Add to Cart button
                     SizedBox(height: context.height * 0.04),
                     Center(
-                      child:CustomButton(
+                      child: CustomButton(
                         onTap: () {
                           final hasSelectedTools = (controller.selectedToolsForImplants[implantId]?.isNotEmpty ?? false);
 
-                          if ( hasSelectedTools) {
+                          if (hasSelectedTools) {
                             final result = {
                               'implantId': implantId,
-                              'implantName': controller.getImplantName(implant.kitId!),
+                              'implantName': controller.getImplantName(),
                               'selectedTools': controller.selectedToolsForImplants[implantId] ?? [],
                             };
-                            print('Sending back result: $result');
                             Get.back(result: result);
-                            Get.snackbar("Added", "${controller.getImplantName(implant.kitId!)} added to cart");
+                            Get.snackbar("Added", "${controller.getImplantName()} added to cart");
                           } else {
                             Get.snackbar("Warning", "Please select at least one option");
                           }
                         },
-                        text: 'Add to Cart', color: AppColors.primaryGreen,
+                        text: 'Add to Cart',
+                        color: AppColors.primaryGreen,
                       ),
                     )
                   ],
                 ),
               ),
+
+              // Footer with green background
               Align(
                 alignment: Alignment.bottomRight,
                 child: Container(
@@ -241,16 +169,52 @@ class ImplantDetailScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              ],
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buildSection(BuildContext context, {required String title, required List<Widget> children}) {
+    return Column(
+      children: [
+        SizedBox(height: context.height * 0.03),
+        Container(
+          padding: EdgeInsets.all(context.width * 0.04),
+          decoration: BoxDecoration(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.grey[800]
+                : Colors.grey[200],
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 5,
+                spreadRadius: 1,
+              )
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              SizedBox(height: context.height * 0.01),
+              Divider(color: AppColors.primaryGreen),
+              SizedBox(height: context.height * 0.01),
+              ...children,
             ],
           ),
         ),
-      ),
+      ],
     );
   }
-  List<Widget> _buildKitToolsList(BuildContext context, int kitId) {
-    final toolNames = controller.getKitToolNames(kitId);
-    debugPrint('Tools for kit $kitId: $toolNames');
 
+  List<Widget> _buildKitToolsList(List<String?> toolNames) {
     if (toolNames.isEmpty || (toolNames.length == 1 && toolNames.first == 'No tools')) {
       return [
         Padding(
@@ -290,5 +254,4 @@ class ImplantDetailScreen extends StatelessWidget {
       );
     }).toList();
   }
-
 }

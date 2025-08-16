@@ -72,7 +72,11 @@ class KitsController extends GetxController {
   final RxMap<String, Implant> selectedImplantDetails = <String, Implant>{}.obs;
   final RxList<Implant> selectedPartialImplants = <Implant>[].obs;
   final RxMap<String, Implant> selectedImplants = <String, Implant>{}.obs;
+  final Rx<Kit?> selectedKit = Rx<Kit?>(null);
   final RxBool isLoading = true.obs;
+  final RxMap<int, String> implantNames = <int, String>{}.obs;
+  final RxMap<int, List<AdditionalTool>> kitTools = <int, List<AdditionalTool>>{}.obs;
+  final RxMap<int, List<String>> kitToolNames= <int, List<String>>{}.obs;
   @override
   void onInit() {
     super.onInit();
@@ -141,7 +145,63 @@ class KitsController extends GetxController {
   }
 
 
+  Future<void> fetchKitById(int kitId) async {
+    try {
+      isLoading(true);
+      final kit = await ApiServices().getKitById(kitId);
+      selectedKit.value = kit;
 
+      // تخزين في الذاكرة المؤقتة
+      kitTools[kitId] = kit.tools;
+      kitToolNames[kitId] =
+          kit.tools.map((t) => t.name ?? 'Unknown Tool').toList();
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load kit tools');
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  String getImplantName() {
+    return selectedKit.value?.name ?? 'No Kit Loaded';
+  }
+
+  List<AdditionalTool> getKitTools() {
+    return selectedKit.value?.tools ?? [];
+  }
+
+  List<String?> getKitToolNames() {
+    if (selectedKit.value == null) return ['No kit loaded'];
+    return selectedKit.value!.tools.map((tool) => tool.name).toList();
+  }
+
+  List<AdditionalTool> getToolsByKitId(int kitId) {
+    if (kitTools.containsKey(kitId)) {
+      return kitTools[kitId]!;
+    }
+
+    if (selectedKit.value != null && selectedKit.value!.id == kitId) {
+      return selectedKit.value!.tools;
+    }
+
+    // البحث في قائمة الـ kits إذا كانت متاحة
+    try {
+      final kit = kits.firstWhere((k) => k.id == kitId);
+      return kit.tools;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  List<String> getToolNamesByKitId(int kitId) {
+    // التحقق من الذاكرة المؤقتة أولاً
+    if (kitToolNames.containsKey(kitId)) {
+      return kitToolNames[kitId]!;
+    }
+
+    final tools = getToolsByKitId(kitId);
+    return tools.map((tool) => tool.name ?? 'Unknown Tool').toList();
+  }
 
 
   // Initialize
@@ -149,7 +209,7 @@ class KitsController extends GetxController {
     toolQuantities.value = List.filled(surgicalKits.length, 0);
     surgicalToolQuantities.value = List.filled(surgicalKits.length, 0);
     fetchAdditionalTools();
-    //updateSelectedTools();
+
   }
 
 
@@ -164,94 +224,32 @@ class KitsController extends GetxController {
   }
 
   String getImplantNameByKitId(int kitId) {
+
+    if (implantNames.containsKey(kitId)) {
+      return implantNames[kitId]!;
+    }
+
+    // إذا كان الـ kit محملاً حالياً
+    if (selectedKit.value != null && selectedKit.value!.id == kitId) {
+      return selectedKit.value!.name;
+    }
+
+    // البحث في قائمة الـ kits إذا كانت متاحة
     try {
-      final implant = implants.firstWhere(
-            (implant) => implant.kitId == kitId,
-        orElse: () => Implant(
-          id: 0,
-          radius: 0,
-          width: 0,
-          height: 0,
-          quantity: 0,
-          brand: 'Unknown',
-          description: 'Not found',
-          imagePath: '',
-          kitId: 0,
-        ),
-      );
-      return '${implant.brand} (${implant.description})';
+      final kit = kits.firstWhere((k) => k.id == kitId);
+      return kit.name;
     } catch (e) {
-      return 'Unknown Implant';
+      return 'Loading...';
     }
   }
+
+
 
   List<String> getAllSurgicalToolsNames() {
     return surgicalKits.map((tool) => tool['name'].toString()).toList();
   }
 
-  String getImplantName(int kitId) {
-    try {
-      if (kits.isEmpty) return 'No Kits Loaded';
-      if (kitId == null) return 'No Kit Assigned';
 
-      final kit = kits.firstWhere(
-            (k) => k.id == kitId,
-
-      );
-
-      return kit?.name ?? 'Kit $kitId Not Found';
-    } catch (e) {
-      print('Error in getImplantName: $e');
-      return 'Error Getting Name';
-    }
-  }
-
-  List<String?> getKitToolNames(int kitId) {
-    try {
-      if (kits.isEmpty) {
-        debugPrint('Kits list is empty');
-        return ['No kits available'];
-      }
-
-      final kit = kits.firstWhere(
-            (k) => k.id == kitId,
-
-      );
-
-      if (kit.tools.isEmpty) {
-        debugPrint('No tools found for kit $kitId');
-        return ['No tools required'];
-      }
-
-      return kit.tools.map((tool) {
-        debugPrint('Found tool: ${tool.name} for kit $kitId');
-        return tool.name;
-      }).toList();
-    } catch (e) {
-      debugPrint('Error in getKitToolNames: $e');
-      return ['Error loading tools'];
-    }
-  }
-
-  List<AdditionalTool> getKitTools(int kitId) {
-    try {
-      if (kits.isEmpty) {
-        debugPrint('Kits list is empty');
-        return [];
-      }
-
-      final kit = kits.firstWhere(
-            (k) => k.id == kitId,
-
-      );
-
-      debugPrint('Found ${kit.tools.length ?? 0} tools for kit $kitId');
-      return kit.tools ?? [];
-    } catch (e) {
-      debugPrint('Error in getKitTools: $e');
-      return [];
-    }
-  }
 
 
   void updateToolsSelection() {
@@ -291,6 +289,7 @@ class KitsController extends GetxController {
       };
     }).toList();
   }
+
   void updateSelectedTools() {
     selectedTools.clear();
     for (int i = 0; i < additionalTools.length; i++) {
@@ -316,8 +315,6 @@ class KitsController extends GetxController {
     surgicalToolQuantities.assignAll(List.filled(surgicalKits.length, 0));
     update();
   }
-
-
 
   bool hasSelectedSurgicalTools() {
     return surgicalToolQuantities.any((quantity) => quantity > 0);
@@ -374,8 +371,6 @@ class KitsController extends GetxController {
     return selectedToolsForImplants[implantId]?.contains(toolName) ?? false;
   }
 
-
-
   void toggleTool(String toolName) {
     tools[toolName] = !(tools[toolName] ?? false);
     update();
@@ -393,7 +388,7 @@ class KitsController extends GetxController {
   // Function For PartialImplants
 
   void addPartialImplant(Implant implant, {List<String>? tools}) {
-    // البحث عن الـKit المرتبط بالزرعة
+
     final associatedKit = kits.firstWhere(
           (k) => k.id == implant.kitId,
       orElse: () => Kit(

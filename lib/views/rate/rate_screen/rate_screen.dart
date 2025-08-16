@@ -58,27 +58,36 @@ class RateScreen extends StatelessWidget {
                     ),
                   ),
                 SizedBox(height: 10),
-                Obx(() => ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: controller.assistantsList.length,
-                  itemBuilder: (context, index) {
-                    final assistant = controller.assistantsList[index];
-                    return Card(
-                      child: ListTile(
-                        title: Text(assistant['name']),
-                        subtitle: Text(assistant['specialization']),
-                        trailing: controller.assistantId.value == assistant['id']
-                            ? Icon(Icons.check, color: Colors.green)
-                            : null,
-                        onTap: () => controller.selectAssistant(
-                            assistant['id'],
-                            assistant['name']
-                        ),
+                Obx(() {
+                  if (controller.assistantsList.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No assistants available for rating',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     );
-                  },
-                )),
+                  }
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: controller.assistantsList.length,
+                    itemBuilder: (context, index) {
+                      final assistant = controller.assistantsList[index];
+                      return Card(
+                        child: ListTile(
+                          title: Text(assistant['name']),
+                          trailing: controller.assistantId.value == assistant['id']
+                              ? Icon(Icons.check, color: Colors.green)
+                              : null,
+                          onTap: () => controller.selectAssistant(
+                              assistant['id'],
+                              assistant['name']
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }),
                 SizedBox(height: 30),
               ],
             )),
@@ -110,13 +119,19 @@ class RateScreen extends StatelessWidget {
             TextField(
               controller: controller.noteController,
               maxLines: 5,
+              cursorColor: AppColors.primaryGreen,
               decoration: InputDecoration(
                 hintText: 'Write your feedback here...',
                 hintStyle: TextStyle(
-                    fontFamily: 'Montserrat',
-                  color: Colors.grey
+                  fontFamily: 'Montserrat',
+                  color: Colors.grey,
                 ),
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: AppColors.primaryGreen, width: 2.0),
+                ),
               ),
             ),
 
