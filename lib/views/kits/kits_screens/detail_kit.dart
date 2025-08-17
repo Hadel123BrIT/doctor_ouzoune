@@ -30,7 +30,6 @@ class ImplantDetailScreen extends StatelessWidget {
     });
 
     return Obx(() {
-      final tools = kitId != null ? controller.getToolsByKitId(kitId) : <AdditionalTool>[];
 
       return SafeArea(
         child: Scaffold(

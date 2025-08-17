@@ -424,7 +424,6 @@ class KitsController extends GetxController {
   int getToolIdByName(String toolName) {
     if (toolName == 'No tools') return 0;
 
-    // تحويل implants إلى List<Map<String, dynamic>>
     for (var implant in implants.cast<Map<String, dynamic>>()) {
       for (var tool in (implant['tools'] as List).cast<Map<String, dynamic>>()) {
         if (tool['name'] == toolName && tool['id'] != null) {
@@ -433,7 +432,6 @@ class KitsController extends GetxController {
       }
     }
 
-    // تحويل additionalTools و surgicalKits إلى List<Map<String, dynamic>>
     for (var tool in [...additionalTools.cast<Map<String, dynamic>>(), ...surgicalKits.cast<Map<String, dynamic>>()]) {
       if (tool['name'] == toolName && tool['id'] != null) {
         return tool['id'] as int;

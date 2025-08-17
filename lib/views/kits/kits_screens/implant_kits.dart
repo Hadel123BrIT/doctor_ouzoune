@@ -29,7 +29,7 @@ class Implantkits extends StatelessWidget {
             padding: const EdgeInsets.all(10.0),
             child: IconButton(
               onPressed: () => {
-                // showImplantsDialog(context),
+                 showImplantsDialog(context),
               },
               icon: Obx(() => Badge(
                 label: Text('${controller.selectedImplants.length}'),
