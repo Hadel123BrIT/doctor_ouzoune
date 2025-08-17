@@ -416,10 +416,9 @@ static const String baseUrl="http://ouzon.somee.com/api";
 
 
 
-
   Future<Response> submitRating({
     required String note,
-    required double rate,
+    required int rate,
     required String assistantId,
     String? procedureId,
     required String token,
@@ -445,7 +444,6 @@ static const String baseUrl="http://ouzon.somee.com/api";
 
       return response;
     } on DioException catch (e) {
-
       if (e.response != null) {
         throw Exception(e.response?.data['message'] ?? 'Failed to submit rating');
       } else {

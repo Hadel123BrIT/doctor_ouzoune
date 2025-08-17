@@ -12,7 +12,7 @@ class RateController extends GetxController {
   final assistantId = ''.obs;
   final selectedAssistantName = ''.obs;
   final assistantsList = <Map<String, dynamic>>[].obs;
-  final rate = 0.0.obs;
+  final rate = 0.obs;
   final isLoading = false.obs;
 
   @override
@@ -70,8 +70,7 @@ class RateController extends GetxController {
 
 
       assistantsList.assignAll(assistants.where((assistant) =>
-      assistant != null &&
-          assistant['id'] != null &&
+      assistant['id'] != null &&
           assistant['name'] != null
       ).toList());
 
