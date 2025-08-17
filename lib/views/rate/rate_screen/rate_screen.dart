@@ -17,6 +17,7 @@ class RateScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
         key: scaffoldKey,
         drawer: CustomDrawer(),
@@ -41,20 +42,53 @@ class RateScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Assistant Selection Dropdown
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(context.width * 0.04),
+                  margin: EdgeInsets.only(bottom: context.height * 0.01),
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Hello Doctor,",
+                        style: TextStyle(
+                          fontFamily: "Montserrat",
+                          fontSize: context.width * 0.045,
+                          fontWeight: FontWeight.bold,
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: context.height * 0.01),
+                      Text(
+                        "On this page you can rate the assistants from 1 to 5 and write your comments about them....",
+                        style: TextStyle(
+                          fontFamily: "Montserrat",
+                          fontSize: context.width * 0.035,
+                          color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+
                 _buildAssistantDropdown(context),
 
                 const SizedBox(height: 30),
 
-                // Rating Section
                 _buildRatingSection(context),
 
-                const SizedBox(height: 30),
+                const SizedBox(height: 15),
 
-                // Feedback Section
                 _buildFeedbackSection(context),
 
-                SizedBox(height: 40),
+                SizedBox(height: 30),
                 CustomButton(
                   onTap: () {
                     controller.isLoading.value ? null : controller.submitRating();
@@ -207,7 +241,7 @@ class RateScreen extends StatelessWidget {
             color: Colors.grey[800],
           ),
         ),
-        const SizedBox(height: 15),
+        const SizedBox(height: 20),
         TextField(
           controller: controller.noteController,
           maxLines: 5,
