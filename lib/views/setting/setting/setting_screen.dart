@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:ouzoun/views/setting/setting/setting_controller.dart';
 import '../../../Core/Services/media_query_service.dart';
 import '../../../Routes/app_routes.dart';
 import '../../../Widgets/custom_button.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/services/services.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
-
+   SettingsScreen({super.key});
+  SettingController controller = Get.put(SettingController());
   @override
   Widget build(BuildContext context) {
     final media = MediaQueryHelper(context);
@@ -47,14 +50,14 @@ class SettingsScreen extends StatelessWidget {
                   onTap: () => _changeLanguage(context),
                 ),
                 _buildSettingItem(
-                  trailing: Switch(value: true, onChanged: (_) {},
-                  activeColor: AppColors.primaryGreen,
-                  ),
                   context,
                   icon: Icons.color_lens,
-                  title: "Apperance",
-                  value: "dark",
-                  onTap: () => _changeTheme(context),
+                  title: "Appearance",
+                  trailing: Obx(() => Switch(
+                    value: controller.isDarkMode.value,
+                    onChanged: (value) => _changeTheme(context),
+                    activeColor: AppColors.primaryGreen,
+                  )),
                 ),
               ],
             ),
@@ -184,7 +187,8 @@ class SettingsScreen extends StatelessWidget {
         String? value,
         Widget? trailing,
         Function()? onTap,
-      }) {return ListTile(
+      }) {
+    return ListTile(
       leading: Icon(icon, color: AppColors.primaryGreen),
       title: Text(title, style: Theme.of(context).textTheme.headlineSmall),
       subtitle: value != null
@@ -192,7 +196,8 @@ class SettingsScreen extends StatelessWidget {
           : null,
       trailing: trailing ?? Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.primaryGreen),
       onTap: onTap,
-    );}
+    );
+  }
 
   void _changeLanguage(BuildContext context) {
     showDialog(
@@ -223,9 +228,77 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _changeTheme(BuildContext context) {
-    // يمكن تفعيل Dark/Light Mode هنا
+    controller.toggleTheme();
   }
-  void _logout(BuildContext context) {
 
+  Future<void> logout(BuildContext context) async {
+      final authService = Get.find<AuthService>();
+      final box = GetStorage();
+      final confirm = await Get.dialog(
+        AlertDialog(
+          title: Center(
+            child: Text('Confirm logout',
+              style: TextStyle(
+                color: AppColors.primaryGreen,
+                fontFamily: 'Montserrat',
+              ),
+            ),
+          ),
+          content: Text('Are you sure you want to log out?',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(result: false),
+              child: Text('Cancel',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontFamily: 'Montserrat',
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () => Get.back(result: true),
+              child: Text('Logout',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontFamily: 'Montserrat',
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryGreen,
+              ),
+            ),
+          ],
+        ),
+      );
+
+      if (confirm == true) {
+        try {
+          await authService.logout();
+
+          await box.erase();
+
+          Get.offAllNamed(AppRoutes.login);
+
+          Get.snackbar(
+            'successfully',
+            'You have been successfully logged out.',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.grey,
+            colorText: Colors.white,
+          );
+        } catch (e) {
+          Get.snackbar(
+            'Wrong',
+            'An error occurred while logging out :  ${e.toString()}',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        }
+      }
+    }
   }
-}
