@@ -562,6 +562,9 @@ static const String baseUrl="http://ouzon.somee.com/api";
   Future<Kit> getKitById(int kitId) async {
     try {
       final token = GetStorage().read('auth_token');
+      debugPrint('Token: ${token != null ? "Exists" : "NULL"}');
+
+      debugPrint('Requesting kit details for ID: $kitId');
       final response = await dio.get(
         'http://ouzon.somee.com/api/kits/$kitId',
         options: Options(
@@ -572,13 +575,28 @@ static const String baseUrl="http://ouzon.somee.com/api";
         ),
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return Kit.fromJson(response.data);
+      debugPrint('Response status: ${response.statusCode}');
+      debugPrint('Response data: ${response.data}');
+
+      if (response.statusCode == 200 || response.statusCode == 200) {
+        try {
+          final kit = Kit.fromJson(response.data);
+          debugPrint('Parsed kit with ${kit.tools.length} tools');
+          return kit;
+        } catch (e) {
+          debugPrint('Parsing error: $e');
+          throw Exception('Failed to parse kit data: $e');
+        }
       } else {
-        throw Exception('Failed to load kit: Status code ${response.statusCode}');
+        throw Exception('API Error: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      throw Exception('Failed to load kit: ${e.message}');
+      debugPrint('DioError: ${e.message}');
+      debugPrint('Error response: ${e.response?.data}');
+      throw Exception('Network error: ${e.message}');
+    } catch (e) {
+      debugPrint('Unexpected error: $e');
+      rethrow;
     }
   }
 

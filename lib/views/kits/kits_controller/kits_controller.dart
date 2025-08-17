@@ -68,15 +68,15 @@ class KitsController extends GetxController {
   final RxList<int> surgicalToolQuantities = <int>[].obs;
   final RxList<Map<String, dynamic>> selectedSurgicalTools = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> selectedTools = <Map<String, dynamic>>[].obs;
-  final RxMap<String, List<String>>selectedToolsForImplants = <String, List<String>>{}.obs;
   final RxMap<String, Implant> selectedImplantDetails = <String, Implant>{}.obs;
   final RxList<Implant> selectedPartialImplants = <Implant>[].obs;
-  final RxMap<String, Implant> selectedImplants = <String, Implant>{}.obs;
   final Rx<Kit?> selectedKit = Rx<Kit?>(null);
   final RxBool isLoading = true.obs;
   final RxMap<int, String> implantNames = <int, String>{}.obs;
-  final RxMap<int, List<AdditionalTool>> kitTools = <int, List<AdditionalTool>>{}.obs;
   final RxMap<int, List<String>> kitToolNames= <int, List<String>>{}.obs;
+  final RxMap<String, Implant> selectedImplants = <String, Implant>{}.obs;
+  final RxMap<String, List<int>> selectedToolsForImplants = <String, List<int>>{}.obs;
+  final RxMap<int, List<AdditionalTool>> kitTools = <int, List<AdditionalTool>>{}.obs;
   @override
   void onInit() {
     super.onInit();
@@ -145,22 +145,7 @@ class KitsController extends GetxController {
   }
 
 
-  Future<void> fetchKitById(int kitId) async {
-    try {
-      isLoading(true);
-      final kit = await ApiServices().getKitById(kitId);
-      selectedKit.value = kit;
 
-      // تخزين في الذاكرة المؤقتة
-      kitTools[kitId] = kit.tools;
-      kitToolNames[kitId] =
-          kit.tools.map((t) => t.name ?? 'Unknown Tool').toList();
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to load kit tools');
-    } finally {
-      isLoading(false);
-    }
-  }
 
   String getImplantName() {
     return selectedKit.value?.name ?? 'No Kit Loaded';
@@ -175,23 +160,7 @@ class KitsController extends GetxController {
     return selectedKit.value!.tools.map((tool) => tool.name).toList();
   }
 
-  List<AdditionalTool> getToolsByKitId(int kitId) {
-    if (kitTools.containsKey(kitId)) {
-      return kitTools[kitId]!;
-    }
 
-    if (selectedKit.value != null && selectedKit.value!.id == kitId) {
-      return selectedKit.value!.tools;
-    }
-
-    // البحث في قائمة الـ kits إذا كانت متاحة
-    try {
-      final kit = kits.firstWhere((k) => k.id == kitId);
-      return kit.tools;
-    } catch (e) {
-      return [];
-    }
-  }
 
   List<String> getToolNamesByKitId(int kitId) {
     // التحقق من الذاكرة المؤقتة أولاً
@@ -203,7 +172,19 @@ class KitsController extends GetxController {
     return tools.map((tool) => tool.name ?? 'Unknown Tool').toList();
   }
 
+  List<AdditionalTool> getToolsByKitId(int kitId) {
+    return kitTools[kitId] ?? [];
+  }
 
+  Future<void> fetchKitById(int kitId) async {
+    try {
+      final Kit kit = await ApiServices().getKitById(kitId);
+      kitTools[kitId] = kit.tools.cast<AdditionalTool>();
+      update();
+    } catch (e) {
+      throw Exception('Failed to load tools: $e');
+    }
+  }
   // Initialize
   void initializeToolQuantities() {
     toolQuantities.value = List.filled(surgicalKits.length, 0);
@@ -330,8 +311,20 @@ class KitsController extends GetxController {
   void toggleImplantSelection(String implantId, Implant implantData) {
     if (selectedImplants.containsKey(implantId)) {
       selectedImplants.remove(implantId);
+      selectedToolsForImplants.remove(implantId); // إزالة الأدوات المرتبطة أيضًا
     } else {
       selectedImplants[implantId] = implantData;
+    }
+    update();
+  }
+
+  void toggleToolSelection(String implantId, int toolId) {
+    selectedToolsForImplants[implantId] ??= [];
+
+    if (selectedToolsForImplants[implantId]!.contains(toolId)) {
+      selectedToolsForImplants[implantId]!.remove(toolId);
+    } else {
+      selectedToolsForImplants[implantId]!.add(toolId);
     }
     update();
   }
@@ -340,37 +333,10 @@ class KitsController extends GetxController {
     return selectedImplants.containsKey(implantId);
   }
 
-  void toggleToolForImplant(String implantId, String toolName) {
-    selectedToolsForImplants[implantId] ??= [];
-    final toolsList = selectedToolsForImplants[implantId]!;
 
-    if (toolName == 'No tools') {
-      if (toolsList.contains('No tools')) {
-        toolsList.remove('No tools');
-      } else {
-        toolsList.clear();
-        toolsList.add('No tools');
-      }
-    }
-    else {
-      if (toolsList.contains('No tools')) {
-        toolsList.remove('No tools');
-      }
-
-      if (toolsList.contains(toolName)) {
-        toolsList.remove(toolName);
-      }
-      else {
-        toolsList.add(toolName);
-      }
-    }
-    update();
+  bool isToolSelectedForImplant(String implantId, int toolId) {
+    return selectedToolsForImplants[implantId]?.contains(toolId) ?? false;
   }
-
-  bool isToolSelectedForImplant(String implantId, String toolName) {
-    return selectedToolsForImplants[implantId]?.contains(toolName) ?? false;
-  }
-
   void toggleTool(String toolName) {
     tools[toolName] = !(tools[toolName] ?? false);
     update();

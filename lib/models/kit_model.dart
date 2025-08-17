@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-
 import 'Implant_model.dart';
 import 'additionalTool_model.dart';
 
@@ -23,23 +22,22 @@ class Kit {
   });
 
   factory Kit.fromJson(Map<String, dynamic> json) {
+    // معالجة الزرعات (Implants)
+    final implantsJson = json['implants'] as List<dynamic>? ?? [];
+    final implants = implantsJson.map((e) => Implant.fromJson(e)).toList();
 
-    final implant = json['implant'] != null
-        ? Implant.fromJson(json['implant'])
-        : null;
-    final tools = (json['toolsWithImplant'] as List<dynamic>?)
-        ?.map((t) => AdditionalTool.fromJson(t))
-        .toList() ?? [];
+    // معالجة الأدوات (Tools)
+    final toolsJson = json['tools'] as List<dynamic>? ?? [];
+    final tools = toolsJson.map((e) => AdditionalTool.fromJson(e)).toList();
 
     return Kit(
       id: json['id'] ?? json['kitId'] ?? 0,
       name: json['name'] ?? 'Unnamed Kit',
       isMainKit: json['isMainKit'] ?? false,
-      implantCount: implant != null ? 1 : 0,
+      implantCount: implants.length,
       toolCount: tools.length,
-      implants: implant != null ? [implant] : [],
+      implants: implants,
       tools: tools,
     );
   }
-
 }

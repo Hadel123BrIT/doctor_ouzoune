@@ -110,14 +110,27 @@ Widget BuildImplantCard(BuildContext context, Implant implant) {
                 CustomButton(
                     onTap: () async {
                       if (implant.kitId != null) {
-                        await controller.fetchKitById(implant.kitId!);
-                        if (controller.selectedKit.value != null) {
-                          Get.to(
-                                () => ImplantDetailScreen(
-                              implant: implant,
+                        try {
 
-                            ),
+                          Get.dialog(
+                              Center(child: CircularProgressIndicator(
+                                color: AppColors.primaryGreen,
+                              )),
+                              barrierDismissible: false
                           );
+
+                          await controller.fetchKitById(implant.kitId!);
+
+
+                          Get.back();
+
+                            Get.to(
+                                  () => ImplantDetailScreen(implant: implant),
+                            );
+
+                        } catch (e) {
+                          Get.back();
+                          Get.snackbar('Error', 'Failed to load: ${e.toString()}');
                         }
                       } else {
                         Get.snackbar('Error', 'No Kit assigned to this implant');
