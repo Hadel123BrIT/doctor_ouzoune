@@ -319,7 +319,7 @@ class KitsController extends GetxController {
   }
 
   void toggleToolSelection(String implantId, int toolId) {
-    selectedToolsForImplants[implantId] ??= [];
+    selectedToolsForImplants[implantId] ??= RxList<int>();
 
     if (selectedToolsForImplants[implantId]!.contains(toolId)) {
       selectedToolsForImplants[implantId]!.remove(toolId);

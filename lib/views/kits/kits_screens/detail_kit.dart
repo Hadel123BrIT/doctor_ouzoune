@@ -7,6 +7,7 @@ import '../../../models/Implant_model.dart';
 import '../../../models/kit_model.dart';
 import '../../../widgets/custom_button.dart';
 import '../Kits_Controller/kits_controller.dart';
+import '../widget/buildKitToolsList.dart';
 import '../widget/buildSpecItem.dart';
 
 class ImplantDetailScreen extends StatelessWidget {
@@ -92,7 +93,7 @@ class ImplantDetailScreen extends StatelessWidget {
                       ),
 
                       // Specifications section
-                      _buildSection(
+                      buildSection(
                         context,
                         title: "Specifications",
                         children: [
@@ -103,7 +104,7 @@ class ImplantDetailScreen extends StatelessWidget {
                       ),
 
                       // Brand and Quantity section
-                      _buildSection(
+                      buildSection(
                         context,
                         title: "Brand and Quantity",
                         children: [
@@ -113,7 +114,7 @@ class ImplantDetailScreen extends StatelessWidget {
                       ),
 
                       // Description section
-                      _buildSection(
+                      buildSection(
                         context,
                         title: "Description",
                         children: [
@@ -130,7 +131,7 @@ class ImplantDetailScreen extends StatelessWidget {
                       // Required Tools section
                       Obx(() {
                         final kitTools = kitId != null ? controller.getToolsByKitId(kitId) : [];
-                        return _buildSection(
+                        return buildSection(
                           context,
                           title: "Required Tools",
                           children: kitTools.isEmpty
@@ -143,7 +144,7 @@ class ImplantDetailScreen extends StatelessWidget {
                               ),
                             )
                           ]
-                              : _buildKitToolsList(kitTools, implantId),
+                              : buildKitToolsList(kitTools, implantId),
                         );
                       }),
 
@@ -152,13 +153,16 @@ class ImplantDetailScreen extends StatelessWidget {
                       Center(
                         child: CustomButton(
                           onTap: () {
-                            final selectedTools = controller.selectedToolsForImplants[implantId] ?? [];
+                            final selectedTools = controller.selectedToolsForImplants[implantId]?.toList() ?? [];
                             if (selectedTools.isNotEmpty) {
                               Get.back(result: {
                                 'implant': implant,
                                 'selectedTools': selectedTools,
                               });
-                              Get.snackbar("Added", "${controller.getImplantNameByKitId(implant.kitId ?? 0)} added to cart");
+                              Get.snackbar(
+                                "Added",
+                                "${controller.getImplantNameByKitId(implant.kitId ?? 0)} added to cart",
+                              );
                             } else {
                               Get.snackbar("Warning", "Please select at least one tool");
                             }
@@ -193,69 +197,5 @@ class ImplantDetailScreen extends StatelessWidget {
     });
   }
 
-  List<Widget> _buildKitToolsList(List<dynamic> tools, String implantId) {
-    return tools.map((tool) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Row(
-          children: [
-            Obx(() => Checkbox(
-              value: controller.isToolSelectedForImplant(implantId, tool.id!),
-              onChanged: (value) {
-                controller.toggleToolSelection(implantId, tool.id!);
-              },
-              activeColor: AppColors.primaryGreen,
-            )),
-            SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                tool.name ?? 'Unnamed Tool',
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                  fontFamily: 'Montserrat',
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }).toList();
-  }
-  Widget _buildSection(BuildContext context, {required String title, required List<Widget> children}) {
-    return Column(
-      children: [
-        SizedBox(height: context.height * 0.03),
-        Container(
-          padding: EdgeInsets.all(context.width * 0.04),
-          decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.grey[800]
-                : Colors.grey[200],
-            borderRadius: BorderRadius.circular(15),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 5,
-                spreadRadius: 1,
-              )
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              SizedBox(height: context.height * 0.01),
-              Divider(color: AppColors.primaryGreen),
-              SizedBox(height: context.height * 0.01),
-              ...children,
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+
 }
