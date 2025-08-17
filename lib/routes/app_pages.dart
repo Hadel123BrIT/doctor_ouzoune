@@ -39,10 +39,8 @@ class AppPages {
     GetPage(
       name: AppRoutes.detail_kit,
       page: () {
-        // احصل على الـ arguments الممررة
         final args = Get.arguments;
 
-        // تأكد من أن الـ arguments تحتوي على البيانات المطلوبة
         if (args is Map<String, dynamic> &&
             args['implant'] is Implant &&
             args['kit'] is Kit) {
@@ -51,10 +49,9 @@ class AppPages {
 
           );
         } else {
-          // في حالة البيانات غير صالحة، ارجع إلى صفحة سابقة أو عرض رسالة خطأ
           Get.back();
           Get.snackbar('Error', 'Invalid data received');
-          return SizedBox.shrink(); // أو أي widget افتراضي آخر
+          return SizedBox.shrink();
         }
       },
     ),
@@ -125,11 +122,10 @@ class AppPages {
         return Implantkits();
       },
     ),
-    // GetPage(
-    //   name: AppRoutes.addprocedure,
-    //   page: () =>AddProcedure(),
-    //
-    // ),
+    GetPage(
+      name: AppRoutes.addprocedure,
+      page: () => AddProcedure(),
+    ),
     GetPage(
       name: AppRoutes.getAllprocedure,
       page: () =>ProceduresScreen(),

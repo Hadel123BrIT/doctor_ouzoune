@@ -17,7 +17,7 @@
   static const additional_kit='/additional_kit';
   static const implant_kit='/implant_kit';
   static const detail_kit='/detail_kit';
-  static const addprocedure='/addprocedure';
+  static const addprocedure = '/add-procedure';
   static const getAllprocedure='/get_all_procedure';
   static const procedure_detail='/procedure_detail';
   static const rate='/rate';

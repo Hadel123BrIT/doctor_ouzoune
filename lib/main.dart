@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:ouzoun/views/doctor_choices/doctor_choices_screens/first_page_choices.dart';
 import 'package:ouzoun/views/homePage/homePage_screen/homePage_screen.dart';
+import 'package:ouzoun/views/procedure/procedure_screen/add_procedure.dart';
 import 'package:ouzoun/views/splash/splash_screens/splash_screen.dart';
 import 'core/services/services.dart';
 import 'firebase_options.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         theme:lightMode,
         darkTheme: darkMode,
         debugShowCheckedModeBanner: false,
-       home: SplashScreen()
+       home: AddProcedure()
        //home: HomePageScreen(),
 
     );

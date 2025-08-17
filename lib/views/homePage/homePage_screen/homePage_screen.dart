@@ -8,6 +8,7 @@ import '../../../Core/Services/media_query_service.dart';
 import '../../../Widgets/custom_bottom_navigation_bar .dart';
 import '../../../Widgets/custom_drawer.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../procedure/procedure_screen/add_procedure.dart';
 import '../HomePage_Controller/homePage_controller.dart';
 import '../widget/build_body.dart';
 
@@ -38,8 +39,15 @@ class HomePageScreen extends StatelessWidget {
           Padding(
               padding: EdgeInsets.symmetric(horizontal: 14),
                child: InkWell(
-                 onTap: (){
-                   Get.toNamed(AppRoutes.addprocedure);
+                 onTap: () {
+                   debugPrint('Attempting to navigate to: ${AppRoutes.addprocedure}');
+                   try {
+                     Get.to(() => AddProcedure());
+                   } catch (e, stackTrace) {
+                     debugPrint('Navigation error: $e');
+                     debugPrint('Stack trace: $stackTrace');
+                     Get.snackbar('Error', 'Failed to navigate to procedure page');
+                   }
                  },
                  child: Stack(
                    alignment: Alignment.topRight,

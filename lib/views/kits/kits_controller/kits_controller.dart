@@ -77,6 +77,7 @@ class KitsController extends GetxController {
   final RxMap<String, Implant> selectedImplants = <String, Implant>{}.obs;
   final RxMap<String, List<int>> selectedToolsForImplants = <String, List<int>>{}.obs;
   final RxMap<int, List<AdditionalTool>> kitTools = <int, List<AdditionalTool>>{}.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -353,42 +354,38 @@ class KitsController extends GetxController {
 
   // Function For PartialImplants
 
-  void addPartialImplant(Implant implant, {List<String>? tools}) {
+  void addPartialImplant(Implant implant, {List<int>? tools}) {
+    print('======= START addPartialImplant ======='); // استخدم print مباشرة
+    print('Implant ID: ${implant.id}');
+    print('Implant Brand: ${implant.brand}');
+    print('Tools: ${tools?.join(', ') ?? 'No tools'}');
 
-    final associatedKit = kits.firstWhere(
-          (k) => k.id == implant.kitId,
-      orElse: () => Kit(
-        id: 0,
-        name: 'Unknown Kit',
-        isMainKit: false,
-        implantCount: 0,
-        toolCount: 0,
-        implants: [],
-        tools: [],
-      ),
-    );
+    if (implant.id == null) {
+      print('ERROR: Implant ID is null!');
+      return;
+    }
 
-    // إنشاء كائن Implant جديد مع البيانات المحدثة
-    final updatedImplant = Implant(
-      id: implant.id,
-      radius: implant.radius,
-      width: implant.width,
-      height: implant.height,
-      quantity: implant.quantity,
-      brand: implant.brand,
-      description: implant.description,
-      imagePath: implant.imagePath,
-      kitId: implant.kitId,
-      //tools: tools ?? associatedKit.tools.map((t) => t.name).toList(),
-    );
+    try {
+      final implantId = implant.id.toString();
 
-    // إزالة الزرعة إذا كانت موجودة مسبقاً
-    selectedPartialImplants.removeWhere((item) => item.id == implant.id);
+      if (tools != null && tools.isNotEmpty) {
+        selectedToolsForImplants[implantId] = tools;
+        print('Tools added successfully');
+      }
 
-    // إضافة الزرعة المحدثة
-    selectedPartialImplants.add(updatedImplant);
+      if (!selectedPartialImplants.any((i) => i.id == implant.id)) {
+        selectedPartialImplants.add(implant);
+        print('New implant added to list');
+      }
 
-    update();
+      print('Current implants count: ${selectedPartialImplants.length}');
+      update();
+      print('UI updated called');
+    } catch (e) {
+      print('EXCEPTION in addPartialImplant: $e');
+    } finally {
+      print('======= END addPartialImplant =======');
+    }
   }
 
   void removePartialImplant(String implantId) {
