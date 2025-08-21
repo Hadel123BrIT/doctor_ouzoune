@@ -19,6 +19,8 @@ class AdditionalKits extends StatelessWidget {
   final KitsController controller = Get.put(KitsController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
 
+  AdditionalKits({super.key});
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -73,7 +75,68 @@ class AdditionalKits extends StatelessWidget {
           ),
           child: Column(
             children: [
-              buildWelcomeMessage(context, isDarkMode),
+               Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(context.width * 0.04),
+              margin: EdgeInsets.only(bottom: context.height * 0.02),
+              decoration: BoxDecoration(
+                color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Hello Doctor,",
+                    style: TextStyle(
+                      fontFamily: "Montserrat",
+                      fontSize: context.width * 0.045,
+                      fontWeight: FontWeight.bold,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: context.height * 0.01),
+                  Text(
+                    "This page is dedicated to additional tools that may assist you in the surgical procedure you are performing. Simply select the quantity you need.",
+                    style: TextStyle(
+                      fontFamily: "Montserrat",
+                      fontSize: context.width * 0.035,
+                      color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
+                    ),
+                  ),
+                  SizedBox(height: context.height * 0.01),
+                  Row(
+
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Note : ",
+                        style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontFamily: "Montserrat",
+                          fontSize: context.width * 0.035,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          "Do not exceed the available quantity...",
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontFamily: "Montserrat",
+                            fontSize: context.width * 0.035,
+                            color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+
+                ],)
+          ),
               Expanded(
                 child: buildToolsList(context),
               ),
@@ -85,70 +148,6 @@ class AdditionalKits extends StatelessWidget {
     );
   }
 
-  Widget buildWelcomeMessage(BuildContext context, bool isDarkMode) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(context.width * 0.04),
-      margin: EdgeInsets.only(bottom: context.height * 0.02),
-      decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Hello Doctor,",
-            style: TextStyle(
-              fontFamily: "Montserrat",
-              fontSize: context.width * 0.045,
-              fontWeight: FontWeight.bold,
-              color: isDarkMode ? Colors.white : Colors.black,
-            ),
-          ),
-          SizedBox(height: context.height * 0.01),
-          Text(
-            "This page is dedicated to additional tools that may assist you in the surgical procedure you are performing. Simply select the quantity you need.",
-            style: TextStyle(
-              fontFamily: "Montserrat",
-              fontSize: context.width * 0.035,
-              color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
-            ),
-          ),
-          SizedBox(height: context.height * 0.01),
-          Row(
-
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Note : ",
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  fontFamily: "Montserrat",
-                  fontSize: context.width * 0.035,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  "Do not exceed the available quantity...",
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontStyle: FontStyle.italic,
-                    fontFamily: "Montserrat",
-                    fontSize: context.width * 0.035,
-                    color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
-                  ),
-                ),
-              ),
-            ],
-          )
-
-    ],));
-
-  }
 
   Widget buildToolsList(BuildContext context) {
     return Obx(() => AnimationLimiter(

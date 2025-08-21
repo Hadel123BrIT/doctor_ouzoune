@@ -286,7 +286,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
     try {
       final token = GetStorage().read('auth_token');
       final response = await dio.get(
-        'http://www.ouzon.somee.com/api/procedures/paged',
+        '$baseUrl/procedures/paged',
         queryParameters: {
           'pageSize': pageSize,
           'pageNum': pageNum,
@@ -427,7 +427,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
       final dio = Dio();
 
       final response = await dio.post(
-        "http://ouzon.somee.com/api/Ratings",
+        "$baseUrl/Ratings",
         data: {
           "note": note,
           "rate": rate,
@@ -509,6 +509,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
   }
 
 
+  //get implants
   Future<List<Implant>> getImplants() async {
     try {
       final token = await GetStorage().read('auth_token');
@@ -535,6 +536,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
     }
   }
 
+  // get kits
   Future<List<Kit>> getKits() async {
     try {
       final token = GetStorage().read('auth_token');
@@ -557,6 +559,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
       throw Exception('Failed to load tools: ${e.message}');
   }}
 
+
   Future<Kit> getKitById(int kitId) async {
     try {
       final token = GetStorage().read('auth_token');
@@ -564,7 +567,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
 
       debugPrint('Requesting kit details for ID: $kitId');
       final response = await dio.get(
-        'http://ouzon.somee.com/api/kits/$kitId',
+        '$baseUrl/kits/$kitId',
         options: Options(
           headers: {
             if (token != null) 'Authorization': 'Bearer $token',

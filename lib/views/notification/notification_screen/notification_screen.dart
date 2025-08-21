@@ -27,7 +27,7 @@ class NotificationScreen extends StatelessWidget {
               ? IconButton(
             icon: Icon(Icons.mark_email_read, color: Colors.white),
             onPressed: controller.markAllAsRead,
-            tooltip: 'تمييز الكل كمقروء',
+            tooltip: 'as reader',
           )
               : SizedBox.shrink()),
         ],
@@ -60,7 +60,7 @@ class NotificationScreen extends StatelessWidget {
           ),
           SizedBox(height: 20),
           Text(
-            'لا توجد إشعارات',
+            'no Notifications found',
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 18,
@@ -69,7 +69,7 @@ class NotificationScreen extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Text(
-            'سيظهر هنا جميع الإشعارات المهمة',
+            'here all the Notifications',
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 14,
@@ -88,7 +88,7 @@ class NotificationScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'الإشعارات الحديثة',
+            'latest Notifications',
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 18,
@@ -99,7 +99,7 @@ class NotificationScreen extends StatelessWidget {
           TextButton(
             onPressed: controller.clearAllNotifications,
             child: Text(
-              'مسح الكل',
+              'Delete All',
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 color: AppColors.primaryGreen,

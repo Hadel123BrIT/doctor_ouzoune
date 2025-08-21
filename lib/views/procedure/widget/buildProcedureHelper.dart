@@ -184,45 +184,45 @@ Widget buildKitsToolsButtonsRow(BuildContext context) {
   return Column(
     children: [
       // Surgical Kits
-      Container(
-        width: double.infinity,
-        constraints: BoxConstraints(minHeight: 200),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: isDarkMode ? Colors.grey[700]! : Colors.grey[400]!,
-            width: 2,
-          ),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Mandatory Surgical Tools',
-                style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 15,
-                    color: AppColors.primaryGreen,
-                    fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              ...controller.surgicalKits.map((tool) => ListTile(
-                title: Text(
-                  tool['name'],
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
-                ),
-              )).toList(),
-            ],
-          ),
-        ),
-      ),
-      SizedBox(height: 20),
+      // Container(
+      //   width: double.infinity,
+      //   constraints: BoxConstraints(minHeight: 200),
+      //   decoration: BoxDecoration(
+      //     borderRadius: BorderRadius.circular(10),
+      //     border: Border.all(
+      //       color: isDarkMode ? Colors.grey[700]! : Colors.grey[400]!,
+      //       width: 2,
+      //     ),
+      //   ),
+      //   child: Padding(
+      //     padding: EdgeInsets.all(16),
+      //     child: Column(
+      //       crossAxisAlignment: CrossAxisAlignment.start,
+      //       children: [
+      //         Text(
+      //           'Mandatory Surgical Tools',
+      //           style: TextStyle(
+      //               fontFamily: 'Montserrat',
+      //               fontSize: 15,
+      //               color: AppColors.primaryGreen,
+      //               fontWeight: FontWeight.bold),
+      //         ),
+      //         SizedBox(height: 10),
+      //         ...controller.surgicalKits.map((tool) => ListTile(
+      //           title: Text(
+      //             tool['name'],
+      //             style: TextStyle(
+      //               fontFamily: 'Montserrat',
+      //               fontSize: 14,
+      //               color: Colors.grey,
+      //             ),
+      //           ),
+      //         )).toList(),
+      //       ],
+      //     ),
+      //   ),
+      // ),
+      // SizedBox(height: 20),
 
       // Full Implant Kits
       Obx(() => Container(

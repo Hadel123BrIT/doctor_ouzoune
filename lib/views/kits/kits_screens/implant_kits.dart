@@ -64,7 +64,11 @@ class Implantkits extends StatelessWidget {
           );
         }
         if (controller.implants.isEmpty) {
-          return Center(child: Text('No implants available'));
+          return Center(child: Text('No implants available',
+          style: TextStyle(
+            fontFamily: "Montserrat",
+          ),
+          ));
         }
 
         return SingleChildScrollView(

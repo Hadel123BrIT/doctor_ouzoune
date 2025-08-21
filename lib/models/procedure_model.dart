@@ -43,8 +43,6 @@ class Procedure {
       status: json['status'],
       date: DateTime.parse(json['date']),
       doctor: Doctor.fromJson(json['doctor']),
-
-      // التعديل الرئيسي هنا:
       tools: List<AdditionalTool>.from(
           (json['requiredTools'] ?? []).map((x) => AdditionalTool.fromJson(x))),
 
@@ -70,6 +68,7 @@ class Procedure {
       case 2: return "In_Progress";
       case 3: return "Done";
       case 4: return "Declined";
+      case 5: return "Cancelled";
       default: return "Request_Sent";
     }
   }
@@ -80,6 +79,7 @@ class Procedure {
       case 2: return Colors.blue;
       case 3: return Colors.green;
       case 4: return Colors.red;
+      case 5 : return Colors.grey;
       default: return Colors.orange;
     }
   }

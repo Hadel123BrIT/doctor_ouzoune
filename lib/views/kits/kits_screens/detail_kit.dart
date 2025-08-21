@@ -13,7 +13,7 @@ import '../widget/buildSpecItem.dart';
 class ImplantDetailScreen extends StatelessWidget {
   final Implant implant;
 
-  final KitsController controller = Get.find<KitsController>();
+  final KitsController controller = Get.put(KitsController());
 
   ImplantDetailScreen({super.key, required this.implant});
 
@@ -30,14 +30,12 @@ class ImplantDetailScreen extends StatelessWidget {
     });
 
     return Obx(() {
-
       return SafeArea(
         child: Scaffold(
           backgroundColor: Theme.of(context).colorScheme.background,
           body: SingleChildScrollView(
             child: Column(
               children: [
-                // Header with green background
                 Align(
                   alignment: Alignment.topLeft,
                   child: Container(
@@ -58,7 +56,6 @@ class ImplantDetailScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Implant image and name
                       Center(
                         child: Column(
                           children: [
@@ -174,7 +171,6 @@ class ImplantDetailScreen extends StatelessWidget {
                   ),
                 ),
 
-                // Footer with green background
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Container(
