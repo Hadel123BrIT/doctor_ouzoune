@@ -19,7 +19,7 @@ class RegisterController extends GetxController {
   var selectedLocation = Rxn<LatLng>();
   var errorMessage="".obs;
   final ApiServices apiServices=ApiServices();
-  final FirebaseService _firebaseService = Get.put(FirebaseService());
+  final FirebaseServices _firebaseService = Get.put(FirebaseServices());
 
 
   void updateLocation(LatLng coords, String address) {

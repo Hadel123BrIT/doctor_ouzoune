@@ -24,6 +24,7 @@ import '../views/kits/kits_screens/implant_kits.dart';
 import '../views/kits/kits_screens/surgical_kits.dart';
 import '../views/login/login_screen.dart';
 import '../views/myProfile/myProfile_screen/myProfile_screen.dart';
+import '../views/notification/notification_screen/notification_screen.dart';
 import '../views/procedure/procedure_screen/get_all_procedures.dart';
 import '../views/procedure/procedure_screen/procedure_detail_screen.dart';
 import '../views/register/register_screen.dart';
@@ -147,6 +148,11 @@ class AppPages {
     GetPage(
       name: AppRoutes.rate,
       page: () =>RateScreen( ),
+    ),
+    GetPage(
+      name: AppRoutes.notifications,
+      page: () =>NotificationScreen(),
+
     ),
   ];
 }

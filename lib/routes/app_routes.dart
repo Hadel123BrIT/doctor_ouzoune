@@ -21,4 +21,5 @@
   static const getAllprocedure='/get_all_procedure';
   static const procedure_detail='/procedure_detail';
   static const rate='/rate';
+  static const notifications='/notifications';
  }

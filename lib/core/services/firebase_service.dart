@@ -1,14 +1,22 @@
 import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:get/get.dart';
 
-class FirebaseService {
-  static FirebaseMessaging messaging= FirebaseMessaging.instance;
-  static Future init() async{
+import 'LocalNotificationService .dart';
+
+class FirebaseServices {
+  static FirebaseMessaging messaging=FirebaseMessaging.instance;
+  static Future init()async{
     await messaging.requestPermission();
+    String? fireBaseToken=await messaging.getToken();
+    print("device token$fireBaseToken");
     getDeviceToken();
-    //notification on background and killed
-    FirebaseMessaging.onBackgroundMessage(handlebackgroundMessage);
+    FirebaseMessaging.onBackgroundMessage(handelBackgroundMessaging);
+    FirebaseMessaging.onMessage.listen((RemoteMessage message){
+      LocalNotificationService.showBasicNotification(message);
+    });
   }
   static Future<String?> getDeviceToken() async {
 
@@ -16,9 +24,10 @@ class FirebaseService {
     print("***************************Device Token: $token");
     return token;
   }
-  static Future<void> handlebackgroundMessage(RemoteMessage message) async{
-    await Firebase.initializeApp();
-    print("----------------------------");
-    log(message.notification!.title??"nul");
+  static Future<void> handelBackgroundMessaging(RemoteMessage message)async{
+    print(message.notification?.title);
+    print(message.notification?.body);
   }
+
+
 }

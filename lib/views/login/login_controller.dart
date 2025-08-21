@@ -11,7 +11,7 @@ class LoginController extends GetxController {
   final passwordController = TextEditingController();
   var isLoading = false.obs;
   ApiServices apiServices = ApiServices();
-  final FirebaseService _firebaseService = Get.put(FirebaseService());
+  final FirebaseServices _firebaseService = Get.put(FirebaseServices());
 
   Future<void> login(GlobalKey<FormState> formKey) async {
     if (formKey.currentState!.validate()) {

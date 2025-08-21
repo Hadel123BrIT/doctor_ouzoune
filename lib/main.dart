@@ -27,13 +27,13 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return Obx(() => GetMaterialApp(
+    return  GetMaterialApp(
       getPages: AppPages.pages,
       theme: lightMode,
       darkTheme: darkMode,
       debugShowCheckedModeBanner: false,
-      home: AddProcedure(),
-    ));
+      home: SplashScreen(),
+    );
   }
 
 }
