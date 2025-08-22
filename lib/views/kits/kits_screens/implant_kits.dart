@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:ouzoun/Widgets/custom_button.dart';
+import 'package:ouzoun/views/procedure/procedure_screen/add_procedure.dart';
 import '../../../Core/Services/media_query_service.dart';
 import '../../../Widgets/custom_drawer.dart';
 import '../../../core/constants/app_colors.dart';
@@ -70,7 +71,6 @@ class Implantkits extends StatelessWidget {
           ),
           ));
         }
-
         return SingleChildScrollView(
           padding: EdgeInsets.all(context.width * 0.04),
           child: Column(

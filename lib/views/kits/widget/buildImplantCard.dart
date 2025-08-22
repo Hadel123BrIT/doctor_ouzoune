@@ -155,7 +155,6 @@ Widget BuildImplantCard(BuildContext context, Implant implant) {
                 value: isSelected,
                 onChanged: (val) {
                   controller.toggleImplantSelection(implantId, implant);
-                  Get.back(result: implant);
                   controller.selectedImplants.refresh();
                 },
                 activeColor: AppColors.primaryGreen,

@@ -346,19 +346,25 @@ Widget buildKitsToolsButtonsRow(BuildContext context) {
         child: controller.selectedPartialImplants.isEmpty
             ? Center(
           child: TextButton(
-            onPressed: () async {
-              final result = await Get.to(() => Implantkits());
-              if (result != null && result is Implant) {
-                final toolsResult = await Get.to(
-                        () => ImplantDetailScreen(implant: result));
-                if (toolsResult != null && toolsResult is Map) {
-                  controller.addPartialImplant(
-                    result,
-                    tools: toolsResult['selectedTools']?.cast<int>() ?? [],
-                  );
-                }
-              }
-            },
+  onPressed: () async {
+  controller.clearSelectedImplants();
+
+  final result = await Get.to(() => Implantkits());
+  print('Result from Implantkits: $result');
+
+  if (result != null && result is Implant) {
+  print('Implant selected for partial: ${result.id} - ${result.brand}');
+
+  final toolsResult = await Get.to(() => ImplantDetailScreen(implant: result));
+
+  if (toolsResult != null && toolsResult is Map) {
+  controller.addPartialImplant(
+  result,
+  tools: toolsResult['selectedTools']?.cast<int>() ?? [],
+  );
+  }
+  }
+  },
             child: Text('Tap to choose Partial Implants / Tools',
                 style: TextStyle(
                   fontFamily: 'Montserrat',
@@ -454,10 +460,9 @@ Widget buildPartialImplantsList(BuildContext context) {
 
     print('Partial Implants Count: ${controller.selectedPartialImplants.length}');
     controller.selectedPartialImplants.forEach((implant) {
-      print('Implant: ${implant.id}, Brand: ${implant.brand}');
+      print('Implant: ${implant.id}, name: ${controller.getImplantNameByKitId(implant.kitId ?? 0)}');
       print('Associated Tools: ${controller.selectedToolsForImplants[implant.id.toString()]?.join(', ') ?? 'None'}');
     });
-
     return ConstrainedBox(
       constraints: BoxConstraints(
         minHeight: 200,
@@ -510,7 +515,7 @@ Widget buildPartialImplantsList(BuildContext context) {
                     margin: EdgeInsets.all(8),
                     child: ListTile(
                       title: Text(
-                        implant.brand ?? 'Unnamed Implant (ID: ${implant.id})',
+                        controller.getImplantNameByKitId(implant.kitId ?? 0),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Montserrat',

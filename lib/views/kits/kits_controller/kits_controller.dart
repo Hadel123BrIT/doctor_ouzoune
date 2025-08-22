@@ -333,7 +333,9 @@ class KitsController extends GetxController {
     update();
   }
 
-
+  void clearSelectedImplants() {
+    selectedImplants.clear();
+  }
 
 
 

@@ -147,14 +147,20 @@ class ImplantDetailScreen extends StatelessWidget {
                       // Add to Cart button
                       SizedBox(height: context.height * 0.04),
                       Center(
-                        child: CustomButton(
+                        child:CustomButton(
                           onTap: () {
                             final selectedTools = controller.selectedToolsForImplants[implantId]?.toList() ?? [];
+
                             if (selectedTools.isNotEmpty) {
-                              Get.back(result: {
-                                'implant': implant,
-                                'selectedTools': selectedTools,
-                              });
+
+                              controller.addPartialImplant(
+                                implant,
+                                tools: selectedTools,
+                              );
+
+
+                              Get.back();
+
                               Get.snackbar(
                                 "Added",
                                 "${controller.getImplantNameByKitId(implant.kitId ?? 0)} added to cart",
@@ -163,7 +169,7 @@ class ImplantDetailScreen extends StatelessWidget {
                               Get.snackbar("Warning", "Please select at least one tool");
                             }
                           },
-                          text: 'Add to Cart',
+                          text: 'Add to cart',
                           color: AppColors.primaryGreen,
                         ),
                       )
