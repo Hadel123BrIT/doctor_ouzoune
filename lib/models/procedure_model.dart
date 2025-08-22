@@ -11,7 +11,7 @@ class Procedure {
   final int numberOfAssistants;
   final List<String> assistantIds;
   final int categoryId;
-  final int status;
+  late final int status;
   final DateTime date;
   final Doctor doctor;
   final List<AdditionalTool> tools;

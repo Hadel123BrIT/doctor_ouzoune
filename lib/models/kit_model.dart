@@ -22,11 +22,9 @@ class Kit {
   });
 
   factory Kit.fromJson(Map<String, dynamic> json) {
-    // معالجة الزرعات (Implants)
     final implantsJson = json['implants'] as List<dynamic>? ?? [];
     final implants = implantsJson.map((e) => Implant.fromJson(e)).toList();
 
-    // معالجة الأدوات (Tools)
     final toolsJson = json['tools'] as List<dynamic>? ?? [];
     final tools = toolsJson.map((e) => AdditionalTool.fromJson(e)).toList();
 

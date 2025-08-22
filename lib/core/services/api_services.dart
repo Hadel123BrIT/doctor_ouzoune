@@ -315,6 +315,35 @@ static const String baseUrl="http://ouzon.somee.com/api";
 
 
 
+  Future<Response> changeProcedureStatus({
+    required int procedureId,
+    required int newStatus,
+    required String token,
+  }) async {
+    try {
+      final response = await dio.patch(
+        '$baseUrl/procedures/ChangeStatus',
+        data: {
+          'procedureId': procedureId,
+          'newStatus': newStatus,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        return e.response!;
+      } else {
+        throw Exception('Failed to connect to the server: ${e.message}');
+      }
+    }
+  }
 
 
 
@@ -601,6 +630,41 @@ static const String baseUrl="http://ouzon.somee.com/api";
       rethrow;
     }
   }
+
+
+  Future<Response> sendNotification({
+    required String title,
+    required String body,
+    required String token,
+  }) async {
+    try {
+      final response = await dio.post(
+        '$baseUrl/Notifications/SendNotification',
+        data: {
+          'title': title,
+          'body': body,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        return e.response!;
+      } else {
+        throw Exception('Failed to connect to the server: ${e.message}');
+      }
+    }
+  }
+
+
+
+
 
 
 

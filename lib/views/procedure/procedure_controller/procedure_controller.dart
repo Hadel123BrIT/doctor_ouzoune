@@ -401,6 +401,57 @@ class ProcedureController extends GetxController {
     statusFilter.value=0;
     fetchAllProcedures();
   }
+
+
+  Future<void> changeProcedureStatus(int procedureId, int newStatus) async {
+    try {
+      final token = GetStorage().read('auth_token') as String?;
+
+      if (token == null || token.isEmpty) {
+        Get.offAllNamed(AppRoutes.login);
+        return;
+      }
+
+      final response = await apiServices.changeProcedureStatus(
+        procedureId: procedureId,
+        newStatus: newStatus,
+        token: token,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201 ) {
+
+        final procedureIndex = proceduresList.indexWhere((p) => p.id == procedureId);
+        if (procedureIndex != -1) {
+          proceduresList[procedureIndex].status = newStatus;
+          proceduresList.refresh();
+        }
+
+        Get.snackbar(
+          'Success'.tr,
+          'Procedure status updated successfully'.tr,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        throw Exception('Failed to change status: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      Get.snackbar(
+        'Error'.tr,
+        'Failed to update procedure status: ${e.response?.data ?? e.message}'.tr,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error'.tr,
+        'An unexpected error occurred: ${e.toString()}'.tr,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
   @override
   void onClose() {
     patientNameController.dispose();
