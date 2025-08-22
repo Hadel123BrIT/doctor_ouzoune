@@ -122,8 +122,9 @@ class ProcedureController extends GetxController {
       procedureTime.value!.hour,
       procedureTime.value!.minute,
     );
+
     return {
-      "numberOfAssistants": assistantsCount ,
+      "numberOfAssistants": assistantsCount.value,
       "date": combinedDateTime.toIso8601String(),
       "categoryId": procedureType.value,
       "toolsIds": getAdditionalToolsData(),
@@ -133,53 +134,38 @@ class ProcedureController extends GetxController {
   }
 
   List<Map<String, dynamic>> getAdditionalToolsData() {
-    return kitsController.selectedTools.where((tool) => tool['id'] != null).map((tool) => {
-      "toolId": tool['id'],
-      "quantity": int.tryParse(tool['quantity']?.toString() ?? '1') ?? 1,
+    final kitsController = Get.find<KitsController>();
+
+    return kitsController.selectedAdditionalTools.map((tool) {
+      final index = kitsController.additionalTools.indexOf(tool);
+      final quantity = kitsController.additionalToolQuantities[index] ?? 1;
+
+      return {
+        "toolId": tool.id,
+        "quantity": quantity,
+      };
     }).toList();
   }
 
   List<int> getFullKitsData() {
-    return kitsController.selectedImplants.keys
-        .map((id) => int.tryParse(id.toString()) ?? 0)
-        .where((id) => id > 0)
+    final kitsController = Get.find<KitsController>();
+
+    return kitsController.selectedImplants.values
+        .map((implant) => implant.kitId)
+        .where((kitId) => kitId != null)
+        .cast<int>()
         .toList();
   }
 
   List<Map<String, dynamic>> getPartialImplantsData() {
+    final kitsController = Get.find<KitsController>();
+
     return kitsController.selectedPartialImplants.map((implant) {
-      final kit = kitsController.kits.firstWhere(
-            (k) => k.id == implant.kitId,
-        orElse: () => Kit(
-          id: 0,
-          name: 'Unknown Kit',
-          isMainKit: false,
-          implantCount: 0,
-          toolCount: 0,
-          implants: [],
-          tools: [],
-        ),
-      );
+      final implantId = implant.id.toString();
 
-      List<int>? toolIds = [];
-      if (implant.tools != null && !implant.tools!.contains('No tools')) {
-        toolIds = implant.tools!.map((toolName) {
+      final toolIds = kitsController.selectedToolsForImplants[implantId] ?? [];
 
-          final tool = kit.tools.firstWhere(
-                (t) => t.name == toolName,
-            orElse: () => AdditionalTool(
-              id: 0,
-              name: '',
-              width: 0,
-              height: 0,
-              thickness: 0,
-              quantity: 0,
-              categoryId: 0,
-            ),
-          );
-          return tool.id;
-        }).where((id) => id != 0).cast<int>().toList();
-      }
+      print('Implant ${implant.id} has selected tools: $toolIds');
 
       return {
         "implantId": implant.id,

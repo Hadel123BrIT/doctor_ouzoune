@@ -128,6 +128,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
       if (e.response != null) {
         return e.response!;
       } else {
+        print(e.toString());
         throw Exception('Failed to connect to the server: ${e.message}');
       }
     }
