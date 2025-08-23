@@ -71,8 +71,10 @@ class MyProfileScreen extends StatelessWidget {
                           width: 3,
                         ),
                         image: const DecorationImage(
-                          image: AssetImage('assets/images/logo_App.jpg'),
+                          image: AssetImage('',
+                          ),
                           fit: BoxFit.cover,
+                          scale: 5
                         ),
                       ),
                     ),

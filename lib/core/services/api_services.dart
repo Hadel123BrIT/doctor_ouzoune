@@ -352,6 +352,10 @@ static const String baseUrl="http://ouzon.somee.com/api";
   Future<Map<String, dynamic>> getMyProfile() async {
     try {
       final token = GetStorage().read('auth_token');
+      if (token == null) {
+        throw Exception('No authentication token found');
+      }
+
       final response = await dio.get(
         '$baseUrl/users/current',
         options: Options(
@@ -362,14 +366,30 @@ static const String baseUrl="http://ouzon.somee.com/api";
         ),
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print("yes");
+      if (response.statusCode == 200) {
+        print("Profile data fetched successfully");
         print(response.data);
-        return response.data;
+
+        // تأكد أن البيانات هي Map<String, dynamic>
+        if (response.data is Map<String, dynamic>) {
+          return response.data;
+        } else {
+          // إذا كانت البيانات ليست بالصيغة المتوقعة
+          throw Exception('Invalid response format');
+        }
+      } else {
+        throw Exception('Failed to load profile. Status code: ${response.statusCode}');
       }
-      throw Exception('Failed to load profile');
     } on DioException catch (e) {
-      throw Exception('Error: ${e.message}');
+      print('Dio error: ${e.message}');
+      if (e.response != null) {
+        print('Response data: ${e.response?.data}');
+        print('Response status: ${e.response?.statusCode}');
+      }
+      throw Exception('Failed to load profile: ${e.message}');
+    } catch (e) {
+      print('Unexpected error: $e');
+      throw Exception('An unexpected error occurred');
     }
   }
 
@@ -631,13 +651,52 @@ static const String baseUrl="http://ouzon.somee.com/api";
     }
   }
 
-//send notification
+
+  Future<Response> getCurrentUserNotifications() async {
+    try {
+      final String? deviceToken = GetStorage().read('device_token');
+      final String? authToken =  GetStorage().read('auth_token');
+
+      if (deviceToken == null || authToken == null) {
+        throw Exception('Device token or auth token is missing');
+      }
+
+      final response = await dio.post(
+        '$baseUrl/Notifications/CurrnetUserNotifications',
+        data: {'deviceToken': deviceToken},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $authToken',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      return response;
+    } on DioException catch (e) {
+      print('Dio Error: ${e.message}');
+      if (e.response != null) {
+        return e.response!;
+      }
+      throw Exception('Failed to connect to the server: ${e.message}');
+    } catch (e) {
+      print('General Error: $e');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+
   Future<Response> sendNotification({
     required String title,
     required String body,
-    required String token,
   }) async {
     try {
+      final String? authToken =  GetStorage().read('auth_token');
+
+      if (authToken == null) {
+        throw Exception('Auth token is missing');
+      }
+
       final response = await dio.post(
         '$baseUrl/Notifications/SendNotification',
         data: {
@@ -646,7 +705,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
         },
         options: Options(
           headers: {
-            'Authorization': 'Bearer $token',
+            'Authorization': 'Bearer $authToken',
             'Content-Type': 'application/json',
           },
         ),

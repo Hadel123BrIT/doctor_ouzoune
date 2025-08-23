@@ -89,13 +89,17 @@ class RateScreen extends StatelessWidget {
                 _buildFeedbackSection(context),
 
                 SizedBox(height: 30),
-                CustomButton(
-                  onTap: () {
-                    controller.isLoading.value ? null : controller.submitRating();
-                  },
-                  text: 'Submit Rating',
-                  color: AppColors.primaryGreen,
-                ),
+                Obx(() {
+                  return controller.isLoading.value
+                      ? _buildProgressIndicator(context)
+                      : CustomButton(
+                    onTap: () {
+                      controller.submitRating();
+                    },
+                    text: 'Submit Rating',
+                    color: AppColors.primaryGreen,
+                  );
+                }),
 
 
               ],
@@ -271,6 +275,37 @@ class RateScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildProgressIndicator(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primaryGreen.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+              strokeWidth: 4,
+            ),
+          ),
+          SizedBox(height: 16),
+          Text(
+            'Submitting Rating...',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16,
+              color: Colors.grey[700],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

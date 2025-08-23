@@ -7,6 +7,7 @@ import 'package:ouzoun/views/doctor_choices/doctor_choices_screens/first_page_ch
 import 'package:ouzoun/views/homePage/homePage_screen/homePage_screen.dart';
 import 'package:ouzoun/views/procedure/procedure_screen/add_procedure.dart';
 import 'package:ouzoun/views/splash/splash_screens/splash_screen.dart';
+import 'binding/initialize_binding.dart';
 import 'core/services/services.dart';
 import 'firebase_options.dart';
 import 'routes/app_pages.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return  GetMaterialApp(
       getPages: AppPages.pages,
+      initialBinding: AppBindings(),
       theme: lightMode,
       darkTheme: darkMode,
       debugShowCheckedModeBanner: false,

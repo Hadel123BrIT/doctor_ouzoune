@@ -29,6 +29,7 @@ class RateController extends GetxController {
   }
 
   Future<void> submitRating() async {
+    isLoading(true);
     if (assistantId.isEmpty) {
       Get.snackbar('Error', 'Please select an assistant');
       return;

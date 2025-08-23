@@ -265,6 +265,7 @@ class ProcedureController extends GetxController {
         print('  Doctor: ${procedures[i].doctor.userName} (ID: ${procedures[i].doctor.id})');
         print('  Number of Assistants: ${procedures[i].numberOfAssistants}');
         print('  Ids of Assistants: ${procedures[i].assistantIds}');
+      //  print('  Name of Assistants: ${procedures[i].assistants[i].userName}');
         print('----------------------------------');
         if (procedures[i].numberOfAssistants != procedures[i].assistants.length) {
           print('Warning: Mismatch in assistants count!');
