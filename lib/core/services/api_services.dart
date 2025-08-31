@@ -229,11 +229,10 @@ static const String baseUrl="http://ouzon.somee.com/api";
 
 
   // fetch one procedure
+
   Future<Map<String, dynamic>> getProcedureDetails(int procedureId) async {
     print('1. Starting getProcedureDetails for ID: $procedureId');
     try {
-
-
       final url = '$baseUrl/procedures/$procedureId';
       print('4. Making request to: $url');
 
@@ -242,20 +241,27 @@ static const String baseUrl="http://ouzon.somee.com/api";
         options: Options(
           headers: {
             'Content-Type': 'application/json',
-
           },
+          validateStatus: (status) => status! < 500, // قبول status codes أقل من 500
         ),
       );
 
       print('5. Response received. Status: ${response.statusCode}');
-      print('6. Response data: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print("**********done************");
-        return response.data as Map<String, dynamic>;
+
+        // تحقق من أن البيانات هي Map
+        if (response.data is Map<String, dynamic>) {
+          return response.data as Map<String, dynamic>;
+        } else {
+          print('Unexpected response format: ${response.data.runtimeType}');
+          throw Exception('Invalid response format');
+        }
       } else {
         print('7. Failed with status: ${response.statusCode}');
-        throw Exception('Failed to load procedure details');
+        print('Response data: ${response.data}');
+        throw Exception('Failed to load procedure details: ${response.statusCode}');
       }
     } on DioException catch (e) {
       print('8. DioError: ${e.message}');

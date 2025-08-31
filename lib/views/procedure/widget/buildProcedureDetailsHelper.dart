@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
-
 import '../../../core/constants/app_colors.dart';
-import '../../../models/Implant_model.dart';
+import '../../../models/ImplantKit .dart';
 import '../../../models/kit_model.dart';
 import '../../../models/additionalTool_model.dart';
 import '../../../models/procedure_model.dart';
+import '../../../models/implant_model.dart';
+import '../../kits/Kits_Controller/kits_controller.dart';
 
 Widget buildHeaderCard(BuildContext context, bool isDarkMode, Color textColor, Procedure procedure) {
   return Card(
@@ -358,6 +361,121 @@ Widget buildToolItem(AdditionalTool tool,isDarkMode) {
         ),
       ),
 
+    ),
+  );
+}
+
+Widget buildImplantKitCard(ImplantKit implantKit, BuildContext context, bool isDarkMode) {
+  final KitsController _controller = Get.put(KitsController());
+
+  return Card(
+    elevation: 2,
+    margin: EdgeInsets.only(top: 10),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+      side: BorderSide(
+        color: isDarkMode ? Colors.grey[700]! : Colors.grey[400]!,
+        width: 2,
+      ),
+    ),
+    child: ExpansionTile(
+      iconColor: AppColors.lightGreen,
+      collapsedIconColor: AppColors.lightGreen,
+      leading: Icon(Icons.medical_services, color: AppColors.lightGreen),
+      title: Text(
+        _controller.getImplantNameByKitId(implantKit.implant.kitId ?? 0),
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontWeight: FontWeight.bold,
+          color: isDarkMode ? Colors.white : Colors.black,
+        ),
+      ),
+      subtitle: Text(
+        "${implantKit.implant.description}",
+        style: TextStyle(
+            color: AppColors.lightGreen,
+            fontFamily: 'Montserrat'
+        ),
+      ),
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // buildSectionTitle('Implant Details'),
+              // ListTile(
+              //   contentPadding: EdgeInsets.zero,
+              //   leading: Icon(Icons.medication, color: AppColors.primaryGreen),
+              //   title: Text(
+              //     implantKit.implant.brand ?? 'No Brand',
+              //     style: TextStyle(
+              //       fontFamily: 'Montserrat',
+              //       fontWeight: FontWeight.bold,
+              //     ),
+              //   ),
+              //   subtitle: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       if (implantKit.implant.description != null &&
+              //           implantKit.implant.description!.isNotEmpty)
+              //         Text(
+              //           implantKit.implant.description!,
+              //           style: TextStyle(
+              //             fontFamily: 'Montserrat',
+              //             color: Colors.grey[600],
+              //           ),
+              //         ),
+              //       SizedBox(height: 4),
+              //       Row(
+              //         children: [
+              //           Text(
+              //             'Size: ${implantKit.implant.width} x ${implantKit.implant.height}',
+              //             style: TextStyle(
+              //               fontFamily: 'Montserrat',
+              //               fontSize: 12,
+              //             ),
+              //           ),
+              //           SizedBox(width: 16),
+              //           Text(
+              //             'Qty: ${implantKit.implant.quantity}',
+              //             style: TextStyle(
+              //               fontFamily: 'Montserrat',
+              //               fontSize: 12,
+              //               fontWeight: FontWeight.bold,
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ],
+              //   ),
+              //   trailing: implantKit.implant.imagePath != null &&
+              //       implantKit.implant.imagePath!.isNotEmpty
+              //       ? Image.network(
+              //     implantKit.implant.imagePath!,
+              //     width: 50,
+              //     height: 50,
+              //     fit: BoxFit.cover,
+              //     errorBuilder: (context, error, stackTrace) {
+              //       return Icon(
+              //           Icons.image_not_supported,
+              //           size: 30,
+              //           color: Colors.grey
+              //       );
+              //     },
+              //   )
+              //       : null,
+              // ),
+              SizedBox(height: 10),
+              if (implantKit.toolsWithImplant.isNotEmpty) ...[
+                buildSectionTitle('Associated Tools (${implantKit.toolsWithImplant.length})'),
+                ...implantKit.toolsWithImplant.map((tool) => buildToolItem(tool, isDarkMode)),
+                SizedBox(height: 10),
+              ],
+            ],
+          ),
+        ),
+      ],
     ),
   );
 }

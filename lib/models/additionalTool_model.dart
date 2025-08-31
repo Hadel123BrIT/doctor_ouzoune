@@ -7,6 +7,7 @@ class AdditionalTool {
   final int? quantity;
   final int? kitId;
   final int? categoryId;
+  final String? imagePath;
 
   AdditionalTool({
     required this.id,
@@ -17,6 +18,7 @@ class AdditionalTool {
     required this.quantity,
     this.kitId,
     required this.categoryId,
+    required this.imagePath,
   });
 
   factory AdditionalTool.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class AdditionalTool {
       quantity: json['quantity'] as int? ?? 0,
       kitId: json['kitId'] as int?,
       categoryId: json['categoryId'] as int? ?? 0,
+      imagePath: json['imagePath'] as String?,
     );
   }
 
@@ -41,6 +44,7 @@ class AdditionalTool {
     'quantity': quantity,
     'kitId': kitId,
     'categoryId': categoryId,
+    'imagePath': imagePath,
   };
 
   factory AdditionalTool.empty() => AdditionalTool(
@@ -51,6 +55,7 @@ class AdditionalTool {
     thickness: 0,
     quantity: 0,
     kitId: null,
-    categoryId: null,
+    categoryId: 0,
+    imagePath: null,
   );
 }

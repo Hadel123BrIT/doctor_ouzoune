@@ -1,3 +1,4 @@
+// doctor_model.dart
 import 'clinic_model.dart';
 
 class Doctor {
@@ -8,6 +9,7 @@ class Doctor {
   final String? role;
   final Clinic? clinic;
   final double? rate;
+  final String? profileImagePath;
 
   Doctor({
     required this.id,
@@ -17,6 +19,7 @@ class Doctor {
     required this.role,
     this.clinic,
     this.rate,
+    this.profileImagePath,
   });
 
   factory Doctor.fromJson(Map<String, dynamic> json) {
@@ -28,6 +31,7 @@ class Doctor {
       role: json['role'] as String? ?? 'User',
       clinic: json['clinic'] != null ? Clinic.fromJson(json['clinic'] as Map<String, dynamic>) : null,
       rate: (json['rate'] as num?)?.toDouble(),
+      profileImagePath: json['profileImagePath'] as String?,
     );
   }
 }

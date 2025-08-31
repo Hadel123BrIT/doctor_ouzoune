@@ -1,8 +1,11 @@
-import 'dart:ui';
+// procedure_model.dart
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'ImplantKit .dart';
+import 'implant_model.dart';
+import 'additionalTool_model.dart';
 import 'assistant_model.dart';
 import 'doctor_model.dart';
-import 'additionalTool_model.dart';
 import 'kit_model.dart';
 
 class Procedure {
@@ -16,6 +19,7 @@ class Procedure {
   final Doctor doctor;
   final List<AdditionalTool> tools;
   final List<Kit> kits;
+  final List<ImplantKit> implantKits;
   final List<Assistant> assistants;
 
   Procedure({
@@ -29,38 +33,144 @@ class Procedure {
     required this.doctor,
     required this.tools,
     required this.kits,
+    required this.implantKits,
     required this.assistants,
   });
 
-
-
   factory Procedure.fromJson(Map<String, dynamic> json) {
-    return Procedure(
-      id: json['id'],
-      doctorId: json['doctorId'],
-      categoryId: json['categoryId'],
-      numberOfAssistants: json['numberOfAsisstants'] ?? 0,
-      status: json['status'],
-      date: DateTime.parse(json['date']),
-      doctor: Doctor.fromJson(json['doctor']),
-      tools: List<AdditionalTool>.from(
-          (json['requiredTools'] ?? []).map((x) => AdditionalTool.fromJson(x))),
+    try {
+      debugPrint('Parsing Procedure JSON - surgicalKits: ${json['surgicalKits']}');
+      debugPrint('Parsing Procedure JSON - implantKits: ${json['implantKits']}');
 
-      kits: [
-        ...(json['surgicalKits'] ?? []).map((x) => Kit.fromJson(x)),
-        ...(json['implantKits'] ?? []).map((x) => Kit.fromJson({
-          ...x,
-          'isImplantKit': true,
-        })),
-      ],
-      assistants: List<Assistant>.from(
-          (json['assistants'] ?? []).map((x) => Assistant.fromJson(x))),
-      assistantIds: (json['assistants'] as List<dynamic>?)
-          ?.map((a) => a['id'] as String)
-          .toList() ?? [],
-    );
+      // معالجة surgicalKits بشكل آمن
+      final surgicalKitsJson = json['surgicalKits'] as List<dynamic>? ?? [];
+      final List<Kit> surgicalKits = surgicalKitsJson.map((kitJson) {
+        if (kitJson is Map<String, dynamic>) {
+          return Kit.fromJson(kitJson);
+        } else {
+          debugPrint('Invalid surgical kit data: $kitJson');
+          return Kit(
+            id: 0,
+            name: 'Invalid Surgical Kit',
+            isMainKit: false,
+            implantCount: 0,
+            toolCount: 0,
+            implants: [],
+            tools: [],
+          );
+        }
+      }).toList();
+
+      // معالجة implantKits بشكل آمن
+      final implantKitsJson = json['implantKits'] as List<dynamic>? ?? [];
+      final List<ImplantKit> implantKits = implantKitsJson.map((implantKitJson) {
+        if (implantKitJson is Map<String, dynamic>) {
+          return ImplantKit.fromJson(implantKitJson);
+        } else {
+          debugPrint('Invalid implant kit data: $implantKitJson');
+          return ImplantKit(
+            implant: Implant(
+              id: 0,
+              radius: 0,
+              width: 0,
+              height: 0,
+              quantity: 0,
+              brand: 'Invalid Implant',
+              description: 'Invalid implant data',
+              imagePath: null,
+              kitId: 0,
+            ),
+            toolsWithImplant: [],
+          );
+        }
+      }).toList();
+
+      return Procedure(
+        id: json['id'] ?? 0,
+        doctorId: json['doctorId'] ?? '',
+        categoryId: json['categoryId'] ?? 0,
+        numberOfAssistants: json['numberOfAsisstants'] ?? 0,
+        status: json['status'] ?? 0,
+        date: DateTime.parse(json['date'] ?? DateTime.now().toString()),
+        doctor: Doctor.fromJson(json['doctor'] ?? {}),
+        tools: List<AdditionalTool>.from(
+            (json['requiredTools'] ?? []).map((x) {
+              if (x is Map<String, dynamic>) {
+                return AdditionalTool.fromJson(x);
+              } else {
+                debugPrint('Invalid tool data: $x');
+                return AdditionalTool(
+                  id: 0,
+                  name: 'Invalid Tool',
+                  width: 0,
+                  height: 0,
+                  thickness: 0,
+                  quantity: 0,
+                  kitId: 0,
+                  categoryId: 0,
+                  imagePath: null,
+                );
+              }
+            })),
+        kits: surgicalKits,
+        implantKits: implantKits,
+        assistants: List<Assistant>.from(
+            (json['assistants'] ?? []).map((x) {
+              if (x is Map<String, dynamic>) {
+                return Assistant.fromJson(x);
+              } else {
+                debugPrint('Invalid assistant data: $x');
+                return Assistant(
+                  id: '',
+                  userName: 'Invalid Assistant',
+                  email: '',
+                  phoneNumber: null,
+                  role: 'User',
+                  clinic: null,
+                  rate: 0,
+                );
+              }
+            })),
+        assistantIds: (json['assistants'] as List<dynamic>?)
+            ?.map((a) {
+          if (a is Map<String, dynamic>) {
+            return a['id'] as String? ?? '';
+          }
+          return '';
+        })
+            .where((id) => id.isNotEmpty)
+            .toList() ?? [],
+      );
+    } catch (e) {
+      debugPrint('Error parsing Procedure: $e');
+      debugPrint('Full JSON: $json');
+
+      // إرجاع procedure افتراضي في حالة الخطأ
+      return Procedure(
+        id: 0,
+        doctorId: '',
+        numberOfAssistants: 0,
+        assistantIds: [],
+        categoryId: 0,
+        status: 0,
+        date: DateTime.now(),
+        doctor: Doctor(
+          id: '',
+          userName: '',
+          email: '',
+          phoneNumber: '',
+          role: 'User',
+          clinic: null,
+          rate: 0,
+          profileImagePath: null,
+        ),
+        tools: [],
+        kits: [],
+        implantKits: [],
+        assistants: [],
+      );
+    }
   }
-
 
   String get statusText {
     switch (status) {

@@ -5,8 +5,11 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as dio;
 import 'package:ouzoun/routes/app_routes.dart';
 import '../../../core/services/api_services.dart';
+import '../../../models/ImplantKit .dart';
 import '../../../models/additionalTool_model.dart';
-import '../../../models/kit_model.dart';
+import '../../../models/assistant_model.dart';
+import '../../../models/doctor_model.dart';
+import '../../../models/implant_model.dart';
 import '../../../models/procedure_model.dart';
 import '../../kits/Kits_Controller/kits_controller.dart';
 
@@ -338,28 +341,102 @@ class ProcedureController extends GetxController {
 
 
   // get one procedure details
+  // procedure_controller.dart
   Future<void> fetchProcedureDetails(int procedureId) async {
     try {
       isLoading(true);
+      print('Fetching procedure details for ID: $procedureId');
+
       final response = await apiServices.getProcedureDetails(procedureId);
 
-      print('API Response: $response');
-
       if (response != null) {
-        selectedProcedure.value = Procedure.fromJson(response);
+        print('API Response received successfully');
 
-        // طباعة تفصيلية للبيانات
-        print('Procedure Details:');
-        print('- ID: ${selectedProcedure.value?.id}');
-        print('- AssisitancsId: ${selectedProcedure.value?.assistantIds}');
-        print('- Assistants: ${selectedProcedure.value?.assistants?.length ?? 0}');
-        print('- Tools: ${selectedProcedure.value?.tools?.length ?? 0}');
-        print('- Kits: ${selectedProcedure.value?.kits?.length ?? 0}');
+        try {
+          selectedProcedure.value = Procedure.fromJson(response);
+          print('Procedure parsed successfully');
+          print('- ID: ${selectedProcedure.value?.id}');
+          print('- ImplantKits: ${selectedProcedure.value?.implantKits.length}');
+          print('- SurgicalKits: ${selectedProcedure.value?.kits.length}');
+
+        } catch (e) {
+          print('Error parsing procedure: $e');
+          // إنشاء procedure افتراضي مع البيانات المتاحة
+          selectedProcedure.value = _createDefaultProcedure(response);
+        }
       }
     } catch (e) {
       print('Error fetching procedure: $e');
+      Get.snackbar('Error', 'Failed to load procedure details: ${e.toString()}');
     } finally {
       isLoading(false);
+    }
+  }
+
+  Procedure _createDefaultProcedure(Map<String, dynamic> json) {
+    try {
+      return Procedure(
+        id: json['id'] ?? 0,
+        doctorId: json['doctorId'] ?? '',
+        numberOfAssistants: json['numberOfAsisstants'] ?? 0,
+        assistantIds: [],
+        categoryId: json['categoryId'] ?? 0,
+        status: json['status'] ?? 0,
+        date: DateTime.parse(json['date'] ?? DateTime.now().toString()),
+        doctor: Doctor.fromJson(json['doctor'] ?? {}),
+        tools: [],
+        kits: [],
+        implantKits: (json['implantKits'] as List<dynamic>?)
+            ?.map((x) {
+          try {
+            return ImplantKit.fromJson(x as Map<String, dynamic>);
+          } catch (e) {
+            print('Error parsing implant kit in fallback: $e');
+            return ImplantKit(
+              implant: Implant(
+                id: 0,
+                radius: 0,
+                width: 0,
+                height: 0,
+                quantity: 0,
+                brand: 'Error',
+                description: 'Error parsing implant',
+                imagePath: null,
+                kitId: 0,
+              ),
+              toolsWithImplant: [],
+            );
+          }
+        })
+            .toList() ?? [],
+        assistants: List<Assistant>.from(
+            (json['assistants'] ?? []).map((x) => Assistant.fromJson(x ?? {}))),
+      );
+    } catch (e) {
+      print('Error in fallback procedure creation: $e');
+      return Procedure(
+        id: 0,
+        doctorId: '',
+        numberOfAssistants: 0,
+        assistantIds: [],
+        categoryId: 0,
+        status: 0,
+        date: DateTime.now(),
+        doctor: Doctor(
+          id: '',
+          userName: '',
+          email: '',
+          phoneNumber: '',
+          role: 'User',
+          clinic: null,
+          rate: 0,
+          profileImagePath: null,
+        ),
+        tools: [],
+        kits: [],
+        implantKits: [],
+        assistants: [],
+      );
     }
   }
 
