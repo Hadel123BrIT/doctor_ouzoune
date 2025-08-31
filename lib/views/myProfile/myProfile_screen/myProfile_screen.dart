@@ -4,6 +4,7 @@ import 'package:ouzoun/Widgets/custom_button.dart';
 import '../../../core/constants/app_colors.dart';
 import '../myProfile_controller/myProfile_controller.dart';
 import '../widget/buildProfileItem.dart';
+import 'EditProfileScreen .dart';
 
 class MyProfileScreen extends StatelessWidget {
   MyProfileScreen({super.key});
@@ -16,6 +17,7 @@ class MyProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.primaryGreen,
       body: Obx(() => Stack(
+        alignment: Alignment.topLeft,
         children: [
           Positioned(
             top: 0,
@@ -27,11 +29,7 @@ class MyProfileScreen extends StatelessWidget {
               child: Center(
                 child: Text(
                   'My Personal Profile',
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                  style: Theme.of(context).textTheme.titleSmall,
                 ),
               ),
             ),
@@ -41,7 +39,7 @@ class MyProfileScreen extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              height: context.height * 0.80,
+              height: context.height * 0.85,
               decoration: BoxDecoration(
                 color: isDarkMode ? AppColors.deepBlack : Colors.white,
                 borderRadius: const BorderRadius.only(
@@ -65,17 +63,12 @@ class MyProfileScreen extends StatelessWidget {
                       height: context.width * 0.35,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.grey[200],
-                        border: Border.all(
-                          color: AppColors.primaryGreen,
-                          width: 3,
-                        ),
-                        image: const DecorationImage(
-                          image: AssetImage('',
-                          ),
-                          fit: BoxFit.cover,
-                          scale: 5
-                        ),
+                        color: Colors.grey,
+
+                      ),
+                      child: Icon(Icons.person,
+                      color: Colors.grey[700],
+                      size:80 ,
                       ),
                     ),
                     SizedBox(height: context.height * 0.03),
@@ -104,23 +97,33 @@ class MyProfileScreen extends StatelessWidget {
                             value: controller.phoneNumber.value,
                           ),
                           SizedBox(height: 10),
+                          buildProfileItem(
+                            context,
+                            icon: Icons.location_pin,
+                            title: 'Location',
+                            value: controller.isConvertingAddress.value
+                                ? 'Loading address...'
+                                : controller.location.value,
+                          ),
                           SizedBox(height: 10),
                           buildProfileItem(
                             context,
-                            icon: Icons.business,
+                            icon: Icons.medical_services_rounded,
                             title: 'Clinic Name',
                             value: controller.clinicName.value,
                           ),
                           SizedBox(height: 10),
                           buildProfileItem(
                             context,
-                            icon: Icons.location_on,
+                            icon: Icons.business_sharp,
                             title: 'Clinic Address',
                             value: controller.clinicAddress.value,
                           ),
                           SizedBox(height: context.height * 0.03),
                           CustomButton(
-                            onTap: controller.updateProfile,
+                            onTap:  (){
+                              Get.to(EditProfileScreen());
+                            },
                             text: "Update my profile",
                             color: AppColors.primaryGreen,
                           ),

@@ -1,6 +1,8 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart' hide Response;
+import 'package:get/get.dart' hide Response, FormData, MultipartFile;
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as dio;
@@ -376,11 +378,9 @@ static const String baseUrl="http://ouzon.somee.com/api";
         print("Profile data fetched successfully");
         print(response.data);
 
-        // تأكد أن البيانات هي Map<String, dynamic>
         if (response.data is Map<String, dynamic>) {
           return response.data;
         } else {
-          // إذا كانت البيانات ليست بالصيغة المتوقعة
           throw Exception('Invalid response format');
         }
       } else {
@@ -401,21 +401,46 @@ static const String baseUrl="http://ouzon.somee.com/api";
 
 
 
-
-
-
-
   // update my profile
-  Future<Map<String, dynamic>> updateMyProfile(Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> updateMyProfile({
+    required Map<String, dynamic> data,
+    File? profileImageFile,
+  }) async {
     try {
       final token = GetStorage().read('auth_token');
+
+      // إنشاء FormData بدلاً من JSON
+      final formData = FormData.fromMap({
+        'id': data['id'],
+        'userName': data['userName'],
+        'email': data['email'],
+        'phoneNumber': data['phoneNumber'],
+        'role': data['role'],
+        'rate': data['rate'].toString(),
+        'clinic[id]': data['clinic']['id'].toString(),
+        'clinic[name]': data['clinic']['name'],
+        'clinic[address]': data['clinic']['address'],
+        'clinic[longtitude]': data['clinic']['longtitude'].toString(),
+        'clinic[latitude]': data['clinic']['latitude'].toString(),
+      });
+
+      if (profileImageFile != null) {
+        formData.files.add(MapEntry(
+          'profileImage',
+          await MultipartFile.fromFile(
+            profileImageFile.path,
+            filename: 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg',
+          ),
+        ));
+      }
+
       final response = await dio.put(
-        '$baseUrl/api/Account/update-profile',
-        data: data,
+        '$baseUrl/users/UpdateCurrentUserProfile',
+        data: formData,
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data',
           },
         ),
       );
@@ -423,18 +448,11 @@ static const String baseUrl="http://ouzon.somee.com/api";
       if (response.statusCode == 200) {
         return response.data;
       }
-      throw Exception('Failed to update profile');
+      throw Exception('Failed to update profile: ${response.statusCode}');
     } on DioException catch (e) {
-      throw Exception('Error: ${e.message}');
+      throw Exception('Error updating profile: ${e.message}');
     }
   }
-
-
-
-
-
-
-
 
 
   // getAdditionalTools
