@@ -109,6 +109,17 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
             ),
+            Padding(
+              padding: EdgeInsets.only(top: context.height * 0.03),
+              child: SizedBox(
+                width: double.infinity,
+                child: CustomButton(
+                  onTap: deleteAccount,
+                  text: 'Delete account'.tr,
+                  color: Colors.red,
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -408,8 +408,6 @@ static const String baseUrl="http://ouzon.somee.com/api";
   }) async {
     try {
       final token = GetStorage().read('auth_token');
-
-      // إنشاء FormData بدلاً من JSON
       final formData = FormData.fromMap({
         'id': data['id'],
         'userName': data['userName'],
@@ -480,13 +478,6 @@ static const String baseUrl="http://ouzon.somee.com/api";
       throw Exception('Failed to load tools: ${e.message}');
     }
   }
-
-
-
-
-
-
-
 
 
 
@@ -746,7 +737,33 @@ static const String baseUrl="http://ouzon.somee.com/api";
   }
 
 
+  Future<Response> deleteCurrentUserAccount() async {
+    try {
+      final token = GetStorage().read('auth_token');
 
+      if (token == null) {
+        throw Exception('No authentication token found');
+      }
+
+      final response = await dio.delete(
+        '$baseUrl/users/DeleteCurrentUserAccount',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        return e.response!;
+      } else {
+        throw Exception('Failed to connect to the server: ${e.message}');
+      }
+    }
+  }
 
 
 

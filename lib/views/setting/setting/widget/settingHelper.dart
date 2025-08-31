@@ -1,10 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../../../../Core/Services/media_query_service.dart';
+import '../../../../Routes/app_routes.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/services/api_services.dart';
 import '../../../../core/services/services.dart';
 import '../../../login/login_screen.dart';
 import '../../../myProfile/myProfile_controller/myProfile_controller.dart';
@@ -212,5 +215,115 @@ Future<void> logout(BuildContext context) async {
         colorText: Colors.white,
       );
     }
+  }
+}
+
+// في ملف setting_helper.dart
+Future<void> deleteAccount() async {
+  final ApiServices apiServices = Get.find<ApiServices>();
+  final GetStorage box = GetStorage();
+
+  try {
+    bool confirmDelete = await showDialog(
+      context: Get.context!,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Deletion'.tr),
+          content: Text('Are you sure you want to delete your account? This action cannot be undone.'.tr),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('Cancel'.tr),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text('Delete'.tr, style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmDelete != true) return;
+    final response = await apiServices.deleteCurrentUserAccount();
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      await box.erase();
+
+      Get.offAllNamed(AppRoutes.register);
+
+      Get.snackbar(
+        'Success'.tr,
+        'Account deleted successfully'.tr,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+      );
+    } else {
+      String errorMessage = 'Failed to delete account';
+
+      if (response.statusCode == 400) {
+        errorMessage = 'Bad request - Please check your information';
+      } else if (response.statusCode == 401) {
+        errorMessage = 'Unauthorized - Please login again';
+      } else if (response.statusCode == 403) {
+        errorMessage = 'Forbidden - You don\'t have permission';
+      } else if (response.statusCode == 404) {
+        errorMessage = 'Account not found';
+      } else if (response.statusCode! >= 500) {
+        errorMessage = 'Server error - Please try again later';
+      }
+
+      if (response.data != null) {
+        if (response.data is Map) {
+          final errorData = response.data as Map<String, dynamic>;
+          errorMessage = errorData['message']?.toString() ??
+              errorData['error']?.toString() ??
+              errorMessage;
+        } else if (response.data is String) {
+          errorMessage = response.data;
+        }
+      }
+
+      Get.snackbar(
+        'Error'.tr,
+        errorMessage.tr,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  } on DioException catch (e) {
+    String errorMessage = 'An error occurred while trying to delete your account';
+
+    if (e.response != null) {
+      errorMessage = 'Failed to delete account: ${e.response?.statusCode}';
+
+      if (e.response?.data != null) {
+        if (e.response?.data is Map) {
+          final errorData = e.response?.data as Map<String, dynamic>;
+          errorMessage = errorData['message']?.toString() ??
+              errorData['error']?.toString() ??
+              errorMessage;
+        } else if (e.response?.data is String) {
+          errorMessage = e.response?.data;
+        }
+      }
+    } else {
+      errorMessage = 'Connection error: ${e.message}';
+    }
+
+    Get.snackbar(
+      'Error'.tr,
+      errorMessage.tr,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+  } catch (e) {
+    Get.snackbar(
+      'Error'.tr,
+      'An unexpected error occurred: $e'.tr,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
   }
 }

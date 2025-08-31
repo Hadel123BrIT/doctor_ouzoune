@@ -44,6 +44,8 @@ Widget buildProfileItem(BuildContext context, {
               ),
               SizedBox(height: context.height * 0.005),
               Text(
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 value,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
