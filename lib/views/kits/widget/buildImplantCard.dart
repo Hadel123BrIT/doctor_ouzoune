@@ -60,9 +60,16 @@ Widget BuildImplantCard(BuildContext context, Implant implant) {
                       decoration: BoxDecoration(
                         color: AppColors.primaryGreen,
                         borderRadius: BorderRadius.circular(10),
-                        image: DecorationImage(
-                          image: AssetImage(implant.imagePath!),
-                          fit: BoxFit.contain,
+                      ),
+                      child: (implant.imagePath != null && implant.imagePath!.isNotEmpty)?
+                      Image.network(
+                        implant.imagePath!,):
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color:AppColors.primaryGreen,
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                     ),

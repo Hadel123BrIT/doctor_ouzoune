@@ -34,7 +34,8 @@ class BuildToolCard extends StatelessWidget {
                 color: AppColors.primaryGreen.withOpacity(0.1),
               ),
               child:  (tool.imagePath != null && tool.imagePath!.isNotEmpty)?Image.network(
-                  tool.imagePath!,):    Container(
+                  tool.imagePath!,):
+              Container(
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
