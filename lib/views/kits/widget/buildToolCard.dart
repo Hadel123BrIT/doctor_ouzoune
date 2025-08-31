@@ -26,7 +26,6 @@ class BuildToolCard extends StatelessWidget {
         padding: EdgeInsets.all(12),
         child: Row(
           children: [
-            //images
             Container(
               width: 80,
               height: 80,
