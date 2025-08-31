@@ -16,8 +16,8 @@ class ApiServices  {
 final Dio dio=Dio();
 static const String baseUrl="http://ouzon.somee.com/api";
 
-// RegisterUser
-  Future<Response> registerUser({
+// RegisterUser with image
+  Future<Response> registerUserWithImage({
     required String userName,
     required String email,
     required String phoneNumber,
@@ -26,25 +26,38 @@ static const String baseUrl="http://ouzon.somee.com/api";
     required String address,
     required double longitude,
     required double latitude,
+    File? profileImage,
     String? deviceToken,
     String role = 'User',
   }) async {
     try {
+      final formData = FormData.fromMap({
+        "userName": userName,
+        'email': email,
+        'password': password,
+        'phoneNumber': phoneNumber,
+        'clinicName': clinicName,
+        'address': address,
+        "longtitude": longitude.toString(),
+        'latitude': latitude.toString(),
+        "role": role,
+        if (deviceToken != null) 'deviceToken': deviceToken,
+      });
+      if (profileImage != null) {
+        formData.files.add(MapEntry(
+          'profileImage',
+          await MultipartFile.fromFile(
+            profileImage.path,
+            filename: 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg',
+          ),
+        ));
+      }
+
       final response = await dio.post(
         "$baseUrl/users/register",
-        data: {
-          "userName": userName,
-          'email': email,
-          'password': password,
-          'phoneNumber': phoneNumber,
-          'clinicName': clinicName,
-          'address': address,
-          "longtitude": longitude,
-          'latitude': latitude,
-          "role": role,
-          'deviceToken': deviceToken,
-        },
+        data: formData,
         options: Options(
+          contentType: 'multipart/form-data',
           receiveTimeout: Duration(seconds: 30),
           sendTimeout: Duration(seconds: 30),
         ),

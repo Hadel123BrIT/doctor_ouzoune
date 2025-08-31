@@ -47,6 +47,52 @@ class RegisterHelpers {
     );
   }
 
+  static Widget buildImagePicker(BuildContext context, RegisterController controller) {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: controller.pickImage,
+          child: Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey[300],
+              border: Border.all(color: Colors.green, width: 2),
+            ),
+            child: controller.selectedImage.value != null
+                ? ClipOval(
+              child: Image.file(
+                controller.selectedImage.value!,
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
+            )
+                : Icon(
+              Icons.camera_alt,
+              size: 40,
+              color: Colors.grey[600],
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+        Text(
+          controller.selectedImage.value != null
+              ? 'Change Profile Picture'.tr
+              : 'Add Profile Picture'.tr,
+          style: TextStyle(color: Colors.grey[600]),
+        ),
+        if (controller.selectedImage.value != null)
+          Text(
+            'Image selected'.tr,
+            style: TextStyle(color: Colors.green, fontSize: 12),
+          ),
+      ],
+    );
+  }
+
+
   static Widget buildNameField( TextEditingController controller) {
     return CustomTextFormField(
       prefixIcon: Icon(Icons.person,
