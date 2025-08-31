@@ -63,7 +63,7 @@ class ImplantDetailScreen extends StatelessWidget {
                               width: context.width * 0.4,
                               height: context.width * 0.4,
                               decoration: BoxDecoration(
-                                color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                               // color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
@@ -72,9 +72,16 @@ class ImplantDetailScreen extends StatelessWidget {
                                     spreadRadius: 2,
                                   )
                                 ],
-                                image: DecorationImage(
-                                  image: AssetImage(implant.imagePath!),
-                                  fit: BoxFit.contain,
+                              ),
+                              child: (implant.imagePath != null && implant.imagePath!.isNotEmpty)?
+                              Image.network(
+                                implant.imagePath!,):
+                              Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  color:AppColors.primaryGreen,
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
                             ),
