@@ -171,14 +171,27 @@ class NotificationsScreen extends StatelessWidget {
           color: isRead ? Colors.grey : AppColors.primaryGreen,
           size: 35,
         ),
-        title: Text(
-          notification['title'],
-          style: TextStyle(
-            fontSize: 17.5,
-            fontFamily: 'Montserrat',
-            fontWeight: isRead ? FontWeight.normal : FontWeight.bold,
-            color: isRead ? Colors.grey[600] : null,
-          ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              notification['title'],
+              style: TextStyle(
+                fontSize: 17.5,
+                fontFamily: 'Montserrat',
+                fontWeight: isRead ? FontWeight.normal : FontWeight.bold,
+                color: isRead ? Colors.grey[600] : null,
+              ),
+            ),
+            Text(
+              _formatTime(notification['createdAt']),
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[500],
+                fontFamily: 'Montserrat',
+              ),
+            ),
+          ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,32 +204,10 @@ class NotificationsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
-            Text(
-              _formatTime(notification['createdAt']),
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[500],
-                fontFamily: 'Montserrat',
-              ),
-            ),
+
           ],
         ),
-        trailing: !isRead
-            ? Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            color: AppColors.primaryGreen,
-            shape: BoxShape.circle,
-          ),
-        )
-            : null,
-        onTap: () {
-          if (!isRead) {
-            final NotificationController controller = Get.find();
-            controller.markAsRead(notification['id']);
-          }
-        },
+
       ),
     );
   }

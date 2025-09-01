@@ -45,7 +45,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
       });
       if (profileImage != null) {
         formData.files.add(MapEntry(
-          'profileImage',
+          'ProfilePicture',
           await MultipartFile.fromFile(
             profileImage.path,
             filename: 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg',
