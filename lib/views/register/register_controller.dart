@@ -27,6 +27,7 @@ class RegisterController extends GetxController {
   final FirebaseServices _firebaseService = Get.put(FirebaseServices());
 
   void updateLocation(LatLng coords, String address) {
+    print(coords);
     selectedLocation.value = coords;
     locationController.text = address;
   }
@@ -49,6 +50,7 @@ class RegisterController extends GetxController {
     }
   }
 
+
   Future<void> register() async {
     if (!formKey.currentState!.validate()) {
       Get.snackbar('Error'.tr, 'Please fill all fields correctly'.tr);
@@ -63,6 +65,17 @@ class RegisterController extends GetxController {
     if (passwordController.text.length < 8) {
       Get.snackbar('Error'.tr, 'Password must be at least 8 characters'.tr);
       return;
+    }
+
+    if (selectedImage.value != null) {
+      final allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
+      final filePath = selectedImage.value!.path.toLowerCase();
+      final hasValidExtension = allowedExtensions.any((ext) => filePath.endsWith(ext));
+
+      if (!hasValidExtension) {
+        Get.snackbar('Error'.tr, 'Only .jpg, .png, .webp, .jpeg are allowed'.tr);
+        return;
+      }
     }
 
     isLoading(true);
@@ -80,8 +93,11 @@ class RegisterController extends GetxController {
         longitude: selectedLocation.value!.longitude,
         latitude: selectedLocation.value!.latitude,
         deviceToken: deviceToken,
-        profileImage: selectedImage.value,
+        ProfilePicture: selectedImage.value,
       );
+
+      print('Registration Response: ${response.statusCode}');
+      print('Registration Data: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.offAllNamed(AppRoutes.homepage);
@@ -92,41 +108,73 @@ class RegisterController extends GetxController {
     } on DioException catch (e) {
       _handleDioError(e);
     } catch (e) {
-      errorMessage('An error occurred: ${e.toString()}'.tr);
-      Get.snackbar('Error'.tr, errorMessage.value);
       print('General Error: ${e.toString()}');
+      print('Error Type: ${e.runtimeType}');
+      errorMessage('An unexpected error occurred'.tr);
+      Get.snackbar('Error'.tr, errorMessage.value);
     } finally {
       isLoading(false);
     }
   }
-
   void _handleRegistrationError(Response response) {
     final errorData = response.data;
-    if (errorData is List && errorData.isNotEmpty) {
-      errorMessage(errorData[0]['description'] ?? 'Registration failed'.tr);
-    } else if (errorData is Map) {
-      errorMessage(errorData['message'] ?? 'Registration failed'.tr);
-    } else {
+    print('Error Response Data: $errorData');
+    print('Error Status Code: ${response.statusCode}');
+
+    try {
+      if (errorData is List) {
+        if (errorData.isNotEmpty && errorData[0] is Map) {
+          errorMessage(errorData[0]['description'] ?? 'Registration failed'.tr);
+        } else {
+          errorMessage('Registration failed'.tr);
+        }
+      } else if (errorData is Map) {
+        errorMessage(errorData['message'] ?? 'Registration failed'.tr);
+      } else if (errorData is String) {
+        errorMessage(errorData);
+      } else {
+        errorMessage('Registration failed: ${response.statusCode}'.tr);
+      }
+    } catch (e) {
+      print('Error parsing error response: $e');
       errorMessage('Registration failed'.tr);
     }
+
     Get.snackbar('Error'.tr, errorMessage.value);
   }
 
   void _handleDioError(DioException e) {
-    if (e.response != null) {
-      final errorData = e.response?.data;
-      if (errorData is List && errorData.isNotEmpty) {
-        errorMessage(errorData[0]['description'] ?? e.message ?? 'Registration failed'.tr);
+    print('Dio Error: ${e.toString()}');
+    print('Dio Response: ${e.response?.data}');
+    print('Dio Status Code: ${e.response?.statusCode}');
+
+    try {
+      if (e.response != null) {
+        final errorData = e.response?.data;
+
+        if (errorData is List) {
+          if (errorData.isNotEmpty && errorData[0] is Map) {
+            errorMessage(errorData[0]['description'] ?? e.message ?? 'Registration failed'.tr);
+          } else {
+            errorMessage(e.message ?? 'Registration failed'.tr);
+          }
+        } else if (errorData is Map) {
+          errorMessage(errorData['message'] ?? e.message ?? 'Registration failed'.tr);
+        } else if (errorData is String) {
+          errorMessage(errorData);
+        } else {
+          errorMessage(e.message ?? 'Registration failed'.tr);
+        }
       } else {
         errorMessage(e.message ?? 'Registration failed'.tr);
       }
-    } else {
-      errorMessage(e.message ?? 'Registration failed'.tr);
+    } catch (e) {
+      print('Error parsing dio error: $e');
+      errorMessage('Registration failed'.tr);
     }
-    Get.snackbar('Error'.tr, errorMessage.value);
-    print('Dio Error: ${e.toString()}');
-  }
 
+    Get.snackbar('Error'.tr, errorMessage.value);
+  }
   @override
   void onClose() {
     nameController.dispose();

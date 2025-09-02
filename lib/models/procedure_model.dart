@@ -14,7 +14,7 @@ class Procedure {
   final int numberOfAssistants;
   final List<String> assistantIds;
   final int categoryId;
-  late final int status;
+    int status;
   final DateTime date;
   final Doctor doctor;
   final List<AdditionalTool> tools;
@@ -41,8 +41,6 @@ class Procedure {
     try {
       debugPrint('Parsing Procedure JSON - surgicalKits: ${json['surgicalKits']}');
       debugPrint('Parsing Procedure JSON - implantKits: ${json['implantKits']}');
-
-      // معالجة surgicalKits بشكل آمن
       final surgicalKitsJson = json['surgicalKits'] as List<dynamic>? ?? [];
       final List<Kit> surgicalKits = surgicalKitsJson.map((kitJson) {
         if (kitJson is Map<String, dynamic>) {
@@ -61,7 +59,6 @@ class Procedure {
         }
       }).toList();
 
-      // معالجة implantKits بشكل آمن
       final implantKitsJson = json['implantKits'] as List<dynamic>? ?? [];
       final List<ImplantKit> implantKits = implantKitsJson.map((implantKitJson) {
         if (implantKitJson is Map<String, dynamic>) {
@@ -145,7 +142,6 @@ class Procedure {
       debugPrint('Error parsing Procedure: $e');
       debugPrint('Full JSON: $json');
 
-      // إرجاع procedure افتراضي في حالة الخطأ
       return Procedure(
         id: 0,
         doctorId: '',

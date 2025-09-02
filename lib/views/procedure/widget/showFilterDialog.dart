@@ -26,23 +26,23 @@ void showFilterDialog(BuildContext context) {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(height: 10),
-              TextField(
-                cursorColor: AppColors.primaryBlue,
-                decoration: InputDecoration(
-                  hintText: 'Search by assistance name...',
-                  hintStyle: TextStyle(fontFamily: 'Montserrat',
-                    fontSize: 14,
-                  ),
-                  border: border,
-                  enabledBorder: border,
-                  focusedBorder: border.copyWith(
-                    borderSide: BorderSide(color: AppColors.primaryGreen),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                ),
-                onChanged: (value) => controller.searchQuery.value = value,
-              ),
+              // SizedBox(height: 10),
+              // TextField(
+              //   cursorColor: AppColors.primaryBlue,
+              //   decoration: InputDecoration(
+              //     hintText: 'Search by assistance name...',
+              //     hintStyle: TextStyle(fontFamily: 'Montserrat',
+              //       fontSize: 14,
+              //     ),
+              //     border: border,
+              //     enabledBorder: border,
+              //     focusedBorder: border.copyWith(
+              //       borderSide: BorderSide(color: AppColors.primaryGreen),
+              //     ),
+              //     contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              //   ),
+              //   onChanged: (value) => controller.searchQuery.value = value,
+              // ),
               SizedBox(height: 14),
               TextField(
                 cursorColor: AppColors.primaryGreen,

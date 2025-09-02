@@ -341,7 +341,6 @@ class ProcedureController extends GetxController {
 
 
   // get one procedure details
-  // procedure_controller.dart
   Future<void> fetchProcedureDetails(int procedureId) async {
     try {
       isLoading(true);
@@ -440,7 +439,6 @@ class ProcedureController extends GetxController {
     }
   }
 
-  //---------------------------------------------------------------------
 
   List<Procedure> get filteredProcedures {
     return proceduresList.where((procedure) {
@@ -459,7 +457,7 @@ class ProcedureController extends GetxController {
   }
 
 
-  //-------------------------------------------------------------
+
 
   //Update the list
   void updateItemsPerPage(int value) {
@@ -467,7 +465,6 @@ class ProcedureController extends GetxController {
     fetchProceduresPaged();
   }
 
-  //--------------------------------------------------------------
   void resetFilters() {
     searchQuery.value = '';
     clinicNameFilter.value = '';
@@ -509,25 +506,23 @@ class ProcedureController extends GetxController {
           'Procedure status updated successfully'.tr,
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
         );
       } else {
         throw Exception('Failed to change status: ${response.statusCode}');
       }
     } on DioException catch (e) {
+      print('-------------------------------Dio Error: ${e.message}');
+      print('-------------------------------Response: ${e.response?.data}');
       Get.snackbar(
         'Error'.tr,
-        'Failed to update procedure status: ${e.response?.data ?? e.message}'.tr,
+        '-------------------------------------Failed to update procedure status: ${e.response?.data ?? e.message}'.tr,
         backgroundColor: Colors.red,
         colorText: Colors.white,
-      );
-    } catch (e) {
-      Get.snackbar(
-        'Error'.tr,
-        'An unexpected error occurred: ${e.toString()}'.tr,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
       );
     }
+    resetFilters();
   }
 
   @override

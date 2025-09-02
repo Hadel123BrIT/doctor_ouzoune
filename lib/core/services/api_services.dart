@@ -26,7 +26,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
     required String address,
     required double longitude,
     required double latitude,
-    File? profileImage,
+    File? ProfilePicture,
     String? deviceToken,
     String role = 'User',
   }) async {
@@ -43,12 +43,12 @@ static const String baseUrl="http://ouzon.somee.com/api";
         "role": role,
         if (deviceToken != null) 'deviceToken': deviceToken,
       });
-      if (profileImage != null) {
+      if (ProfilePicture!= null) {
         formData.files.add(MapEntry(
           'ProfilePicture',
           await MultipartFile.fromFile(
-            profileImage.path,
-            filename: 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg',
+            ProfilePicture.path,
+            filename: 'profile_${DateTime.now().millisecondsSinceEpoch}',
           ),
         ));
       }
@@ -62,9 +62,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
           sendTimeout: Duration(seconds: 30),
         ),
       );
-
       print("Response Status: ${response.statusCode}");
-      print("Response Data: ${response.data}");
       return response;
     } on DioException catch (e) {
       print("Dio Error: ${e.message}");
@@ -100,15 +98,21 @@ static const String baseUrl="http://ouzon.somee.com/api";
     ),
     );
     print("--------------------------------login");
-    print(response.data);
+    print("Response Status: ${response.statusCode}");
+    print("Response Data: ${response.data}");
     return response;
   }
-  on DioException catch(e){
+  on DioException catch (e) {
+    print("Dio Error: ${e.message}");
     if (e.response != null) {
+      print("Error Response Data: ${e.response?.data}");
+      print("Error Status Code: ${e.response?.statusCode}");
       return e.response!;
-    } else {
-      throw Exception('Failed to connect to the server: ${e.message}');
     }
+    throw Exception('Failed to connect to the server: ${e.message}');
+  } catch (e) {
+    print("General Error: $e");
+    throw Exception('An unexpected error occurred: $e');
   }
 }
 

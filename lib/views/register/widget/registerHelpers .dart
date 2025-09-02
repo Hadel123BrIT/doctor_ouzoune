@@ -237,6 +237,7 @@ class RegisterHelpers {
     return Obx(
           () => CustomButton(
         onTap: () async {
+          print(controller.locationController.text);
           if (controller.isLoading.value) return;
            // if (controller.formKey.currentState?.validate() ?? false) {
              await controller.register();
