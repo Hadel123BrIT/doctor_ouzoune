@@ -165,12 +165,33 @@ Widget buildToolsList(List<AdditionalTool> tools, bool isDarkMode) {
   }
 
   return Card(
-    elevation: 2,
+      elevation: 2,
+      margin: EdgeInsets.only(top: 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: isDarkMode ? Colors.grey[700]! : Colors.grey[400]!,
+          width: 2,
+        ),
+      ),
     child: Column(
       children: tools.map((tool) => ListTile(
         leading: Icon(Icons.build, color: AppColors.primaryGreen),
-        title: Text(tool.name ?? 'Unnamed Tool'),
-        subtitle: Text('Qty: ${tool.quantity}'),
+        title: Text(tool.name ?? 'Unnamed Tool',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            color: isDarkMode ? Colors.white : Colors.black,
+          ),
+        ),
+        trailing: Text('Qty: ${tool.quantity}',
+          style: TextStyle(
+            fontSize: 13,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+            color: Colors.grey,
+          ),
+        ),
+
       )).toList(),
     ),
   );
@@ -205,7 +226,7 @@ Widget buildSurgicalKitCard(Kit kit, BuildContext context, bool isDarkMode) {
         kit.name,
         style: TextStyle(
           fontFamily: 'Montserrat',
-          fontWeight: FontWeight.bold,
+
           color: isDarkMode ? Colors.white : Colors.black,
         ),
       ),
@@ -324,7 +345,7 @@ Widget buildImplantItem(Implant implant, bool isDarkMode) {
       leading: Icon(Icons.medication, color: AppColors.primaryGreen),
       title: Text(
         implant.brand ?? 'Unknown brand',
-        style: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold),
+        style: TextStyle(fontFamily: 'Montserrat',),
       ),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -363,14 +384,16 @@ Widget buildToolItem(AdditionalTool tool,isDarkMode) {
       leading: Icon(Icons.build, color: AppColors.primaryGreen),
       title: Text(
         tool.name!,
-        style: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold),
+        style: TextStyle(fontFamily: 'Montserrat',),
       ),
-      subtitle:  Text(
-        'Quantity: ${tool.quantity}',
+      trailing:Text(
+        'Qty: ${tool.quantity}',
         style: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold,
-        color: Colors.grey
+            fontSize: 13,
+            color: Colors.grey
         ),
       ),
+
 
     ),
   );
@@ -397,7 +420,7 @@ Widget buildImplantKitCard(ImplantKit implantKit, BuildContext context, bool isD
         _controller.getImplantNameByKitId(implantKit.implant.kitId ?? 0),
         style: TextStyle(
           fontFamily: 'Montserrat',
-          fontWeight: FontWeight.bold,
+
           color: isDarkMode ? Colors.white : Colors.black,
         ),
       ),

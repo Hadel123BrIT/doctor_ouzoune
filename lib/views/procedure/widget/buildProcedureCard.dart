@@ -124,13 +124,14 @@ Widget buildProcedureCard(Procedure procedure, BuildContext context) {
               ),
             ),
             SizedBox(height: 8),
-            // Text(
-            //   'Assistants Name: ${procedure.assistants[i].userName ?? 0}',
-            //   style: TextStyle(
-            //     fontFamily: "Montserrat",
-            //     fontSize: 15,
-            //   ),
-            // ),
+            if (procedure.assistants != null && procedure.assistants!.isNotEmpty)
+              Text(
+                'Assistants Names : ${procedure.assistants!.map((a) => a.userName).join(', ')}',
+                style: TextStyle(
+                  fontFamily: "Montserrat",
+                  fontSize: 15,
+                ),
+              ),
             SizedBox(height: 16),
             Obx(() {
               if (controller.isLoading.value) {
