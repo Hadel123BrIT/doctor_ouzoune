@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:ouzoun/views/homePage/homePage_screen/homePage_screen.dart';
 import 'package:ouzoun/views/myProfile/myProfile_screen/myProfile_screen.dart';
+import 'package:ouzoun/views/rate/rate_screen/rate_screen.dart';
 import '../Core/Services/media_query_service.dart';
 import '../Models/draw_item_model.dart';
 import '../Routes/app_routes.dart';
@@ -12,6 +13,8 @@ import '../core/constants/app_colors.dart';
 import '../core/constants/app_images.dart';
 import '../core/services/services.dart';
 import '../views/about_us/about_us_screen.dart';
+import '../views/notification/notification_screen/notification_screen.dart';
+import '../views/procedure/procedure_screen/get_all_procedures.dart';
 import '../views/setting/setting/setting_screen.dart';
 import 'custom_view_item_list.dart';
 
@@ -28,15 +31,18 @@ class _CustomDrawerState extends State<CustomDrawer> with SingleTickerProviderSt
     DrawItemModel(text: 'HOMEPAGE', icon: Icons.home, function: (){
       Get.to(HomePageScreen());
     }, ),
-    DrawItemModel(text: 'MYPROFILE', icon: Icons.person,function: (){
+    DrawItemModel(text: 'NOTIFICATION', icon: Icons.notifications_active, function: (){
+      Get.to(NotificationsScreen());
+    }, ),
+    DrawItemModel(text: 'MY PROFILE', icon: Icons.person,function: (){
       Get.to(MyProfileScreen());
     }),
-    DrawItemModel(text: 'MYORDER', icon: Icons.receipt_long,function: (){
-
+    DrawItemModel(text: 'MY ORDER', icon: Icons.receipt_long,function: (){
+      Get.to(ProceduresScreen());
     }),
-    // DrawItemModel(text: 'ABOUT US', icon: Icons.info,function: (){
-    //   Get.to(AboutUsScreen());
-    // }),
+    DrawItemModel(text: 'RATING', icon: Icons.star_rate_sharp,function: (){
+      Get.to(RateScreen());
+    }),
 
     DrawItemModel(text: 'SETTING', icon: Icons.settings,function: (){
       Get.to(SettingsScreen());

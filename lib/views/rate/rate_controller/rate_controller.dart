@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import '../../../Routes/app_routes.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/services/api_services.dart';
+import '../../../widgets/CustomSnackbar .dart';
 
 class RateController extends GetxController {
   final ApiServices apiServices = Get.put(ApiServices());
@@ -14,14 +15,13 @@ class RateController extends GetxController {
   final assistantsList = <Map<String, dynamic>>[].obs;
   final rate = 0.obs;
   final isLoading = false.obs;
+  final hasNoAssistants = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     loadAssistants();
   }
-
-
 
   void selectAssistant(String id, String name) {
     assistantId.value = id;
@@ -30,18 +30,23 @@ class RateController extends GetxController {
 
   Future<void> submitRating() async {
     if (assistantId.value.isEmpty) {
-      Get.snackbar('Error', 'Please select an assistant');
+      CustomSnackbar.error(message: 'Please select an assistant');
       return;
     }
 
     if (rate.value == 0) {
-      Get.snackbar('Error', 'Please select a rating');
+      CustomSnackbar.error(message: 'Please select a rating');
       return;
     }
 
     try {
       isLoading.value = true;
       final token = GetStorage().read('auth_token');
+
+      if (token == null) {
+        CustomSnackbar.error(message: 'Please login again');
+        return;
+      }
 
       final response = await apiServices.submitRating(
         note: noteController.text,
@@ -52,7 +57,7 @@ class RateController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.back();
-        Get.snackbar('Success', 'Rating submitted successfully');
+        CustomSnackbar.success(message: 'Rating submitted successfully');
         noteController.clear();
         rate.value = 0;
         assistantId.value = '';
@@ -61,10 +66,10 @@ class RateController extends GetxController {
       }
     } on DioException catch (e) {
       print('Dio Error: ${e.message}');
-      Get.snackbar('Error', 'Failed to submit rating: ${e.message}');
+      CustomSnackbar.error(message: 'Failed to submit rating: ${e.message}');
     } catch (e) {
       print('Unexpected Error: $e');
-      Get.snackbar('Error', 'An unexpected error occurred: ${e.toString()}');
+      CustomSnackbar.error(message: 'An unexpected error occurred');
     } finally {
       isLoading.value = false;
     }
@@ -73,23 +78,41 @@ class RateController extends GetxController {
   Future<void> loadAssistants() async {
     try {
       isLoading.value = true;
+      hasNoAssistants.value = false;
+
       final token = GetStorage().read('auth_token');
 
       if (token == null) {
-
+        CustomSnackbar.error(message: 'Please login again');
         return;
       }
 
       final assistants = await apiServices.getAssistantsFromProcedures(token);
 
-      assistantsList.assignAll(assistants);
+      if (assistants.isEmpty) {
+        hasNoAssistants.value = true;
+        CustomSnackbar.info(
+          message: 'No assistants found in your procedures',
+          duration: Duration(seconds: 5),
+        );
+      } else {
+        assistantsList.assignAll(assistants);
+        print('Loaded ${assistantsList.length} assistants');
+      }
 
+    } on DioException catch (e) {
+      print('Dio Error loading assistants: ${e.message}');
+      CustomSnackbar.error(message: 'Failed to load assistants');
     } catch (e) {
-
-
-      Get.snackbar('Error', 'Failed to load assistants');
+      print('Unexpected Error loading assistants: $e');
+      CustomSnackbar.error(message: 'Failed to load assistants');
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> reloadAssistants() async {
+    CustomSnackbar.info(message: 'Reloading assistants...');
+    await loadAssistants();
   }
 }

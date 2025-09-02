@@ -63,7 +63,7 @@ class MyProfileScreen extends StatelessWidget {
                       height: context.width * 0.35,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                         color: Colors.grey,
+                         color: Colors.grey[300],
                         image: DecorationImage(
                           image: NetworkImage(controller.profileImagePath.value),
                           fit: BoxFit.cover,
@@ -73,7 +73,7 @@ class MyProfileScreen extends StatelessWidget {
                         ),
                       ),
                       child: controller.profileImagePath.value.isEmpty
-                          ? Icon(Icons.person, color: Colors.grey[700], size: 80)
+                          ? Icon(Icons.person, color: Colors.grey[500], size: 80)
                           : null,
                     ),
                     SizedBox(height: context.height * 0.03),

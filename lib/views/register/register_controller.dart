@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ouzoun/core/services/api_services.dart';
 import '../../Routes/app_routes.dart';
 import '../../core/services/firebase_service.dart';
+import '../../widgets/CustomSnackbar .dart';
 
 class RegisterController extends GetxController {
   final nameController = TextEditingController();
@@ -46,24 +47,23 @@ class RegisterController extends GetxController {
         selectedImage.value = File(image.path);
       }
     } catch (e) {
-      Get.snackbar('Error'.tr, 'Failed to pick image: $e'.tr);
+      CustomSnackbar.error(message: 'Failed to pick image: $e');
     }
   }
 
-
   Future<void> register() async {
     if (!formKey.currentState!.validate()) {
-      Get.snackbar('Error'.tr, 'Please fill all fields correctly'.tr);
+      CustomSnackbar.error(message: 'Please fill all fields correctly');
       return;
     }
 
     if (selectedLocation.value == null) {
-      Get.snackbar('Error'.tr, 'Please select a location'.tr);
+      CustomSnackbar.error(message: 'Please select a location');
       return;
     }
 
     if (passwordController.text.length < 8) {
-      Get.snackbar('Error'.tr, 'Password must be at least 8 characters'.tr);
+      CustomSnackbar.error(message: 'Password must be at least 8 characters');
       return;
     }
 
@@ -73,7 +73,7 @@ class RegisterController extends GetxController {
       final hasValidExtension = allowedExtensions.any((ext) => filePath.endsWith(ext));
 
       if (!hasValidExtension) {
-        Get.snackbar('Error'.tr, 'Only .jpg, .png, .webp, .jpeg are allowed'.tr);
+        CustomSnackbar.error(message: 'Only .jpg, .png, .webp, .jpeg are allowed');
         return;
       }
     }
@@ -101,7 +101,7 @@ class RegisterController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.offAllNamed(AppRoutes.homepage);
-        Get.snackbar('Success'.tr, 'Registration successful'.tr);
+        CustomSnackbar.success(message: 'Registration successful');
       } else {
         _handleRegistrationError(response);
       }
@@ -110,37 +110,37 @@ class RegisterController extends GetxController {
     } catch (e) {
       print('General Error: ${e.toString()}');
       print('Error Type: ${e.runtimeType}');
-      errorMessage('An unexpected error occurred'.tr);
-      Get.snackbar('Error'.tr, errorMessage.value);
+      CustomSnackbar.error(message: 'An unexpected error occurred');
     } finally {
       isLoading(false);
     }
   }
+
   void _handleRegistrationError(Response response) {
     final errorData = response.data;
     print('Error Response Data: $errorData');
     print('Error Status Code: ${response.statusCode}');
 
+    String errorMessage = 'Registration failed';
+
     try {
       if (errorData is List) {
         if (errorData.isNotEmpty && errorData[0] is Map) {
-          errorMessage(errorData[0]['description'] ?? 'Registration failed'.tr);
-        } else {
-          errorMessage('Registration failed'.tr);
+          errorMessage = errorData[0]['description'] ?? 'Registration failed';
         }
       } else if (errorData is Map) {
-        errorMessage(errorData['message'] ?? 'Registration failed'.tr);
+        errorMessage = errorData['message'] ?? 'Registration failed';
       } else if (errorData is String) {
-        errorMessage(errorData);
+        errorMessage = errorData;
       } else {
-        errorMessage('Registration failed: ${response.statusCode}'.tr);
+        errorMessage = 'Registration failed: ${response.statusCode}';
       }
     } catch (e) {
       print('Error parsing error response: $e');
-      errorMessage('Registration failed'.tr);
+      errorMessage = 'Registration failed';
     }
 
-    Get.snackbar('Error'.tr, errorMessage.value);
+    CustomSnackbar.error(message: errorMessage);
   }
 
   void _handleDioError(DioException e) {
@@ -148,33 +148,34 @@ class RegisterController extends GetxController {
     print('Dio Response: ${e.response?.data}');
     print('Dio Status Code: ${e.response?.statusCode}');
 
+    String errorMessage = 'Registration failed';
+
     try {
       if (e.response != null) {
         final errorData = e.response?.data;
 
         if (errorData is List) {
           if (errorData.isNotEmpty && errorData[0] is Map) {
-            errorMessage(errorData[0]['description'] ?? e.message ?? 'Registration failed'.tr);
-          } else {
-            errorMessage(e.message ?? 'Registration failed'.tr);
+            errorMessage = errorData[0]['description'] ?? e.message ?? 'Registration failed';
           }
         } else if (errorData is Map) {
-          errorMessage(errorData['message'] ?? e.message ?? 'Registration failed'.tr);
+          errorMessage = errorData['message'] ?? e.message ?? 'Registration failed';
         } else if (errorData is String) {
-          errorMessage(errorData);
+          errorMessage = errorData;
         } else {
-          errorMessage(e.message ?? 'Registration failed'.tr);
+          errorMessage = e.message ?? 'Registration failed';
         }
       } else {
-        errorMessage(e.message ?? 'Registration failed'.tr);
+        errorMessage = e.message ?? 'Registration failed';
       }
     } catch (e) {
       print('Error parsing dio error: $e');
-      errorMessage('Registration failed'.tr);
+      errorMessage = 'Registration failed';
     }
 
-    Get.snackbar('Error'.tr, errorMessage.value);
+    CustomSnackbar.error(message: errorMessage);
   }
+
   @override
   void onClose() {
     nameController.dispose();

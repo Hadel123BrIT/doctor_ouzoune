@@ -18,10 +18,9 @@ Widget buildRegisterForm(BuildContext context) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              RegisterHelpers.buildHeader(context),
-              SizedBox(height: context.height * 0.03),
+              SizedBox(height: context.height * 0.02),
               RegisterHelpers.buildImagePicker(context, controller),
-              SizedBox(height: context.height * 0.03),
+              RegisterHelpers.buildHeader(context),
               RegisterHelpers.buildNameField(controller.nameController),
               SizedBox(height: context.height * 0.03),
               RegisterHelpers.buildClinicField(controller.clinicNameController),

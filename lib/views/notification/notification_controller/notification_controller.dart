@@ -76,88 +76,17 @@ class NotificationController extends GetxController {
       }
 
 
-      _loadDefaultNotifications();
+
 
     } catch (e) {
       print('Error loading notifications: $e');
-      _loadDefaultNotifications();
+
     } finally {
       isLoading.value = false;
     }
   }
 
-  void _loadDefaultNotifications() {
 
-    final now = DateTime.now();
-    notifications.assignAll([
-      {
-        'id': 3,
-        'title': 'Reminder',
-        'body': "Don't forget to complete your profile",
-        'read': true,
-        'createdAt': now.subtract(Duration(days: 1)).toString(),
-        'groupDate': now.subtract(Duration(days: 1)).toString(),
-      },
-      {
-        'id': 2,
-        'title': 'System update',
-        'body': "New features have been added to the application",
-        'read': false,
-        'createdAt': now.subtract(Duration(hours: 5)).toString(),
-        'groupDate': now.subtract(Duration(hours: 5)).toString(),
-      },
-      {
-        'id': 1,
-        'title': 'New change',
-        'body': "Admin changed the status from send request to decline",
-        'read': false,
-        'createdAt': now.subtract(Duration(hours: 2)).toString(),
-        'groupDate': now.subtract(Duration(hours: 2)).toString(),
-      },
-    ]);
-
-
-    groupedNotifications.assignAll([
-      {
-        'date': now.subtract(Duration(days: 1)).toString(),
-        'notifications': [
-          {
-            'id': 3,
-            'title': 'Reminder',
-            'body': "Don't forget to complete your profile",
-            'read': true,
-            'createdAt': now.subtract(Duration(days: 1)).toString(),
-          },
-        ],
-      },
-      {
-        'date': now.subtract(Duration(hours: 5)).toString(),
-        'notifications': [
-          {
-            'id': 2,
-            'title': 'System update',
-            'body': "New features have been added to the application",
-            'read': false,
-            'createdAt': now.subtract(Duration(hours: 5)).toString(),
-          },
-        ],
-      },
-      {
-        'date': now.subtract(Duration(hours: 2)).toString(),
-        'notifications': [
-          {
-            'id': 1,
-            'title': 'New change',
-            'body': "Admin changed the status from send request to decline",
-            'read': false,
-            'createdAt': now.subtract(Duration(hours: 2)).toString(),
-          },
-        ],
-      },
-    ]);
-
-    checkUnreadNotifications();
-  }
 
   void sortNotificationsDescending() {
     notifications.sort((a, b) {

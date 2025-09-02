@@ -11,7 +11,9 @@ import '../../../models/assistant_model.dart';
 import '../../../models/doctor_model.dart';
 import '../../../models/implant_model.dart';
 import '../../../models/procedure_model.dart';
+import '../../../widgets/CustomSnackbar .dart';
 import '../../kits/Kits_Controller/kits_controller.dart';
+import '../procedure_screen/get_all_procedures.dart';
 
 class ProcedureController extends GetxController {
   final KitsController kitsController = Get.put(KitsController());
@@ -28,7 +30,7 @@ class ProcedureController extends GetxController {
   final RxBool isLoading = false.obs;
   final Rx<Procedure?> selectedProcedure = Rx<Procedure?>(null);
   final RxInt currentPage = 1.obs;
-  final RxInt itemsPerPage = 3.obs;
+  final RxInt itemsPerPage = 0.obs;
   final RxBool hasMore = true.obs;
   final RxString clinicNameFilter = ''.obs;
   final RxString clinicAddressFilter = ''.obs;
@@ -185,9 +187,10 @@ class ProcedureController extends GetxController {
 
 
   //Post Procedure
+
   Future<void> postProcedure() async {
     if (procedureDate.value == null || procedureTime.value == null) {
-      Get.snackbar('Error'.tr, 'Procedure date and time are required'.tr);
+      CustomSnackbar.error(message: 'Procedure date and time are required'.tr);
       return;
     }
 
@@ -206,27 +209,48 @@ class ProcedureController extends GetxController {
       print('Status Code: ${response.statusCode}');
       print('Response Body: ${response.data}');
       print('Headers: ${response.headers}');
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.toNamed(AppRoutes.homepage);
-        Get.snackbar('Success'.tr, 'Procedure added successfully'.tr);
-        await Future.delayed(const Duration(milliseconds: 700));
-      }
-
-      else {
+        Get.snackbar(
+          'Processing',
+          'Your request is being processed...',
+          titleText: Text(
+            'Processing',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          messageText: Text(
+            'Your request is being processed...',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: Colors.grey,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          duration: Duration(seconds: 2),
+        );
+        CustomSnackbar.success(message: 'Procedure added successfully'.tr);
+        Get.to(ProceduresScreen());
+        resetFilters();
+      } else {
         if (response.data is Map<String, dynamic>) {
           final errorMsg = response.data['message'] ??
               response.data['error'] ??
               'Failed with status ${response.statusCode}';
-          Get.snackbar('Error'.tr, errorMsg
-              .toString()
-              .tr);
+          CustomSnackbar.error(message: errorMsg.toString().tr);
         } else if (response.data is String) {
-          Get.snackbar('Error'.tr, response.data.tr);
+          CustomSnackbar.error(message: response.data.tr);
         }
       }
     } catch (e) {
       print('Error type: ${e.runtimeType}');
-      Get.snackbar('Error'.tr, 'An error occurred: ${e.toString()}'.tr);
+      CustomSnackbar.error(message: 'An error occurred: ${e.toString()}'.tr);
     }
   }
 
@@ -259,27 +283,27 @@ class ProcedureController extends GetxController {
         token: token,
       );
 
-      print('====== Fetched Procedures (${procedures.length}) ======');
-      for (var i = 0; i < procedures.length; i++) {
-        print('Procedure #${i + 1}:');
-        print('  ID: ${procedures[i].id}');
-        print('  Status: ${procedures[i].status}');
-        print('  Date: ${procedures[i].date}');
-        print('  Doctor: ${procedures[i].doctor.userName} (ID: ${procedures[i].doctor.id})');
-        print('  Number of Assistants: ${procedures[i].numberOfAssistants}');
-        print('  Ids of Assistants: ${procedures[i].assistantIds}');
-      //  print('  Name of Assistants: ${procedures[i].assistants[i].userName}');
-        print('----------------------------------');
-        if (procedures[i].numberOfAssistants != procedures[i].assistants.length) {
-          print('Warning: Mismatch in assistants count!');
-          print('Expected: ${procedures[i].numberOfAssistants}, Actual: ${procedures[i].assistants.length}');
-        }
+      if (procedures.isEmpty) {
+        CustomSnackbar.info(
+          message: 'No procedures found with the current filters',
+          duration: Duration(seconds: 3),
+        );
+        proceduresList.clear();
+      } else {
+        proceduresList.assignAll(procedures);
       }
 
-      proceduresList.assignAll(procedures);
     } catch (e) {
-      Get.snackbar('Error', e.toString());
-      print('Error details: ${e.toString()}');
+      print('Error fetching procedures: $e');
+      if (e.toString().contains('Data not Found',)) {
+        CustomSnackbar.info(
+          message: 'No procedures match your search criteria',
+          duration: Duration(seconds: 3),
+        );
+        proceduresList.clear();
+      } else {
+        CustomSnackbar.error(message: 'Failed to load procedures');
+      }
     } finally {
       isLoading.value = false;
     }
@@ -328,8 +352,9 @@ class ProcedureController extends GetxController {
         hasMore.value = false;
         print('No procedures found for doctorId: $targetDoctorId');
       }
-    } catch (e) {
-      Get.snackbar('Error'.tr, 'Failed to load procedures: ${e.toString()}'.tr);
+    }
+    catch (e) {
+      CustomSnackbar.error(message: 'Failed to load procedures: ${e.toString()}'.tr);
       print('Error fetching procedures: $e');
     } finally {
       isLoading.value = false;
@@ -360,13 +385,12 @@ class ProcedureController extends GetxController {
 
         } catch (e) {
           print('Error parsing procedure: $e');
-          // إنشاء procedure افتراضي مع البيانات المتاحة
           selectedProcedure.value = _createDefaultProcedure(response);
         }
       }
-    } catch (e) {
+    }  catch (e) {
+      CustomSnackbar.error(message: 'Failed to load procedure details: ${e.toString()}');
       print('Error fetching procedure: $e');
-      Get.snackbar('Error', 'Failed to load procedure details: ${e.toString()}');
     } finally {
       isLoading(false);
     }
@@ -442,9 +466,10 @@ class ProcedureController extends GetxController {
 
   List<Procedure> get filteredProcedures {
     return proceduresList.where((procedure) {
-      final matchesSearch = procedure.doctor.userName
-          ?.toLowerCase()
-          .contains(searchQuery.value.toLowerCase());
+      final matchesSearch = searchQuery.value.isEmpty ||
+          procedure.doctor.userName?.toLowerCase().contains(searchQuery.value.toLowerCase()) == true ||
+          procedure.assistants.any((assistant) =>
+          assistant.userName?.toLowerCase().contains(searchQuery.value.toLowerCase()) == true);
 
       final matchesStatus = statusFilter.value == 0 ||
           procedure.status == statusFilter.value;
@@ -452,14 +477,12 @@ class ProcedureController extends GetxController {
       final matchesKitFilter = !showMainKitsOnly.value ||
           procedure.kits.any((kit) => kit.isMainKit);
 
-      return matchesSearch! && matchesStatus && matchesKitFilter;
+      return matchesSearch && matchesStatus && matchesKitFilter;
     }).toList();
   }
 
 
 
-
-  //Update the list
   void updateItemsPerPage(int value) {
     itemsPerPage.value = value;
     fetchProceduresPaged();
@@ -493,36 +516,28 @@ class ProcedureController extends GetxController {
         token: token,
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201 ) {
-
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final procedureIndex = proceduresList.indexWhere((p) => p.id == procedureId);
         if (procedureIndex != -1) {
           proceduresList[procedureIndex].status = newStatus;
           proceduresList.refresh();
         }
 
-        Get.snackbar(
-          'Success'.tr,
-          'Procedure status updated successfully'.tr,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
+        CustomSnackbar.success(message: 'Procedure status updated successfully'.tr,
         );
       } else {
         throw Exception('Failed to change status: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      print('-------------------------------Dio Error: ${e.message}');
-      print('-------------------------------Response: ${e.response?.data}');
-      Get.snackbar(
-        'Error'.tr,
-        '-------------------------------------Failed to update procedure status: ${e.response?.data ?? e.message}'.tr,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
+      print('Dio Error: ${e.message}');
+      print('Response: ${e.response?.data}');
+
+      CustomSnackbar.error(
+        message: 'Failed to update procedure status: ${e.response?.data?['message'] ?? e.message}'.tr,
       );
+    } finally {
+      resetFilters();
     }
-    resetFilters();
   }
 
   @override

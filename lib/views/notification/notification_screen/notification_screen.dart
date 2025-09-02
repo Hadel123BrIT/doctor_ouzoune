@@ -27,7 +27,7 @@ class NotificationsScreen extends StatelessWidget {
           ),
         ),
         title:  Text('Notifications',
-            style: Theme.of(context).textTheme.titleSmall,
+          style: Theme.of(context).textTheme.titleSmall,
         ),
         centerTitle: true,
         actions: [
@@ -50,7 +50,7 @@ class NotificationsScreen extends StatelessWidget {
               : const SizedBox.shrink()),
           IconButton(
             icon: const Icon(Icons.refresh,
-          color: Colors.white,
+              color: Colors.white,
             ),
             onPressed: () => controller.refreshNotifications(),
           ),
@@ -67,7 +67,7 @@ class NotificationsScreen extends StatelessWidget {
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-           return Center(
+          return Center(
             child: Lottie.asset(
                 AppAssets.LoadingAnimation,
                 fit: BoxFit.cover,
@@ -91,7 +91,7 @@ class NotificationsScreen extends StatelessWidget {
           );
         }
 
-        return Column(
+        return Obx(() => Column(
           children: [
             Expanded(
               child: RefreshIndicator(
@@ -106,7 +106,6 @@ class NotificationsScreen extends StatelessWidget {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
@@ -119,8 +118,6 @@ class NotificationsScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-
-
                         ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
@@ -130,7 +127,6 @@ class NotificationsScreen extends StatelessWidget {
                             return _buildNotificationCard(notification, context);
                           },
                         ),
-
                       ],
                     );
                   },
@@ -138,7 +134,7 @@ class NotificationsScreen extends StatelessWidget {
               ),
             ),
           ],
-        );
+        ));
       }),
       floatingActionButton: Obx(() => controller.notifications.isNotEmpty
           ? FloatingActionButton(
@@ -204,10 +200,8 @@ class NotificationsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
-
           ],
         ),
-
       ),
     );
   }

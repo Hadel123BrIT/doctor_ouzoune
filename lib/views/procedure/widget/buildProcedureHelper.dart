@@ -8,6 +8,7 @@ import '../../kits/Kits_Controller/kits_controller.dart';
 import '../../kits/kits_screens/detail_kit.dart';
 import '../../kits/kits_screens/implant_kits.dart';
 import '../procedure_controller/procedure_controller.dart';
+import '../procedure_screen/get_all_procedures.dart';
 
 
 Widget buildNeedsAssistanceDropdown(BuildContext context) {
@@ -382,19 +383,15 @@ Widget buildKitsToolsButtonsRow(BuildContext context) {
 Widget buildSubmitButton(BuildContext context) {
   final controller = Get.put(ProcedureController());
   return CustomButton(
-      onTap: () {
-        controller.postProcedure();
-        Get.snackbar(
-          'Processing',
-          'Your request is being processed...',
-          backgroundColor: Colors.grey,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          duration: Duration(seconds: 2),
-        );
-      },
-      text: 'Confirm Procedure',
-      color: AppColors.primaryGreen);
+    onTap: () async {
+
+      await controller.postProcedure();
+
+    },
+    text: 'Confirm Procedure',
+    color: AppColors.primaryGreen,
+
+  );
 }
 
 Widget buildSelectedImplantsList(BuildContext context) {

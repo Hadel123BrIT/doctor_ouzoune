@@ -52,28 +52,43 @@ class RegisterHelpers {
       children: [
         GestureDetector(
           onTap: controller.pickImage,
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey[300],
-              border: Border.all(color: Colors.green, width: 2),
-            ),
-            child: controller.selectedImage.value != null
-                ? ClipOval(
-              child: Image.file(
-                controller.selectedImage.value!,
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
+          child: Stack(
+            children: [
+              Container(
+                width: 140,
+                height: 140,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey[300],
+                ),
+                child: controller.selectedImage.value != null
+                    ? ClipOval(
+                  child: Image.file(
+                    controller.selectedImage.value!,
+                    width: 140,
+                    height: 140,
+                    fit: BoxFit.cover,
+                  ),
+                )
+                    : Icon(
+                  Icons.person,
+                  size: 50,
+                  color: Colors.grey[600],
+                ),
               ),
-            )
-                : Icon(
-              Icons.camera_alt,
-              size: 40,
-              color: Colors.grey[600],
-            ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryGreen,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.camera_alt, color: Colors.white, size: 25),
+                ),
+              ),
+            ],
           ),
         ),
         SizedBox(height: 10),
@@ -91,7 +106,6 @@ class RegisterHelpers {
       ],
     );
   }
-
 
   static Widget buildNameField( TextEditingController controller) {
     return CustomTextFormField(
@@ -248,7 +262,6 @@ class RegisterHelpers {
       ),
     );
   }
-
 
   static Widget buildLoginLink(BuildContext context) {
     return Container(

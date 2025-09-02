@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../widgets/CustomSnackbar .dart';
 import '../procedure_controller/procedure_controller.dart';
 
 
@@ -26,23 +27,23 @@ void showFilterDialog(BuildContext context) {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // SizedBox(height: 10),
-              // TextField(
-              //   cursorColor: AppColors.primaryBlue,
-              //   decoration: InputDecoration(
-              //     hintText: 'Search by assistance name...',
-              //     hintStyle: TextStyle(fontFamily: 'Montserrat',
-              //       fontSize: 14,
-              //     ),
-              //     border: border,
-              //     enabledBorder: border,
-              //     focusedBorder: border.copyWith(
-              //       borderSide: BorderSide(color: AppColors.primaryGreen),
-              //     ),
-              //     contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              //   ),
-              //   onChanged: (value) => controller.searchQuery.value = value,
-              // ),
+              SizedBox(height: 10),
+              TextField(
+                cursorColor: AppColors.primaryBlue,
+                decoration: InputDecoration(
+                  hintText: 'Search by assistance name...',
+                  hintStyle: TextStyle(fontFamily: 'Montserrat',
+                    fontSize: 14,
+                  ),
+                  border: border,
+                  enabledBorder: border,
+                  focusedBorder: border.copyWith(
+                    borderSide: BorderSide(color: AppColors.primaryGreen),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                ),
+                onChanged: (value) => controller.searchQuery.value = value,
+              ),
               SizedBox(height: 14),
               TextField(
                 cursorColor: AppColors.primaryGreen,
@@ -200,49 +201,53 @@ void showFilterDialog(BuildContext context) {
             ],
           ),
         ),
-         actions: [
-          TextButton(
-            onPressed: () {
-              controller.resetFilters();
-              Get.back();
-            },
-            child: Text("Reset",
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                color: Colors.grey,
-              ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                controller.resetFilters();
+                Get.back();
+              },
+              child: Text("Reset"),
             ),
-          ),
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text("Cancel",
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                color: Colors.grey,
-              ),
+            TextButton(
+              onPressed: () => Get.back(),
+              child: Text("Cancel"),
             ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              controller.fetchAllProcedures();
-              Get.back();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryGreen,
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Text("Apply",
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+      ElevatedButton(
+      onPressed: () async {
+      try {
+      await controller.fetchAllProcedures();
+      if (controller.proceduresList.isEmpty) {
+      CustomSnackbar.info(
+      message: 'No procedures found with these filters',
+      duration: Duration(seconds: 3),
+      );
+      }
+
+      Get.back();
+      } catch (e) {
+      if (e.toString().contains('Data not Found')) {
+      CustomSnackbar.info(
+      message: 'No matching procedures found',
+      duration: Duration(seconds: 3),
+      );
+      controller.proceduresList.clear();
+      Get.back();
+      } else {
+      CustomSnackbar.error(message: 'An error occurred');
+      }
+      }
+      },
+      style: ElevatedButton.styleFrom(
+      backgroundColor: AppColors.primaryGreen,
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8),
+      ),
+      ),
+      child: Text("Apply"),
+      ),
+          ],
       );
     },
   );
