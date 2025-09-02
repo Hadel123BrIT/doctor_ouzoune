@@ -154,12 +154,16 @@ class RateScreen extends StatelessWidget {
                     ? null
                     : controller.assistantId.value,
                 items: controller.assistantsList.map((assistant) {
+                  // تأكد من أن id هو String
+                  final assistantId = assistant['id']?.toString() ?? '';
+                  final assistantName = assistant['name']?.toString() ?? 'Unknown';
+
                   return DropdownMenuItem<String>(
-                    value: assistant['id'],
+                    value: assistantId,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        assistant['name'],
+                        assistantName,
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 16,
@@ -169,10 +173,13 @@ class RateScreen extends StatelessWidget {
                   );
                 }).toList(),
                 onChanged: (value) {
-                  final assistant = controller.assistantsList.firstWhere(
-                        (a) => a['id'] == value,
-                  );
-                  controller.selectAssistant(value!, assistant['name']);
+                  if (value != null) {
+                    final assistant = controller.assistantsList.firstWhere(
+                          (a) => a['id']?.toString() == value,
+                      orElse: () => {'id': value, 'name': 'Unknown'},
+                    );
+                    controller.selectAssistant(value, assistant['name']?.toString() ?? 'Unknown');
+                  }
                 },
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 icon: const Icon(Icons.arrow_drop_down, size: 30),

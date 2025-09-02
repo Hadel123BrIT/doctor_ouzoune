@@ -24,13 +24,12 @@ class RateController extends GetxController {
 
 
   void selectAssistant(String id, String name) {
-    assistantId.value = id ?? '';
-    selectedAssistantName.value = name ?? 'No Name';
+    assistantId.value = id;
+    selectedAssistantName.value = name;
   }
 
   Future<void> submitRating() async {
-    isLoading(true);
-    if (assistantId.isEmpty) {
+    if (assistantId.value.isEmpty) {
       Get.snackbar('Error', 'Please select an assistant');
       return;
     }
@@ -54,9 +53,18 @@ class RateController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.back();
         Get.snackbar('Success', 'Rating submitted successfully');
+        noteController.clear();
+        rate.value = 0;
+        assistantId.value = '';
+      } else {
+        throw Exception('Failed to submit rating: ${response.statusCode}');
       }
+    } on DioException catch (e) {
+      print('Dio Error: ${e.message}');
+      Get.snackbar('Error', 'Failed to submit rating: ${e.message}');
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      print('Unexpected Error: $e');
+      Get.snackbar('Error', 'An unexpected error occurred: ${e.toString()}');
     } finally {
       isLoading.value = false;
     }
@@ -67,19 +75,19 @@ class RateController extends GetxController {
       isLoading.value = true;
       final token = GetStorage().read('auth_token');
 
+      if (token == null) {
+
+        return;
+      }
+
       final assistants = await apiServices.getAssistantsFromProcedures(token);
 
+      assistantsList.assignAll(assistants);
 
-      assistantsList.assignAll(assistants.where((assistant) =>
-      assistant['id'] != null &&
-          assistant['name'] != null
-      ).toList());
-
-      if (assistantsList.isEmpty) {
-        Get.snackbar('Info', 'No valid assistants found in procedures');
-      }
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+
+
+      Get.snackbar('Error', 'Failed to load assistants');
     } finally {
       isLoading.value = false;
     }

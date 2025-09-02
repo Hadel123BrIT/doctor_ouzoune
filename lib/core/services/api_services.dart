@@ -547,38 +547,59 @@ static const String baseUrl="http://ouzon.somee.com/api";
           headers: {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
           },
         ),
         data: [],
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final procedures = response.data as List;
-        final assistants = <Map<String, dynamic>>[];
-        final Set<String> addedAssistantIds = {}; // لتجنب التكرار
 
-        for (var procedure in procedures) {
-          if (procedure['assistants'] != null && procedure['assistants'].isNotEmpty) {
-            for (var assistant in procedure['assistants']) {
-              final assistantId = assistant['id']?.toString();
-              if (assistantId != null && !addedAssistantIds.contains(assistantId)) {
-                assistants.add({
-                  'id': assistantId,
-                  'name': assistant['userName'] ?? 'Unknown',
-                  'specialization': assistant['specialization'] ?? 'No Specialization',
-                  'email': assistant['email'] ?? '',
-                  'phone': assistant['phoneNumber'] ?? '',
-                  'clinic': assistant['clinic']?['name'] ?? '',
-                });
-                addedAssistantIds.add(assistantId);
-              }
-            }
-          }
+      if (response.statusCode == 200 || response.statusCode == 201) {
+
+        if (response.data is! List) {
+          return [];
         }
 
-        if (assistants.isEmpty) {
-          print('No assistants found in any procedure');
+        final procedures = response.data as List;
+        print('📋 Number of procedures: ${procedures.length}');
+
+        final assistants = <Map<String, dynamic>>[];
+        final Set<String> addedAssistantIds = {};
+
+        for (var i = 0; i < procedures.length; i++) {
+          try {
+            final procedure = procedures[i];
+
+            if (procedure.containsKey('assistants')) {
+              final procedureAssistants = procedure['assistants'];
+
+              if (procedureAssistants is List) {
+
+                for (var j = 0; j < procedureAssistants.length; j++) {
+                  try {
+                    final assistant = procedureAssistants[j];
+
+                    if (assistant is Map) {
+                      final assistantId = assistant['id']?.toString();
+
+                      if (assistantId != null && assistantId.isNotEmpty) {
+                        if (!addedAssistantIds.contains(assistantId)) {
+                          assistants.add({
+                            'id': assistantId,
+                            'name': assistant['userName']?.toString() ?? 'Unknown',
+                          });
+                          addedAssistantIds.add(assistantId);
+                        }
+                      }
+                    }
+                  } catch (e) {
+                  }
+                }
+              } else {
+              }
+            } else {
+            }
+          } catch (e) {
+          }
         }
 
         return assistants;
@@ -586,9 +607,16 @@ static const String baseUrl="http://ouzon.somee.com/api";
         throw Exception('Failed to load procedures: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      throw Exception('Failed to load assistants: ${e.message}');
+      print('❌ Dio Error: ${e.message}');
+      print('❌ Response: ${e.response?.data}');
+      rethrow;
+    } catch (e) {
+      print('❌ Unexpected Error in getAssistantsFromProcedures: $e');
+      rethrow;
     }
   }
+
+
 
 
   //get implants
