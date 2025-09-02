@@ -4,62 +4,69 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../../../core/constants/app_colors.dart';
-Future<int?> ShowQuantityDialog(String toolName) async {
+Future<int?> ShowQuantityDialog(String toolName, {int maxQuantity = 999}) async {
+  final quantityController = TextEditingController();
   int? selectedQuantity;
-  final TextEditingController _quantityController = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
 
   await Get.dialog(
     AlertDialog(
-      title: Text('Enter Quantity for $toolName',
-          style: TextStyle( fontFamily: "Montserrat",color: AppColors.primaryGreen)),
-      content: Container(
-        width: 200,
-        child: TextField(
-          controller: _quantityController,
-          focusNode: _focusNode,
-          keyboardType: TextInputType.number,
-          cursorColor: AppColors.primaryGreen,
-          decoration: InputDecoration(
-            labelText: 'Quantity',
-            labelStyle: TextStyle( fontFamily: "Montserrat",color: Colors.grey),
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
+      title: Text("Select Quantity", style: TextStyle(fontFamily: 'Montserrat')),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text("Available: $maxQuantity", style: TextStyle(
+            fontFamily: 'Montserrat',
+            color: Colors.grey[600],
+          )),
+          SizedBox(height: 10),
+          TextField(
+            controller: quantityController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              hintText: 'Enter quantity (1-$maxQuantity)',
+              border: OutlineInputBorder(),
             ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.primaryGreen, width: 2.0),
-            ),
-            hintText: 'Enter desired quantity',
-            hintStyle: TextStyle( fontFamily: "Montserrat",),
+            onChanged: (value) {
+              if (value.isNotEmpty) {
+                final entered = int.tryParse(value) ?? 0;
+                if (entered > maxQuantity) {
+                  quantityController.text = maxQuantity.toString();
+                  quantityController.selection = TextSelection.collapsed(
+                    offset: quantityController.text.length,
+                  );
+                }
+              }
+            },
           ),
-          onChanged: (value) {
-            if (value.isNotEmpty) {
-              selectedQuantity = int.tryParse(value);
-            } else {
-              selectedQuantity = null;
-            }
-          },
-        ),
+        ],
       ),
       actions: [
         TextButton(
           onPressed: () => Get.back(),
-          child: Text('Cancel', style: TextStyle( fontFamily: "Montserrat",color: AppColors.primaryGreen)),
+          child: Text("Cancel", style: TextStyle(fontFamily: 'Montserrat')),
         ),
         ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryGreen),
           onPressed: () {
-            if (_quantityController.text.isNotEmpty) {
-              selectedQuantity = int.tryParse(_quantityController.text);
-              Get.back();
+            if (quantityController.text.isNotEmpty) {
+              final quantity = int.parse(quantityController.text);
+              if (quantity > 0 && quantity <= maxQuantity) {
+                selectedQuantity = quantity;
+                Get.back(result: quantity);
+              } else {
+                Get.snackbar(
+                  "Error",
+                  "Please enter a valid quantity (1->$maxQuantity)",
+                  backgroundColor: Colors.red,
+                  colorText: Colors.white,
+                );
+              }
             }
           },
-          child: Text('Confirm', style: TextStyle( fontFamily: "Montserrat",color: Colors.white)),
+          child: Text("Confirm", style: TextStyle(fontFamily: 'Montserrat')),
         ),
       ],
     ),
   );
 
-  _focusNode.dispose();
   return selectedQuantity;
 }

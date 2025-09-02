@@ -33,14 +33,22 @@ class BuildToolCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 color: AppColors.primaryGreen.withOpacity(0.1),
               ),
-              child:  (tool.imagePath != null && tool.imagePath!.isNotEmpty)?Image.network(
-                  tool.imagePath!,):
-              Container(
+              child: (tool.imagePath != null && tool.imagePath!.isNotEmpty)
+                  ? Image.network(
+                tool.imagePath!,
+                fit: BoxFit.cover,
+              )
+                  : Container(
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color:AppColors.primaryGreen,
+                  color: AppColors.primaryGreen,
                   borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.build,
+                  color: Colors.white,
+                  size: 30,
                 ),
               ),
             ),
@@ -59,16 +67,17 @@ class BuildToolCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+
                   SizedBox(height: 8),
                   Row(
                     children: [
-                      BuildDetailItem(context, "Length", "${tool.width}"),
+                      BuildDetailItem(context, "thickness", "${tool.thickness ?? 'N/A'}"),
                       SizedBox(width: context.width * 0.02),
-                      BuildDetailItem(context, "Width", "${tool.width}"),
+                      BuildDetailItem(context, "Width", "${tool.width ?? 'N/A'}"),
                       SizedBox(width: context.width * 0.02),
-                      BuildDetailItem(context, "Height", "${tool.height}"),
+                      BuildDetailItem(context, "Height", "${tool.height ?? 'N/A'}"),
                       SizedBox(width: context.width * 0.02),
-                      BuildDetailItem(context, "qun", "${tool.quantity}", takeFirstDigit: true)
+                      BuildDetailItem(context, "Qty", "${tool.quantity ?? 0}", takeFirstDigit: true),
                     ],
                   ),
                 ],
@@ -81,25 +90,55 @@ class BuildToolCard extends StatelessWidget {
                   style: TextStyle(
                     color: AppColors.primaryGreen,
                     fontFamily: "Montserrat",
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: context.height * 0.01),
                 GestureDetector(
                   onTap: () async {
-                    final quantity = await ShowQuantityDialog(tool.name ?? 'Tool');
+
+                    if ((tool.quantity ?? 0) <= 0) {
+                      Get.snackbar(
+                        "Out of Stock",
+                        "This tool is currently out of stock",
+                        backgroundColor: Colors.orange,
+                        colorText: Colors.white,
+                        duration: Duration(seconds: 3),
+                      );
+                      return;
+                    }
+
+                    final quantity = await ShowQuantityDialog(
+                      tool.name ?? 'Tool',
+                      maxQuantity: tool.quantity ?? 1,
+                    );
+
                     if (quantity != null) {
-                      onQuantitySelected(quantity);
+                      if (quantity <= (tool.quantity ?? 0)) {
+                        onQuantitySelected(quantity);
+                      } else {
+                        Get.snackbar(
+                          "Error",
+                          "Quantity cannot exceed available stock (${tool.quantity})",
+                          backgroundColor: Colors.red,
+                          colorText: Colors.white,
+                          duration: Duration(seconds: 3),
+                        );
+                      }
                     }
                   },
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.primaryGreen,
+                      color: (tool.quantity ?? 0) <= 0
+                          ? Colors.grey
+                          : AppColors.primaryGreen,
                     ),
                     padding: EdgeInsets.all(context.width * 0.02),
                     child: Icon(
                       selectedQuantity > 0 ? Icons.edit : Icons.add,
                       color: Colors.white,
+                      size: 20,
                     ),
                   ),
                 ),
@@ -110,5 +149,4 @@ class BuildToolCard extends StatelessWidget {
       ),
     );
   }
-
 }
