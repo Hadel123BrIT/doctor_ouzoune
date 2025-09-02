@@ -118,11 +118,22 @@ Widget buildAssistantsList(Procedure procedure, bool isDarkMode) {
       padding: EdgeInsets.all(12),
       child: Column(
         children: procedure.assistants!.map((assistant) => ListTile(
-          leading: CircleAvatar(
-            backgroundColor: AppColors.primaryGreen,
-            child: Text(
-              assistant.userName.isNotEmpty ? assistant.userName[0] : '?',
-              style: TextStyle(color: Colors.white),
+          leading: ClipOval(
+
+            child: (assistant.profileImagePath != null && assistant.profileImagePath!.isNotEmpty)?
+            Image.network(
+              assistant.profileImagePath!,
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+            ):
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color:AppColors.primaryGreen,
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
           ),
           title: Text(
