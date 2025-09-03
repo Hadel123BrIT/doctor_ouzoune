@@ -24,6 +24,9 @@ Future<int?> ShowQuantityDialog(String toolName, {int maxQuantity = 999}) async 
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
               hintText: 'Enter quantity (1-$maxQuantity)',
+              hintStyle: TextStyle(
+                  fontFamily: 'Montserrat',
+              ),
               border: OutlineInputBorder(),
             ),
             onChanged: (value) {
@@ -43,7 +46,9 @@ Future<int?> ShowQuantityDialog(String toolName, {int maxQuantity = 999}) async 
       actions: [
         TextButton(
           onPressed: () => Get.back(),
-          child: Text("Cancel", style: TextStyle(fontFamily: 'Montserrat')),
+          child: Text("Cancel", style: TextStyle(fontFamily: 'Montserrat',
+            color: AppColors.primaryGreen,
+          )),
         ),
         ElevatedButton(
           onPressed: () {
@@ -62,7 +67,9 @@ Future<int?> ShowQuantityDialog(String toolName, {int maxQuantity = 999}) async 
               }
             }
           },
-          child: Text("Confirm", style: TextStyle(fontFamily: 'Montserrat')),
+          child: Text("Confirm", style: TextStyle(fontFamily: 'Montserrat',
+          color: AppColors.primaryGreen,
+          )),
         ),
       ],
     ),

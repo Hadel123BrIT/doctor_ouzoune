@@ -63,18 +63,9 @@ class MyProfileScreen extends StatelessWidget {
                       height: context.width * 0.35,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                         color: Colors.grey[300],
-                        image: DecorationImage(
-                          image: NetworkImage(controller.profileImagePath.value),
-                          fit: BoxFit.cover,
-                          onError: (exception, stackTrace) {
-
-                          },
-                        ),
+                        color: Colors.grey[300],
                       ),
-                      child: controller.profileImagePath.value.isEmpty
-                          ? Icon(Icons.person, color: Colors.grey[500], size: 80)
-                          : null,
+                      child: _buildProfileImage(),
                     ),
                     SizedBox(height: context.height * 0.03),
                     Padding(
@@ -143,6 +134,36 @@ class MyProfileScreen extends StatelessWidget {
           ),
         ],
       )),
+    );
+  }
+
+  Widget _buildProfileImage() {
+    final imagePath = controller.profileImagePath.value;
+
+    if (imagePath.isEmpty) {
+      return Icon(Icons.person, color: Colors.grey[500], size: 80);
+    }
+
+    return ClipOval(
+      child: Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              color: AppColors.primaryGreen,
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                  loadingProgress.expectedTotalBytes!
+                  : null,
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return Icon(Icons.person, color: Colors.grey[500], size: 80);
+        },
+      ),
     );
   }
 }

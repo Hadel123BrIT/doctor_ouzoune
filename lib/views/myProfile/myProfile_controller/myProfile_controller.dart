@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
@@ -6,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../core/services/api_services.dart';
+import '../../../widgets/CustomSnackbar .dart';
 import '../../register/Widget/LocationPicker/locationPicker_controller.dart';
 import '../myProfile_screen/myProfile_screen.dart';
 
@@ -40,7 +42,16 @@ class MyProfileController extends GetxController {
   Future<void> fetchProfileData() async {
     try {
       isLoading(true);
+
       final response = await apiServices.getMyProfile();
+
+      if (response.isEmpty) {
+        CustomSnackbar.warning(
+          message: 'No profile data found',
+          title: 'Profile',
+        );
+        return;
+      }
 
       id.value = response['id'] ?? '';
       userName.value = response['userName'] ?? '';
@@ -60,11 +71,72 @@ class MyProfileController extends GetxController {
         await convertCoordinatesToAddress(
             clinicLatitude.value, clinicLongitude.value);
       }
+
+
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        CustomSnackbar.error(
+          message: 'Session expired. Please login again',
+          title: 'Authentication Error',
+        );
+
+      } else if (e.type == DioExceptionType.connectionTimeout) {
+        CustomSnackbar.error(
+          message: 'Connection timeout. Please check your internet',
+          title: 'Network Error',
+        );
+      } else {
+        CustomSnackbar.error(
+          message: 'Network error: ${e.message ?? "Unknown error"}',
+          title: 'Profile Error',
+        );
+      }
+      debugPrint('Dio error fetching profile: $e');
+
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load profile data');
+      CustomSnackbar.error(
+        message: 'Failed to load profile data: ${e.toString()}',
+        title: 'Profile Error',
+      );
       debugPrint('Error fetching profile: $e');
     } finally {
       isLoading(false);
+    }
+  }
+
+  Future<void> updateProfile() async {
+    try {
+      isLoading(true);
+
+      final data = {
+        'userName': userName.value,
+        'email': email.value,
+        'phoneNumber': phoneNumber.value,
+        'clinicName': clinicName.value,
+        'clinicAddress': clinicAddress.value,
+        'clinicLatitude': clinicLatitude.value,
+        'clinicLongitude': clinicLongitude.value,
+      };
+
+      final response = await apiServices.updateMyProfile(
+        data: data,
+        profileImageFile: selectedImage.value,
+      );
+
+      if (response != null) {
+        if (response['profileImagePath'] != null) {
+          profileImagePath.value = response['profileImagePath'];
+        }
+
+        CustomSnackbar.success(message: 'Profile updated successfully');
+        Get.back();
+      }
+    } catch (e) {
+      CustomSnackbar.error(message: 'Failed to update profile: ${e.toString()}');
+      debugPrint('Error updating profile: $e');
+    } finally {
+      isLoading(false);
+      selectedImage.value = null;
     }
   }
 
@@ -80,53 +152,20 @@ class MyProfileController extends GetxController {
 
       if (image != null) {
         selectedImage.value = File(image.path);
+        CustomSnackbar.success(
+          message: 'Image selected successfully',
+          title: 'Success',
+        );
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to pick image');
+      CustomSnackbar.error(
+        message: 'Failed to pick image: ${e.toString()}',
+        title: 'Error',
+      );
       debugPrint('Error picking image: $e');
     }
   }
 
-  Future<void> updateProfile() async {
-    try {
-      isLoading(true);
-
-      final data = {
-        'id': id.value,
-        'userName': userName.value,
-        'email': email.value,
-        'phoneNumber': phoneNumber.value,
-        'role': role.value,
-        'rate': rate.value,
-        'clinic': {
-          'id': clinicId.value,
-          'name': clinicName.value,
-          'address': clinicAddress.value,
-          'longtitude': clinicLongitude.value,
-          'latitude': clinicLatitude.value,
-        }
-      };
-
-      final response = await apiServices.updateMyProfile(
-        data: data,
-        profileImageFile: selectedImage.value,
-      );
-
-      Get.snackbar('Success', 'Profile updated successfully');
-      if (selectedImage.value != null) {
-        await fetchProfileData();
-        print("yes");
-
-      }
-      selectedImage.value = null;
-      Get.to(MyProfileScreen());
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to update profile');
-      debugPrint('Error updating profile: $e');
-    } finally {
-      isLoading(false);
-    }
-  }
 
   Future<void> convertCoordinatesToAddress(double latitude,
       double longitude) async {

@@ -58,7 +58,7 @@ class CustomSnackbar {
   static void error({
     required String message,
     String title = 'Error',
-    Duration duration = const Duration(seconds: 4),
+    Duration duration = const Duration(seconds: 3),
   }) {
     show(
       title: title,

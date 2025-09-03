@@ -68,11 +68,10 @@ class RegisterController extends GetxController {
     }
 
     if (selectedImage.value != null) {
-      final allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
-      final filePath = selectedImage.value!.path.toLowerCase();
-      final hasValidExtension = allowedExtensions.any((ext) => filePath.endsWith(ext));
+      final allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+      final fileExtension = selectedImage.value!.path.split('.').last.toLowerCase();
 
-      if (!hasValidExtension) {
+      if (!allowedExtensions.contains(fileExtension)) {
         CustomSnackbar.error(message: 'Only .jpg, .png, .webp, .jpeg are allowed');
         return;
       }
@@ -109,8 +108,7 @@ class RegisterController extends GetxController {
       _handleDioError(e);
     } catch (e) {
       print('General Error: ${e.toString()}');
-      print('Error Type: ${e.runtimeType}');
-      CustomSnackbar.error(message: 'An unexpected error occurred');
+      CustomSnackbar.error(message: 'An unexpected error occurred: ${e.toString()}');
     } finally {
       isLoading(false);
     }

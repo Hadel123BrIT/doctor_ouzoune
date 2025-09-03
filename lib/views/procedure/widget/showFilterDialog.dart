@@ -207,11 +207,21 @@ void showFilterDialog(BuildContext context) {
                 controller.resetFilters();
                 Get.back();
               },
-              child: Text("Reset"),
+              child: Text("Reset",
+              style: TextStyle(
+                color: AppColors.primaryGreen,
+                fontFamily:'Montserrat',
+              ),
+              ),
             ),
             TextButton(
               onPressed: () => Get.back(),
-              child: Text("Cancel"),
+              child: Text("Cancel",
+                style: TextStyle(
+                  color: AppColors.primaryGreen,
+                  fontFamily:'Montserrat',
+                ),
+              ),
             ),
       ElevatedButton(
       onPressed: () async {
@@ -245,7 +255,12 @@ void showFilterDialog(BuildContext context) {
       borderRadius: BorderRadius.circular(8),
       ),
       ),
-      child: Text("Apply"),
+      child: Text("Apply",
+        style: TextStyle(
+          color: Colors.white,
+          fontFamily:'Montserrat',
+        ),
+      ),
       ),
           ],
       );

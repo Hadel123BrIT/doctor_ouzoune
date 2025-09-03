@@ -23,7 +23,7 @@ class BuildToolCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.all(8),
         child: Row(
           children: [
             Container(
@@ -71,12 +71,12 @@ class BuildToolCard extends StatelessWidget {
                   SizedBox(height: 8),
                   Row(
                     children: [
-                      BuildDetailItem(context, "thickness", "${tool.thickness ?? 'N/A'}"),
-                      SizedBox(width: context.width * 0.01),
+                      BuildDetailItem(context, "Thickness", "${tool.thickness ?? 'N/A'}"),
+                      SizedBox(width: context.width * 0.02),
                       BuildDetailItem(context, "Width", "${tool.width ?? 'N/A'}"),
-                      SizedBox(width: context.width * 0.01),
+                      SizedBox(width: context.width * 0.02),
                       BuildDetailItem(context, "Height", "${tool.height ?? 'N/A'}"),
-                      SizedBox(width: context.width * 0.01),
+                      SizedBox(width: context.width * 0.02),
                       BuildDetailItem(context, "Qty", "${tool.quantity ?? 0}", takeFirstDigit: true),
                     ],
                   ),

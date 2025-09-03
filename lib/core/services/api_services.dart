@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' hide Response, FormData, MultipartFile;
@@ -31,24 +31,35 @@ static const String baseUrl="http://ouzon.somee.com/api";
     String role = 'User',
   }) async {
     try {
-      final formData = FormData.fromMap({
-        "userName": userName,
-        'email': email,
-        'password': password,
-        'phoneNumber': phoneNumber,
-        'clinicName': clinicName,
-        'address': address,
-        "longtitude": longitude.toString(),
-        'latitude': latitude.toString(),
-        "role": role,
-        if (deviceToken != null) 'deviceToken': deviceToken,
-      });
-      if (ProfilePicture!= null) {
+      final formData = FormData();
+
+      formData.fields.addAll([
+        MapEntry('userName', userName),
+        MapEntry('email', email),
+        MapEntry('password', password),
+        MapEntry('phoneNumber', phoneNumber),
+        MapEntry('clinicName', clinicName),
+        MapEntry('address', address),
+        MapEntry('longtitude', longitude.toString()),
+        MapEntry('latitude', latitude.toString()),
+        MapEntry('role', role),
+        if (deviceToken != null) MapEntry('deviceToken', deviceToken),
+      ]);
+
+      if (ProfilePicture != null) {
+        final String extension = _getFileExtension(ProfilePicture.path);
+        final List<String> allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+
+        if (!allowedExtensions.contains(extension)) {
+          throw Exception('Only ${allowedExtensions.join(', ')} files are allowed');
+        }
+
         formData.files.add(MapEntry(
           'ProfilePicture',
           await MultipartFile.fromFile(
             ProfilePicture.path,
-            filename: 'profile_${DateTime.now().millisecondsSinceEpoch}',
+            filename: 'profile_${DateTime.now().millisecondsSinceEpoch}.$extension',
+            contentType: MediaType('image', extension == 'jpg' ? 'jpeg' : extension),
           ),
         ));
       }
@@ -62,7 +73,9 @@ static const String baseUrl="http://ouzon.somee.com/api";
           sendTimeout: Duration(seconds: 30),
         ),
       );
+
       print("Response Status: ${response.statusCode}");
+      print("Response Data: ${response.data}");
       return response;
     } on DioException catch (e) {
       print("Dio Error: ${e.message}");
@@ -78,7 +91,9 @@ static const String baseUrl="http://ouzon.somee.com/api";
     }
   }
 
-
+  String _getFileExtension(String path) {
+    return path.split('.').last.toLowerCase();
+  }
 
 
   //LoginUser
@@ -261,7 +276,7 @@ static const String baseUrl="http://ouzon.somee.com/api";
           headers: {
             'Content-Type': 'application/json',
           },
-          validateStatus: (status) => status! < 500, // قبول status codes أقل من 500
+          validateStatus: (status) => status! < 500,
         ),
       );
 
@@ -270,7 +285,6 @@ static const String baseUrl="http://ouzon.somee.com/api";
       if (response.statusCode == 200 || response.statusCode == 201) {
         print("**********done************");
 
-        // تحقق من أن البيانات هي Map
         if (response.data is Map<String, dynamic>) {
           return response.data as Map<String, dynamic>;
         } else {
@@ -418,30 +432,35 @@ static const String baseUrl="http://ouzon.somee.com/api";
 
 
 
-  // update my profile
   Future<Map<String, dynamic>> updateMyProfile({
     required Map<String, dynamic> data,
     File? profileImageFile,
   }) async {
     try {
-      final token = GetStorage().read('auth_token');
+      final dio = Dio();
+      final box = GetStorage();
+      final token = box.read('auth_token');
+
+      if (token == null) {
+        throw Exception('No authentication token found');
+      }
+
+      dio.options.headers['Authorization'] = 'Bearer $token';
+
       final formData = FormData.fromMap({
-        'id': data['id'],
-        'userName': data['userName'],
-        'email': data['email'],
-        'phoneNumber': data['phoneNumber'],
-        'role': data['role'],
-        'rate': data['rate'].toString(),
-        'clinic[id]': data['clinic']['id'].toString(),
-        'clinic[name]': data['clinic']['name'],
-        'clinic[address]': data['clinic']['address'],
-        'clinic[longtitude]': data['clinic']['longtitude'].toString(),
-        'clinic[latitude]': data['clinic']['latitude'].toString(),
+        'UserName': data['userName'],
+        'Email': data['email'],
+        'PhoneNumber': data['phoneNumber'],
+        'Name': data['userName'],
+        'ClinicName': data['clinicName'],
+        'Address': data['clinicAddress'],
+        'Latitude': data['clinicLatitude']?.toString() ?? '0',
+        'Longtitude': data['clinicLongitude']?.toString() ?? '0',
       });
 
       if (profileImageFile != null) {
         formData.files.add(MapEntry(
-          'profileImage',
+          'Image',
           await MultipartFile.fromFile(
             profileImageFile.path,
             filename: 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg',
@@ -453,19 +472,25 @@ static const String baseUrl="http://ouzon.somee.com/api";
         '$baseUrl/users/UpdateCurrentUserProfile',
         data: formData,
         options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'multipart/form-data',
-          },
+          contentType: 'multipart/form-data',
+          receiveTimeout: Duration(seconds: 30),
+          sendTimeout: Duration(seconds: 30),
         ),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 200 ) {
         return response.data;
+      } else {
+        throw Exception('Failed to update profile: ${response.statusCode}');
       }
-      throw Exception('Failed to update profile: ${response.statusCode}');
     } on DioException catch (e) {
-      throw Exception('Error updating profile: ${e.message}');
+      if (e.response != null) {
+        throw Exception('Server error: ${e.response?.statusCode} - ${e.response?.data}');
+      } else {
+        throw Exception('Network error: ${e.message}');
+      }
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
     }
   }
 

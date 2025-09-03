@@ -5,47 +5,53 @@ import 'package:ouzoun/core/constants/app_colors.dart';
 class BuildEditableProfileItem extends StatelessWidget {
   final IconData icon;
   final String title;
-  final String value;
+  final String initialValue;
   final ValueChanged<String> onChanged;
+  final FormFieldValidator<String>? validator;
+  final TextInputType? keyboardType;
 
   const BuildEditableProfileItem({
+    Key? key,
     required this.icon,
     required this.title,
-    required this.value,
+    required this.initialValue,
     required this.onChanged,
-  });
+    this.validator,
+    this.keyboardType,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       cursorColor: AppColors.primaryGreen,
-      controller: TextEditingController(text: value,
-      ),
+      initialValue: initialValue,
       onChanged: onChanged,
+      validator: validator,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-            color: AppColors.primaryGreen,
-            width: 2.0,
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-            color: Colors.grey[400]!,
-            width: 1.0,
-          ),
-        ),
-        prefixIcon: Icon(icon, color: Colors.grey),
         labelText: title,
         labelStyle: TextStyle(
-            fontFamily:'Montserrat',
-            color: Colors.grey
+          fontFamily: 'Montserrat',
+          color: AppColors.primaryGreen
         ),
+        prefixIcon: Icon(icon, color: AppColors.primaryGreen),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey[300]!),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.primaryGreen, width: 2),
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      ),
+      style: TextStyle(
+        fontSize: 16,
+        fontFamily: 'Montserrat',
       ),
     );
   }
