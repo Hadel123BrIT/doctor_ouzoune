@@ -34,7 +34,7 @@ class LoginController extends GetxController {
           final box = GetStorage();
           await box.write('user_token', token);
           await GetStorage().write('auth_token', token.toString());
-
+           print("***************device taken ${deviceToken}");
           CustomSnackbar.success(
             message: 'Welcome doctor  ${controller.nameController.text}',
             duration: Duration(seconds: 3),
