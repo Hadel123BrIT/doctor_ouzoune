@@ -72,11 +72,11 @@ class BuildToolCard extends StatelessWidget {
                   Row(
                     children: [
                       BuildDetailItem(context, "thickness", "${tool.thickness ?? 'N/A'}"),
-                      SizedBox(width: context.width * 0.02),
+                      SizedBox(width: context.width * 0.01),
                       BuildDetailItem(context, "Width", "${tool.width ?? 'N/A'}"),
-                      SizedBox(width: context.width * 0.02),
+                      SizedBox(width: context.width * 0.01),
                       BuildDetailItem(context, "Height", "${tool.height ?? 'N/A'}"),
-                      SizedBox(width: context.width * 0.02),
+                      SizedBox(width: context.width * 0.01),
                       BuildDetailItem(context, "Qty", "${tool.quantity ?? 0}", takeFirstDigit: true),
                     ],
                   ),

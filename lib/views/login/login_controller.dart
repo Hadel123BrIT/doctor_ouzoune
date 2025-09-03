@@ -9,8 +9,10 @@ import 'package:ouzoun/core/services/api_services.dart';
 import '../../Routes/app_routes.dart';
 import '../../core/services/firebase_service.dart';
 import '../../widgets/CustomSnackbar .dart';
+import '../register/register_controller.dart';
 
 class LoginController extends GetxController {
+  RegisterController controller=Get.put(RegisterController());
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   var isLoading = false.obs;
@@ -34,7 +36,7 @@ class LoginController extends GetxController {
           await GetStorage().write('auth_token', token.toString());
 
           CustomSnackbar.success(
-            message: 'Welcome doctor',
+            message: 'Welcome doctor  ${controller.nameController.text}',
             duration: Duration(seconds: 3),
           );
 
