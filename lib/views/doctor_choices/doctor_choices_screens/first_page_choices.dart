@@ -11,7 +11,7 @@ import '../../../core/services/services.dart';
 
 class FirstPageChoices extends StatelessWidget {
    FirstPageChoices({super.key});
-  final AuthService authService = Get.find();
+  final AuthService authService = Get.put(AuthService());
   @override
   Widget build(BuildContext context) {
     return Obx(() {

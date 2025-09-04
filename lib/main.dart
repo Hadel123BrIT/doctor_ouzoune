@@ -3,9 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:ouzoun/views/notification/notification_controller/notification_controller.dart';
 import 'package:ouzoun/views/splash/splash_screens/splash_screen.dart';
 import 'binding/initialize_binding.dart';
 import 'core/services/LocalNotificationService .dart';
+import 'core/services/api_services.dart';
 import 'core/services/firebase_service.dart';
 import 'core/services/services.dart';
 import 'firebase_options.dart';
@@ -20,10 +22,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await LocalNotificationService.init();
-  await FirebaseServices.init();
 
-  Get.put(AuthService());
 
   runApp(const MyApp());
 }

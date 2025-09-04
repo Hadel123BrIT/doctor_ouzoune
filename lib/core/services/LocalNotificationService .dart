@@ -1,22 +1,39 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
 
-class LocalNotificationService {
-  static FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+import '../../views/notification/notification_controller/notification_controller.dart';
 
-  static StreamController<NotificationResponse> streamController =
-  StreamController();
+class LocalNotificationService extends GetxService {
+  static LocalNotificationService? _instance;
 
-  static onTap(NotificationResponse notificationResponse) {
-    streamController.add(notificationResponse);
+  static LocalNotificationService get instance {
+    if (_instance == null) {
+      _instance = Get.put(LocalNotificationService());
+    }
+    return _instance!;
   }
 
-  static Future init() async {
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  late StreamController<NotificationResponse> streamController;
+
+  final RxBool hasNewNotification = false.obs;
+
+  @override
+  Future<void> onInit() async {
+    super.onInit();
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    streamController = StreamController<NotificationResponse>.broadcast();
+
+    await _initializeNotifications();
+    setupNotificationHandlers();
+    log('LocalNotificationService initialized');
+  }
+
+  Future<void> _initializeNotifications() async {
     const AndroidInitializationSettings androidSettings =
     AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -34,16 +51,20 @@ class LocalNotificationService {
 
     await flutterLocalNotificationsPlugin.initialize(
       settings,
-      onDidReceiveNotificationResponse: onTap,
-      onDidReceiveBackgroundNotificationResponse: onTap,
+      onDidReceiveNotificationResponse: _onNotificationTap,
+      onDidReceiveBackgroundNotificationResponse: _onNotificationTap,
     );
 
-
-    await createNotificationChannel();
+    await _createNotificationChannel();
   }
 
+  void _onNotificationTap(NotificationResponse notificationResponse) {
+    streamController.add(notificationResponse);
+    hasNewNotification.value = true;
+    _handleNotificationTap(notificationResponse);
+  }
 
-  static Future<void> createNotificationChannel() async {
+  Future<void> _createNotificationChannel() async {
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'channel_id',
       'channel_name',
@@ -59,10 +80,33 @@ class LocalNotificationService {
         ?.createNotificationChannel(channel);
   }
 
-  //basic Notification
-  static void showBasicNotification(RemoteMessage message) async {
-    try {
+  void setupNotificationHandlers() {
+    streamController.stream.listen((NotificationResponse response) {
+      _handleNotificationTap(response);
+    });
+  }
 
+  void _handleNotificationTap(NotificationResponse response) {
+    try {
+      final payload = response.payload;
+      if (payload != null) {
+        final data = json.decode(payload);
+        log('Notification tapped with data: $data');
+        _triggerNotificationRefresh();
+      }
+    } catch (e) {
+      log('Error handling notification tap: $e');
+    }
+  }
+
+  void _triggerNotificationRefresh() {
+    if (Get.isRegistered<NotificationController>()) {
+      Get.find<NotificationController>().refreshNotifications();
+    }
+  }
+
+  Future<void> showBasicNotification(RemoteMessage message) async {
+    try {
       const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
         'channel_id',
         'channel_name',
@@ -71,7 +115,6 @@ class LocalNotificationService {
         priority: Priority.high,
         playSound: true,
         enableVibration: true,
-
       );
 
       const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
@@ -91,10 +134,19 @@ class LocalNotificationService {
         payload: json.encode(message.data),
       );
 
+      hasNewNotification.value = true;
+      _triggerNotificationRefresh();
+
       log('Notification shown successfully');
 
     } catch (e) {
       log('Error showing notification: $e');
     }
+  }
+
+  @override
+  void onClose() {
+    streamController.close();
+    super.onClose();
   }
 }

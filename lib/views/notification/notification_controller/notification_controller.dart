@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
+import '../../../core/services/LocalNotificationService .dart';
 import '../../../core/services/api_services.dart';
 
 class NotificationController extends GetxController {
@@ -16,6 +17,20 @@ class NotificationController extends GetxController {
   void onInit() {
     super.onInit();
     loadNotifications();
+    _setupNotificationListener();
+  }
+
+  void _setupNotificationListener() {
+    ever(LocalNotificationService.instance.hasNewNotification, (hasNew) {
+      if (hasNew) {
+        refreshNotifications();
+        LocalNotificationService.instance.hasNewNotification.value = false;
+      }
+    });
+
+    LocalNotificationService.instance.streamController.stream.listen((response) {
+      refreshNotifications();
+    });
   }
 
   Future<void> loadNotifications() async {
@@ -42,13 +57,11 @@ class NotificationController extends GetxController {
             if (group is Map<String, dynamic>) {
               final notificationsList = group['notifications'] as List? ?? [];
 
-
               notificationsList.sort((a, b) {
                 final dateA = DateTime.parse(a['createdAt'] ?? '');
                 final dateB = DateTime.parse(b['createdAt'] ?? '');
                 return dateB.compareTo(dateA);
               });
-
 
               for (var notification in notificationsList) {
                 notifications.add({
@@ -61,7 +74,6 @@ class NotificationController extends GetxController {
                 });
               }
 
-
               groupedNotifications.add({
                 'date': group['createdAt']?.toString() ?? '',
                 'notifications': notificationsList,
@@ -70,23 +82,20 @@ class NotificationController extends GetxController {
           }
 
           checkUnreadNotifications();
-          return;
         }
-
       }
-
-
-
-
     } catch (e) {
       print('Error loading notifications: $e');
-
     } finally {
       isLoading.value = false;
     }
   }
 
-
+  Future<void> refreshNotifications() async {
+    print('Refreshing notifications...');
+    await loadNotifications();
+    update();
+  }
 
   void sortNotificationsDescending() {
     notifications.sort((a, b) {
@@ -94,7 +103,6 @@ class NotificationController extends GetxController {
       final dateB = DateTime.parse(b['createdAt'] ?? '');
       return dateB.compareTo(dateA);
     });
-
 
     groupedNotifications.sort((a, b) {
       final dateA = DateTime.parse(a['date'] ?? '');
@@ -126,7 +134,6 @@ class NotificationController extends GetxController {
     if (index != -1) {
       notifications[index]['read'] = true;
       notifications.refresh();
-
 
       for (var group in groupedNotifications) {
         final groupNotifications = group['notifications'] as List;
@@ -166,11 +173,6 @@ class NotificationController extends GetxController {
     unreadCount.value = 0;
   }
 
-  Future<void> refreshNotifications() async {
-    await loadNotifications();
-  }
-
-
   String formatDate(String dateString) {
     try {
       final date = DateTime.parse(dateString);
@@ -179,7 +181,6 @@ class NotificationController extends GetxController {
       return dateString;
     }
   }
-
 
   String formatTime(String dateString) {
     try {

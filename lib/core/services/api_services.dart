@@ -15,6 +15,9 @@ import '../../models/kit_model.dart';
 class ApiServices  {
 final Dio dio=Dio();
 static const String baseUrl="http://ouzon.somee.com/api";
+final RxList<dynamic> notifications = <dynamic>[].obs;
+final RxBool isLoadingNotifications = false.obs;
+final RxString notificationsError = ''.obs;
 
 // RegisterUser with image
   Future<Response> registerUserWithImage({
@@ -632,11 +635,11 @@ static const String baseUrl="http://ouzon.somee.com/api";
         throw Exception('Failed to load procedures: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      print('❌ Dio Error: ${e.message}');
-      print('❌ Response: ${e.response?.data}');
+      print(' Dio Error: ${e.message}');
+      print(' Response: ${e.response?.data}');
       rethrow;
     } catch (e) {
-      print('❌ Unexpected Error in getAssistantsFromProcedures: $e');
+      print(' Unexpected Error in getAssistantsFromProcedures: $e');
       rethrow;
     }
   }
@@ -756,7 +759,10 @@ static const String baseUrl="http://ouzon.somee.com/api";
           },
         ),
       );
-
+      if (response.statusCode == 200) {
+        notifications.value = response.data;
+        notifications.refresh();
+      }
       return response;
     } on DioException catch (e) {
       print('Dio Error: ${e.message}');
@@ -768,6 +774,10 @@ static const String baseUrl="http://ouzon.somee.com/api";
       print('General Error: $e');
       throw Exception('An unexpected error occurred: $e');
     }
+  }
+
+  Future<void> refreshNotifications() async {
+    await getCurrentUserNotifications();
   }
 
 
