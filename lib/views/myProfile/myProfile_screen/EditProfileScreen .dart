@@ -5,6 +5,9 @@ import 'package:ouzoun/Widgets/custom_button.dart';
 import 'package:ouzoun/core/constants/app_colors.dart';
 import 'package:ouzoun/core/constants/app_images.dart';
 
+import '../../../Widgets/custom_text_form_field.dart';
+import '../../register/Widget/LocationPicker/locationPicker .dart';
+import '../../register/register_controller.dart';
 import '../myProfile_controller/editProfile_controller .dart';
 import '../myProfile_controller/myProfile_controller.dart';
 import '../widget/BuildEditableProfileItem .dart';
@@ -12,6 +15,8 @@ import '../widget/BuildEditableProfileItem .dart';
 class EditProfileScreen extends StatelessWidget {
   EditProfileScreen({super.key});
   final EditProfileController controller = Get.put(EditProfileController());
+  final RegisterController  _controller=Get.put(RegisterController());
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -39,13 +44,6 @@ class EditProfileScreen extends StatelessWidget {
         ),
         backgroundColor: AppColors.primaryGreen,
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.clear_all, color: Colors.white),
-            onPressed: () => controller.clearAllFields(),
-            tooltip: 'Clear all fields',
-          ),
-        ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -83,19 +81,6 @@ class EditProfileScreen extends StatelessWidget {
                         color: AppColors.primaryGreen,
                       ),
                     ),
-                    SizedBox(width: 10),
-
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey[300],
-                      ),
-                      child: IconButton(
-                        icon: Icon(Icons.clear, color: Colors.red),
-                        onPressed: () => controller.clearAllFields(),
-                        tooltip: 'Clear all fields',
-                      ),
-                    ),
                   ],
                 ),
                 SizedBox(height: 20),
@@ -121,10 +106,6 @@ class EditProfileScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.grey[200],
-                  border: Border.all(
-                    color: AppColors.primaryGreen,
-                    width: 3,
-                  ),
                 ),
                 child: _buildProfileImage(),
               ),
@@ -184,7 +165,7 @@ class EditProfileScreen extends StatelessWidget {
       children: [
         BuildEditableProfileItem(
           icon: Icons.person,
-          title: 'Name',
+          title: 'User Name',
           initialValue: controller.userName.value,
           onChanged: (value) => controller.userName.value = value,
           validator: (value) {
@@ -197,7 +178,7 @@ class EditProfileScreen extends StatelessWidget {
         SizedBox(height: 20),
         BuildEditableProfileItem(
           icon: Icons.email,
-          title: 'Email',
+          title: 'Email Address',
           initialValue: controller.email.value,
           onChanged: (value) => controller.email.value = value,
           keyboardType: TextInputType.emailAddress,
@@ -214,7 +195,7 @@ class EditProfileScreen extends StatelessWidget {
         SizedBox(height: 20),
         BuildEditableProfileItem(
           icon: Icons.phone,
-          title: 'Phone',
+          title: 'Phone Number',
           initialValue: controller.phoneNumber.value,
           onChanged: (value) => controller.phoneNumber.value = value,
           keyboardType: TextInputType.phone,
@@ -226,11 +207,45 @@ class EditProfileScreen extends StatelessWidget {
           },
         ),
         SizedBox(height: 20),
-        BuildEditableProfileItem(
-          icon: Icons.location_on,
-          title: 'Location',
-          initialValue: controller.location.value,
-          onChanged: (value) => controller.location.value = value,
+    GestureDetector(
+    behavior: HitTestBehavior.opaque,
+    onTap: () async {
+    Get.dialog(
+    Center(
+    child: CircularProgressIndicator(
+    color: AppColors.primaryGreen,
+    ),
+    ),
+    barrierDismissible: false,
+    );
+
+    try {
+    await Get.to(() => LocationPicker(
+    onLocationSelected: (coords, address) {
+
+    _controller.updateLocation(coords, address);
+    },
+    useOSM: true,
+    ));
+
+    if (Get.isDialogOpen!) Get.back();
+    } catch (e) {
+    if (Get.isDialogOpen!) Get.back();
+    Get.snackbar(
+    'Error'.tr,
+    'Failed to load map: ${e.toString()}'.tr,
+    snackPosition: SnackPosition.BOTTOM,
+    );
+    }
+    },
+    child: IgnorePointer(
+    child: BuildEditableProfileItem(
+    icon: Icons.location_on,
+    title: 'Tap to choose Location',
+    initialValue: controller.location.value,
+    onChanged: (value) {},
+    ),
+    ),
         ),
         SizedBox(height: 20),
         BuildEditableProfileItem(

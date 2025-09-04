@@ -7,11 +7,11 @@ import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../widgets/CustomSnackbar .dart';
+import '../../register/register_controller.dart';
 import 'myProfile_controller.dart';
 
 class EditProfileController extends GetxController {
   final MyProfileController profileController = Get.put(MyProfileController());
-
   final userName = ''.obs;
   final email = ''.obs;
   final phoneNumber = ''.obs;
