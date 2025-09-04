@@ -16,6 +16,7 @@ import '../views/about_us/about_us_screen.dart';
 import '../views/notification/notification_screen/notification_screen.dart';
 import '../views/procedure/procedure_screen/get_all_procedures.dart';
 import '../views/setting/setting/setting_screen.dart';
+import 'CustomSnackbar .dart';
 import 'custom_view_item_list.dart';
 
 
@@ -57,14 +58,16 @@ class _CustomDrawerState extends State<CustomDrawer> with SingleTickerProviderSt
         final confirm = await Get.dialog(
           AlertDialog(
             title: Center(
-              child: Text('Confirm logout',
-              style: TextStyle(
-                color: AppColors.primaryGreen,
+              child: Text(
+                'Confirm logout',
+                style: TextStyle(
+                  color: AppColors.primaryGreen,
                   fontFamily: 'Montserrat',
-              ),
+                ),
               ),
             ),
-            content: Text('Are you sure you want to log out?',
+            content: Text(
+              'Are you sure you want to log out?',
               style: TextStyle(
                 fontFamily: 'Montserrat',
               ),
@@ -72,7 +75,8 @@ class _CustomDrawerState extends State<CustomDrawer> with SingleTickerProviderSt
             actions: [
               TextButton(
                 onPressed: () => Get.back(result: false),
-                child: Text('Cancel',
+                child: Text(
+                  'Cancel',
                   style: TextStyle(
                     color: Colors.grey,
                     fontFamily: 'Montserrat',
@@ -81,9 +85,10 @@ class _CustomDrawerState extends State<CustomDrawer> with SingleTickerProviderSt
               ),
               ElevatedButton(
                 onPressed: () => Get.back(result: true),
-                child: Text('Logout',
+                child: Text(
+                  'Logout',
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.white,
                     fontFamily: 'Montserrat',
                   ),
                 ),
@@ -98,25 +103,17 @@ class _CustomDrawerState extends State<CustomDrawer> with SingleTickerProviderSt
         if (confirm == true) {
           try {
             await authService.logout();
-
             await box.erase();
-
             Get.offAllNamed(AppRoutes.login);
 
-            Get.snackbar(
-              'successfully',
-              'You have been successfully logged out.',
-              snackPosition: SnackPosition.TOP,
-              backgroundColor: Colors.grey,
-              colorText: Colors.white,
+            CustomSnackbar.success(
+              title: 'Successfully',
+              message: 'You have been successfully logged out.',
             );
           } catch (e) {
-            Get.snackbar(
-              'Wrong',
-              'An error occurred while logging out :  ${e.toString()}',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.red,
-              colorText: Colors.white,
+            CustomSnackbar.error(
+              title: 'Error',
+              message: 'An error occurred while logging out: ${e.toString()}',
             );
           }
         }

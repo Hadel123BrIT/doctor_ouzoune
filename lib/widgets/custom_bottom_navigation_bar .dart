@@ -9,7 +9,7 @@ import '../core/constants/app_colors.dart';
 class NavigationController extends GetxController {
 final tabIndex = 2.obs;
 final icons = [
-Icons.rate_review,
+Icons.star_rate_sharp,
 Icons.person,
 Icons.home,
 Icons.receipt_long,

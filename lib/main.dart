@@ -23,7 +23,7 @@ void main() async {
   );
 
 
-
+  Get.put(AuthService());
   runApp(const MyApp());
 }
 
