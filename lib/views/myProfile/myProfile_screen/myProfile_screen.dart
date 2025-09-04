@@ -68,70 +68,80 @@ class MyProfileScreen extends StatelessWidget {
                       child: _buildProfileImage(),
                     ),
                     SizedBox(height: context.height * 0.03),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: context.width * 0.05),
-                      child: Column(
-                        children: [
-                          buildProfileItem(
-                            context,
-                            icon: Icons.person,
-                            title: 'Name',
-                            value: controller.userName.value,
-                          ),
-                          SizedBox(height: 10),
-                          buildProfileItem(
-                            context,
-                            icon: Icons.email,
-                            title: 'Email',
-                            value: controller.email.value,
-                          ),
-                          SizedBox(height: 10),
-                          buildProfileItem(
-                            context,
-                            icon: Icons.phone,
-                            title: 'Phone',
-                            value: controller.phoneNumber.value,
-                          ),
-                          SizedBox(height: 10),
-                          buildProfileItem(
-                            context,
-                            icon: Icons.location_pin,
-                            title: 'Location',
-                            value: controller.isConvertingAddress.value
-                                ? 'Loading address...'
-                                : controller.location.value,
-                          ),
-                          SizedBox(height: 10),
-                          buildProfileItem(
-                            context,
-                            icon: Icons.medical_services_rounded,
-                            title: 'Clinic Name',
-                            value: controller.clinicName.value,
-                          ),
-                          SizedBox(height: 10),
-                          buildProfileItem(
-                            context,
-                            icon: Icons.business_sharp,
-                            title: 'Clinic Address',
-                            value: controller.clinicAddress.value,
-                          ),
-                          SizedBox(height: context.height * 0.03),
-                          CustomButton(
-                            onTap:  (){
-                              Get.to(EditProfileScreen());
-                            },
-                            text: "Update my profile",
-                            color: AppColors.primaryGreen,
-                          ),
-                          SizedBox(height: context.height * 0.05),
-                        ],
+
+                    if (controller.isLoading.value)
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(
+                          color: AppColors.primaryGreen,
+                        ),
+                      )
+                    else
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: context.width * 0.05),
+                        child: Column(
+                          children: [
+                            buildProfileItem(
+                              context,
+                              icon: Icons.person,
+                              title: 'Name',
+                              value: controller.userName.value,
+                            ),
+                            SizedBox(height: 10),
+                            buildProfileItem(
+                              context,
+                              icon: Icons.email,
+                              title: 'Email',
+                              value: controller.email.value,
+                            ),
+                            SizedBox(height: 10),
+                            buildProfileItem(
+                              context,
+                              icon: Icons.phone,
+                              title: 'Phone',
+                              value: controller.phoneNumber.value,
+                            ),
+                            SizedBox(height: 10),
+                            buildProfileItem(
+                              context,
+                              icon: Icons.location_pin,
+                              title: 'Location',
+                              value: controller.isConvertingAddress.value
+                                  ? 'Loading address...'
+                                  : controller.location.value,
+                            ),
+                            SizedBox(height: 10),
+                            buildProfileItem(
+                              context,
+                              icon: Icons.medical_services_rounded,
+                              title: 'Clinic Name',
+                              value: controller.clinicName.value,
+                            ),
+                            SizedBox(height: 10),
+                            buildProfileItem(
+                              context,
+                              icon: Icons.business_sharp,
+                              title: 'Clinic Address',
+                              value: controller.clinicAddress.value,
+                            ),
+                            SizedBox(height: context.height * 0.03),
+                            CustomButton(
+                              onTap:  (){
+                                Get.to(EditProfileScreen());
+                              },
+                              text: "Update my profile",
+                              color: AppColors.primaryGreen,
+                            ),
+                            SizedBox(height: context.height * 0.05),
+                          ],
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
             ),
           ),
+
         ],
       )),
     );

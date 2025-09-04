@@ -32,20 +32,20 @@ class BuildEditableProfileItem extends StatelessWidget {
         labelText: title,
         labelStyle: TextStyle(
           fontFamily: 'Montserrat',
-          color: AppColors.primaryGreen
+          color: Colors.grey
         ),
-        prefixIcon: Icon(icon, color: AppColors.primaryGreen),
+        prefixIcon: Icon(icon, color: Colors.grey),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: BorderSide(color: Colors.grey!),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: BorderSide(color: Colors.grey!),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.primaryGreen, width: 2),
+          borderSide: BorderSide(color: Colors.grey, width: 2),
         ),
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),

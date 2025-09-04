@@ -5,12 +5,13 @@ import 'package:ouzoun/Widgets/custom_button.dart';
 import 'package:ouzoun/core/constants/app_colors.dart';
 import 'package:ouzoun/core/constants/app_images.dart';
 
+import '../myProfile_controller/editProfile_controller .dart';
 import '../myProfile_controller/myProfile_controller.dart';
 import '../widget/BuildEditableProfileItem .dart';
 
 class EditProfileScreen extends StatelessWidget {
   EditProfileScreen({super.key});
-  final controller = Get.find<MyProfileController>();
+  final EditProfileController controller = Get.put(EditProfileController());
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -38,6 +39,13 @@ class EditProfileScreen extends StatelessWidget {
         ),
         backgroundColor: AppColors.primaryGreen,
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.clear_all, color: Colors.white),
+            onPressed: () => controller.clearAllFields(),
+            tooltip: 'Clear all fields',
+          ),
+        ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -58,21 +66,37 @@ class EditProfileScreen extends StatelessWidget {
             padding: EdgeInsets.all(20),
             child: Column(
               children: [
-
                 _buildProfileImageSection(context),
                 SizedBox(height: 30),
-
                 _buildEditableFields(),
-
                 SizedBox(height: 30),
-                CustomButton(
-                  onTap: () {
-                    if (_formKey.currentState!.validate()) {
-                      controller.updateProfile();
-                    }
-                  },
-                  text: "Save Changes",
-                  color: AppColors.primaryGreen,
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomButton(
+                        onTap: () {
+
+                            controller.updateProfile();
+
+                        },
+                        text: "Save Changes",
+                        color: AppColors.primaryGreen,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.grey[300],
+                      ),
+                      child: IconButton(
+                        icon: Icon(Icons.clear, color: Colors.red),
+                        onPressed: () => controller.clearAllFields(),
+                        tooltip: 'Clear all fields',
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20),
               ],
@@ -149,30 +173,8 @@ class EditProfileScreen extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       );
-    } else if (controller.profileImagePath.value.isNotEmpty) {
-      return ClipOval(
-        child: Image.network(
-          controller.profileImagePath.value,
-          width: 120,
-          height: 120,
-          fit: BoxFit.cover,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes!
-                    : null,
-              ),
-            );
-          },
-          errorBuilder: (context, error, stackTrace) {
-            return Icon(Icons.person, size: 60, color: Colors.grey[400]);
-          },
-        ),
-      );
     } else {
+      // لا نعرض الصورة القديمة، نعرض أيقونة افتراضية فقط
       return Icon(Icons.person, size: 60, color: Colors.grey[400]);
     }
   }

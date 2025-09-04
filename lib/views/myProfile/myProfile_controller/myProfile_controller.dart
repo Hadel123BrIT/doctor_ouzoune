@@ -13,10 +13,10 @@ import '../myProfile_screen/myProfile_screen.dart';
 
 class MyProfileController extends GetxController {
   final ApiServices apiServices = Get.put(ApiServices());
-  final LocationPickerController locationController = Get.put(
-      LocationPickerController());
+  final LocationPickerController locationController = Get.put(LocationPickerController());
 
-  final id = ''.obs;
+
+  final  id = ''.obs;
   final userName = ''.obs;
   final email = ''.obs;
   final phoneNumber = ''.obs;
@@ -33,11 +33,18 @@ class MyProfileController extends GetxController {
   final isLoading = false.obs;
   final isConvertingAddress = false.obs;
 
+
+
+  @override
   void onInit() {
     super.onInit();
-    fetchProfileData();
+    if (Get.currentRoute == '/profile') {
+      fetchProfileData();
+    }
+    else{
+      clearAllFields();
+    }
   }
-
 
   Future<void> fetchProfileData() async {
     try {
@@ -140,6 +147,24 @@ class MyProfileController extends GetxController {
     }
   }
 
+
+
+  void clearAllFields() {
+    userName.value="";
+    email.value = '';
+    phoneNumber.value = '';
+    clinicName.value = '';
+    clinicAddress.value = '';
+    location.value = '';
+    selectedImage.value = null;
+
+    CustomSnackbar.info(
+      message: 'All fields cleared',
+      title: 'Cleared',
+    );
+  }
+
+
   Future<void> pickImage() async {
     try {
       final ImagePicker picker = ImagePicker();
@@ -174,7 +199,6 @@ class MyProfileController extends GetxController {
         location.value = 'Location not set';
         return;
       }
-
       final latLng = LatLng(latitude, longitude);
       await locationController.onMapTapped(latLng);
       await Future.delayed(Duration(milliseconds: 500));
