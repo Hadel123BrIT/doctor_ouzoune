@@ -13,7 +13,7 @@ class SettingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    box = GetStorage(); // تهيئة GetStorage هنا
+    box = GetStorage();
     _loadThemePreference();
   }
 

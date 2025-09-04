@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart';
@@ -846,6 +847,87 @@ final RxString notificationsError = ''.obs;
   }
 
 
+   Future<Response> checkEmail(String email) async {
+    return await dio.post(
+      '$baseUrl/users/ForgotPassword',
+      data: {'email': email},
+      options: Options(
+        headers: {'Content-Type': 'application/json'},
+      ),
+    );
+  }
 
+  Future<Response> verifyCode(String code) async {
+    return await dio.post(
+      '$baseUrl/users/VerifyForgotPasswordOtp',
+      data: {
+        'code': code,
+      },
+      options: Options(
+        headers: {'Content-Type': 'application/json'},
+      ),
+    );
+  }
+  Future<dynamic> resetPassword({
+    required String newPassword,
+    required String confirmNewPassword,
+    required String token,
+  }) async {
+    try {
+      print('🌐 Sending to: $baseUrl/users/ResetPassword');
+
+      // استخدام Options مع validateStatus لقبول جميع status codes
+      final response = await dio.post(
+        '$baseUrl/users/ResetPassword',
+        data: {
+          'newPassword': newPassword,
+          'confirmNewPassword': confirmNewPassword,
+          'token': token,
+        },
+        options: Options(
+          headers: {
+            'accept': '*/*',
+            'Content-Type': 'application/json',
+          },
+          validateStatus: (status) => true,
+        ),
+      );
+
+      print('📨 Response status: ${response.statusCode}');
+      print('📨 Response data: ${response.data}');
+      print('📨 Response data type: ${response.data.runtimeType}');
+
+      return {
+        'statusCode': response.statusCode,
+        'data': response.data,
+        'success': response.statusCode! >= 200 && response.statusCode! < 300,
+      };
+
+    } on DioException catch (e) {
+      print('🔥 Dio error in resetPassword: ${e.message}');
+
+      if (e.response != null) {
+        return {
+          'statusCode': e.response!.statusCode,
+          'data': e.response!.data,
+          'success': false,
+          'error': e.message,
+        };
+      }
+
+      return {
+        'success': false,
+        'error': e.message,
+        'statusCode': 0,
+      };
+    } catch (e) {
+      print('🔥 Other error in resetPassword: $e');
+      return {
+        'success': false,
+        'error': e.toString(),
+        'statusCode': 0,
+      };
+    }
+  }
 
 }

@@ -1,6 +1,4 @@
-
 import 'package:flutter/material.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 import 'package:ouzoun/Widgets/custom_button.dart';
 import 'package:ouzoun/Widgets/custom_otp.dart';
@@ -13,38 +11,79 @@ class Code extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    VerfiyCodeController controller=Get.put(VerfiyCodeController());
+    VerfiyCodeController controller = Get.put(VerfiyCodeController());
     return Scaffold(
-      backgroundColor:Theme.of(context).colorScheme.background,
-      body:SafeArea(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical:context.height*0.15,horizontal:context.width*0.06),
-          child:Container(
-            alignment: Alignment.center,
-            child: Column(children: [
-              Text("Enter Verification Code",textAlign: TextAlign.center,style:Theme.of(context).textTheme.titleLarge,),
-              SizedBox(height: context.height * 0.02),
-              Text("Enter the 5-digit that we have sent via the \nEmail ",textAlign: TextAlign.center,style:Theme.of(context).textTheme.titleMedium,),
-              SizedBox(height: context.height * 0.04),
-              CustomOtp(
-                  onChanged:(code){
-                controller.verifyCode=code;
-              },
-                codeNumber: 5,
-                  focusedBorderColor: AppColors.primaryGreen,
-                  cursorColor: AppColors.lightGreen,
-                keyBoard:TextInputType.number,
+          padding: EdgeInsets.symmetric(
+            vertical: context.height * 0.1,
+            horizontal: context.width * 0.06,
+          ),
+          child: SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(
+                minHeight: context.height * 0.9,
               ),
-              SizedBox(height: context.height * 0.05),
-              CustomButton(
-                color:AppColors.primaryGreen,
-                text:"Confirm",
-                onTap:(){
-                  controller.goToReset();
-                },)
-        
-            ],),
-        
+              alignment: Alignment.center,
+              child: Obx(() => Stack(
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Enter Verification Code",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      SizedBox(height: context.height * 0.02),
+                      Text(
+                        "Enter the 6-digit code that we have sent via Email",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      SizedBox(height: context.height * 0.04),
+                      CustomOtp(
+                        onChanged: (code) {
+                          print('OTP changed: $code');
+                          controller.verify_code.value = code!;
+                        },
+                        onSubmit: (code) {
+                          print('OTP submitted: $code');
+                          controller.verify_code.value = code;
+                        },
+                        codeNumber: 6,
+                        focusedBorderColor: AppColors.primaryGreen,
+                        cursorColor: AppColors.lightGreen,
+                        keyBoard: TextInputType.number,
+                      ),
+                      SizedBox(height: context.height * 0.05),
+                      CustomButton(
+                        color: AppColors.primaryGreen,
+                        text: "Confirm",
+                        onTap: controller.isLoading.value
+                            ? () {}
+                            : () {
+                          controller.verifyCode();
+                        },
+                      )
+                    ],
+                  ),
+                  if (controller.isLoading.value)
+                    Positioned.fill(
+                      child: Container(
+                        color: Colors.black.withOpacity(0.5),
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryGreen,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              )),
+            ),
           ),
         ),
       ),
