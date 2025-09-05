@@ -129,42 +129,9 @@ class NotificationController extends GetxController {
     unreadCount.value = unread.length;
   }
 
-  void markAsRead(int notificationId) {
-    final index = notifications.indexWhere((n) => n['id'] == notificationId);
-    if (index != -1) {
-      notifications[index]['read'] = true;
-      notifications.refresh();
 
-      for (var group in groupedNotifications) {
-        final groupNotifications = group['notifications'] as List;
-        final groupIndex = groupNotifications.indexWhere((n) => n['id'] == notificationId);
-        if (groupIndex != -1) {
-          groupNotifications[groupIndex]['read'] = true;
-          break;
-        }
-      }
-      groupedNotifications.refresh();
 
-      checkUnreadNotifications();
-    }
-  }
 
-  void markAllAsRead() {
-    for (var notification in notifications) {
-      notification['read'] = true;
-    }
-    notifications.refresh();
-
-    for (var group in groupedNotifications) {
-      final groupNotifications = group['notifications'] as List;
-      for (var notification in groupNotifications) {
-        notification['read'] = true;
-      }
-    }
-    groupedNotifications.refresh();
-
-    checkUnreadNotifications();
-  }
 
   void clearAllNotifications() {
     notifications.clear();

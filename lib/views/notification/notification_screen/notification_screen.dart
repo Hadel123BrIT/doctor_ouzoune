@@ -4,13 +4,13 @@ import 'package:lottie/lottie.dart';
 import 'package:ouzoun/core/constants/app_colors.dart';
 import '../../../core/constants/app_images.dart';
 import '../notification_controller/notification_controller.dart';
+import '../widget/buildNotificationHelper.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final NotificationController controller = Get.put(NotificationController());
 
     return Scaffold(
@@ -31,38 +31,13 @@ class NotificationsScreen extends StatelessWidget {
         ),
         centerTitle: true,
         actions: [
-          Obx(() => controller.unreadCount.value > 0
-              ? Padding(
-            padding: const EdgeInsets.only(right: 8.0, top: 8.0),
-            child: CircleAvatar(
-              radius: 10,
-              backgroundColor: Colors.red,
-              child: Text(
-                controller.unreadCount.value.toString(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          )
-              : const SizedBox.shrink()),
           IconButton(
             icon: const Icon(Icons.refresh,
               color: Colors.white,
             ),
             onPressed: () => controller.refreshNotifications(),
           ),
-          Obx(() => controller.notifications.isNotEmpty
-              ? IconButton(
-            icon: const Icon(Icons.mark_email_read,
-              color: Colors.white,
-            ),
-            onPressed: () => controller.markAllAsRead(),
-            tooltip: 'Mark all as read',
-          )
-              : const SizedBox.shrink()),
+
         ],
       ),
       body: Obx(() {
@@ -95,6 +70,7 @@ class NotificationsScreen extends StatelessWidget {
           children: [
             Expanded(
               child: RefreshIndicator(
+                color: AppColors.primaryGreen,
                 onRefresh: () => controller.refreshNotifications(),
                 child: ListView.builder(
                   itemCount: controller.groupedNotifications.length,
@@ -124,7 +100,7 @@ class NotificationsScreen extends StatelessWidget {
                           itemCount: groupNotifications.length,
                           itemBuilder: (context, index) {
                             final notification = groupNotifications[index];
-                            return _buildNotificationCard(notification, context);
+                            return buildNotificationCard(notification, context);
                           },
                         ),
                       ],
@@ -139,121 +115,12 @@ class NotificationsScreen extends StatelessWidget {
       floatingActionButton: Obx(() => controller.notifications.isNotEmpty
           ? FloatingActionButton(
         backgroundColor: AppColors.primaryGreen,
-        onPressed: () => _showClearAllDialog(context, controller),
+        onPressed: () => showClearAllDialog(context, controller),
         child: const Icon(Icons.delete, color: Colors.white),
       )
           : const SizedBox.shrink()),
     );
   }
 
-  Widget _buildNotificationCard(Map<String, dynamic> notification, BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final isRead = notification['read'] ?? false;
 
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-        side: BorderSide(
-          color: isDarkMode ? Colors.grey[700]! : Colors.grey[400]!,
-          width: 1.5,
-        ),
-      ),
-      elevation: 0,
-      color: isDarkMode ? Colors.grey[900] : Colors.white,
-      margin: const EdgeInsets.all(12),
-      child: ListTile(
-        leading: Icon(
-          isRead ? Icons.notifications_none : Icons.notifications_active,
-          color: isRead ? Colors.grey : AppColors.primaryGreen,
-          size: 35,
-        ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              notification['title'],
-              style: TextStyle(
-                fontSize: 17.5,
-                fontFamily: 'Montserrat',
-                fontWeight: isRead ? FontWeight.normal : FontWeight.bold,
-                color: isRead ? Colors.grey[600] : null,
-              ),
-            ),
-            Text(
-              _formatTime(notification['createdAt']),
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[500],
-                fontFamily: 'Montserrat',
-              ),
-            ),
-          ],
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              notification['body'],
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                color: isRead ? Colors.grey[500] : Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 4),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _formatTime(String dateString) {
-    try {
-      final date = DateTime.parse(dateString);
-      return '${date.hour}:${date.minute.toString().padLeft(2, '0')}';
-    } catch (e) {
-      return dateString;
-    }
-  }
-
-  void _showClearAllDialog(BuildContext context, NotificationController controller) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text(
-          'Delete all',
-          style: TextStyle(fontFamily: 'Montserrat'),
-        ),
-        content: const Text(
-          'Do you want to delete all notifications?',
-          style: TextStyle(fontFamily: 'Montserrat'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                color: Colors.grey,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              controller.clearAllNotifications();
-              Get.back();
-              Get.snackbar('Done', 'All notifications deleted');
-            },
-            child: const Text(
-              'Confirm',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                color: AppColors.primaryGreen,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

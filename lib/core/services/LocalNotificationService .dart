@@ -82,10 +82,10 @@ class LocalNotificationService {
         details,
       );
 
-      print('✅ Local notification shown successfully');
+      print(' Local notification shown successfully');
 
     } catch (e) {
-      print('❌ Error showing local notification: $e');
+      print(' Error showing local notification: $e');
     }
   }
 }
