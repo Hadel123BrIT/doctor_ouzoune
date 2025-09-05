@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:ouzoun/views/setting/setting/setting_controller.dart';
-import 'package:ouzoun/views/setting/setting/widget/settingHelper.dart';
+import 'package:ouzoun/views/setting/setting_controller/setting_controller.dart';
+import 'package:ouzoun/views/setting/setting_screen/widget/settingHelper.dart';
 import '../../../Core/Services/media_query_service.dart';
 import '../../../Routes/app_routes.dart';
 import '../../../Widgets/custom_button.dart';
@@ -11,6 +11,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/services/services.dart';
 import '../../login/login_screen.dart';
 import '../../myProfile/myProfile_controller/myProfile_controller.dart';
+import 'changePassword.dart';
 
 class SettingsScreen extends StatelessWidget {
    SettingsScreen({super.key});
@@ -69,8 +70,8 @@ class SettingsScreen extends StatelessWidget {
                 buildSettingItem(
                   context,
                   icon: Icons.lock,
-                  title: "change password",
-                  onTap: () => {},
+                  title: "change password".tr,
+                  onTap: () => Get.to(() => ChangePasswordPage()),
                 ),
                 buildSettingItem(
                   context,

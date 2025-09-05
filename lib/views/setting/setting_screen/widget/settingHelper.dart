@@ -11,7 +11,7 @@ import '../../../../core/services/api_services.dart';
 import '../../../../core/services/services.dart';
 import '../../../login/login_screen.dart';
 import '../../../myProfile/myProfile_controller/myProfile_controller.dart';
-import '../setting_controller.dart';
+import '../../setting_controller/setting_controller.dart';
 
 final _controller = Get.put(MyProfileController());
 SettingController controller = Get.put(SettingController());
@@ -218,7 +218,6 @@ Future<void> logout(BuildContext context) async {
   }
 }
 
-// في ملف setting_helper.dart
 Future<void> deleteAccount() async {
   final ApiServices apiServices = Get.find<ApiServices>();
   final GetStorage box = GetStorage();
@@ -327,3 +326,4 @@ Future<void> deleteAccount() async {
     );
   }
 }
+

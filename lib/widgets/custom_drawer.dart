@@ -15,7 +15,7 @@ import '../core/services/services.dart';
 import '../views/about_us/about_us_screen.dart';
 import '../views/notification/notification_screen/notification_screen.dart';
 import '../views/procedure/procedure_screen/get_all_procedures.dart';
-import '../views/setting/setting/setting_screen.dart';
+import '../views/setting/setting_screen/setting_screen.dart';
 import 'CustomSnackbar .dart';
 import 'custom_view_item_list.dart';
 

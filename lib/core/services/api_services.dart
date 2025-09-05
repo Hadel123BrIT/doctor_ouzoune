@@ -868,6 +868,7 @@ final RxString notificationsError = ''.obs;
       ),
     );
   }
+
   Future<dynamic> resetPassword({
     required String newPassword,
     required String confirmNewPassword,
@@ -875,8 +876,6 @@ final RxString notificationsError = ''.obs;
   }) async {
     try {
       print('🌐 Sending to: $baseUrl/users/ResetPassword');
-
-      // استخدام Options مع validateStatus لقبول جميع status codes
       final response = await dio.post(
         '$baseUrl/users/ResetPassword',
         data: {
@@ -927,6 +926,49 @@ final RxString notificationsError = ''.obs;
         'error': e.toString(),
         'statusCode': 0,
       };
+    }
+  }
+
+  Future<Response> changePassword({
+    required String newPassword,
+    required String confirmNewPassword,
+    required String oldPassword,
+  }) async {
+    try {
+      final box = GetStorage();
+      final token = box.read('user_token');
+
+      print('🔐 Token: ${token != null ? "Exists" : "NULL"}');
+      print('📤 Sending change password request...');
+      print('   Old Password: $oldPassword');
+      print('   New Password: $newPassword');
+      print('   Confirm Password: $confirmNewPassword');
+
+      final response = await dio.put(
+        '$baseUrl/users/ChangePassword',
+        data: {
+          'newPassword': newPassword,
+          'confirmNewPassword': confirmNewPassword,
+          'oldPassword': oldPassword,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          validateStatus: (status) => true,
+        ),
+      );
+
+      print('📥 Response status: ${response.statusCode}');
+      print('📥 Response data: ${response.data}');
+      print('📥 Response headers: ${response.headers}');
+
+      return response;
+
+    } catch (e) {
+      print('🔥 Error in changePassword: $e');
+      rethrow;
     }
   }
 
