@@ -18,14 +18,13 @@ class FirstPageChoices extends StatelessWidget {
       if (authService.isLoggedIn.value) {
         Future.delayed(
             Duration.zero, () => Get.offAllNamed(AppRoutes.homepage));
-        return Scaffold(body: Center(child: CircularProgressIndicator()));
+        return Scaffold(body: Center(child: CircularProgressIndicator(
+          color: AppColors.primaryGreen,
+        )));
       }
 
       return Scaffold(
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .background,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: Container(
           width: context.width,
           height: context.height,
@@ -38,10 +37,7 @@ class FirstPageChoices extends StatelessWidget {
               image: const AssetImage(AppAssets.maleDentistIcon),
               fit: BoxFit.fitWidth,
             ),
-            color: Theme
-                .of(context)
-                .colorScheme
-                .background,
+            color: Theme.of(context).colorScheme.background,
           ),
           child: Column(
             children: [
@@ -49,10 +45,7 @@ class FirstPageChoices extends StatelessWidget {
               Text(
                 "Welcome to your app.\n What do you usually need? ",
                 textAlign: TextAlign.center,
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .titleLarge,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               SizedBox(height: context.height * 0.4),
               Expanded(

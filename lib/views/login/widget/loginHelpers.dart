@@ -7,19 +7,21 @@ import 'package:ouzoun/Widgets/custom_button.dart';
 import 'package:ouzoun/Widgets/custom_text_form_field.dart' hide CustomTextFormField;
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_images.dart';
 import '../../../widgets/custom_text_form_field.dart';
 import '../../register/register_screen.dart';
+import '../../setting/setting_screen/widget/settingHelper.dart';
 import '../login_controller.dart';
 
 class LoginHelpers {
   static Widget buildLoadingIndicator() {
     return Center(
       child: Lottie.asset(
-        '',
-        fit: BoxFit.cover,
-        repeat: true,
-        height: 150,
-        width: 150,
+          AppAssets.LoadingAnimation,
+          fit: BoxFit.cover,
+          repeat: true,
+          width: 200,
+          height: 200
       ),
     );
   }
@@ -55,14 +57,27 @@ class LoginHelpers {
   }
 
   static Widget buildPasswordField(TextEditingController controller) {
-    return CustomTextFormField(
+    final isPasswordVisible = false.obs;
+
+    return Obx(() => CustomTextFormField(
       prefixIcon: Icon(Icons.lock, color: Colors.grey[500]),
-      suffixIcon: Icon(Icons.remove_red_eye_outlined, color: Colors.grey[500]),
+      suffixIcon: IconButton(
+        icon: Icon(
+          isPasswordVisible.value
+              ? Icons.visibility_off
+              : Icons.visibility,
+          color: Colors.grey[500],
+        ),
+        onPressed: () {
+          isPasswordVisible.value = !isPasswordVisible.value;
+
+        },
+      ),
       validator: (val) => val?.isEmpty ?? true ? "Password must not be empty".tr : null,
-      obscureText: true,
+      obscureText: !isPasswordVisible.value,
       myController: controller,
       hintText: 'Enter Your Password'.tr,
-    );
+    ));
   }
 
   static Widget buildForgotPasswordLink(BuildContext context) {

@@ -5,10 +5,7 @@ import '../login_controller.dart';
 import 'loginHelpers.dart';
 
 class buildLogin {
-  static Widget buildLoginForm(
-      BuildContext context,
-      GlobalKey<FormState> formKey,
-      LoginController controller,
+  static Widget buildLoginForm(BuildContext context, GlobalKey<FormState> formKey, LoginController controller,
       ) {
     return Container(
       padding: EdgeInsets.all(context.width * 0.05),

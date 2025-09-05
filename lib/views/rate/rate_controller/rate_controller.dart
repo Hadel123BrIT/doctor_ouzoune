@@ -111,8 +111,5 @@ class RateController extends GetxController {
     }
   }
 
-  Future<void> reloadAssistants() async {
-    CustomSnackbar.info(message: 'Reloading assistants...');
-    await loadAssistants();
-  }
+
 }

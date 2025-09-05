@@ -19,6 +19,7 @@ class LoginController extends GetxController {
   ApiServices apiServices = ApiServices();
   final FirebaseServices _firebaseService = Get.put(FirebaseServices());
 
+
   Future<void> login(GlobalKey<FormState> formKey) async {
     if (formKey.currentState!.validate()) {
       isLoading(true);
@@ -41,7 +42,6 @@ class LoginController extends GetxController {
             message: 'Welcome doctor  ${controller.nameController.text}',
             duration: Duration(seconds: 3),
           );
-
           Get.offAllNamed(AppRoutes.homepage);
         } else {
           final errorMessage = response.data?.toString() ?? 'Login failed';
@@ -64,10 +64,8 @@ class LoginController extends GetxController {
         } else if (e.response?.statusCode == 400) {
           errorMessage = 'Email or Password is Wrong';
         }
-
         CustomSnackbar.error(message: errorMessage);
       } catch (e) {
-
         print('General Error: $e');
         CustomSnackbar.error(
           message: 'An unexpected error occurred',

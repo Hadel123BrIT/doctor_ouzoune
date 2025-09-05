@@ -13,7 +13,7 @@ import '../Doctor_choices_controller/doctor_choices_controller.dart';
 
 class SecondPageChoices extends StatelessWidget {
   SecondPageChoices({super.key});
-  final AuthService authService = Get.find();
+  final AuthService authService = Get.put(AuthService());
   final DoctorChoicesController controller = Get.put(DoctorChoicesController());
 
   @override
@@ -22,13 +22,12 @@ class SecondPageChoices extends StatelessWidget {
       if (authService.isLoggedIn.value) {
         Future.delayed(
             Duration.zero, () => Get.offAllNamed(AppRoutes.homepage));
-        return Scaffold(body: Center(child: CircularProgressIndicator()));
+        return Scaffold(body: Center(child: CircularProgressIndicator(
+          color: AppColors.primaryGreen,
+        )));
       }
       return Scaffold(
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .background,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: Stack(
           children: [
             Container(
@@ -42,10 +41,7 @@ class SecondPageChoices extends StatelessWidget {
                   image: AssetImage(AppAssets.femaleDentistIcon),
                   fit: BoxFit.fitWidth,
                 ),
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .background,
+                color: Theme.of(context).colorScheme.background,
               ),
               child: Column(
                 children: [
@@ -79,10 +75,8 @@ class SecondPageChoices extends StatelessWidget {
                                   onTap: () {
                                     showAssistantsDialog(context);
                                   },
-                                  subtitle: controller.selectedAssistants
-                                      .value > 0
-                                      ? '${controller.selectedAssistants
-                                      .value} assistant(s)'
+                                  subtitle: controller.selectedAssistants.value > 0
+                                      ? '${controller.selectedAssistants.value} assistant(s)'
                                       : '',
                                   textColor: AppColors.whiteBackground,
                                   title: 'With an assistant',

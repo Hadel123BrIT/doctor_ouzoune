@@ -1,6 +1,6 @@
 // widgets/choice_card.dart
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 import '../core/constants/app_colors.dart';
 
 class BuildChoiceCard extends StatelessWidget {
@@ -27,21 +27,21 @@ class BuildChoiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: EdgeInsets.symmetric(horizontal: context.width * 0.025),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(context.width * 0.0375),
           child: Container(
-            padding:EdgeInsets.all(10),
-             alignment:Alignment.center,
-            height: 175,
+            padding: EdgeInsets.all(context.width * 0.025),
+            alignment: Alignment.center,
+            height: context.height * 0.22,
             decoration: BoxDecoration(
               color: AppColors.primaryGreen,
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(context.width * 0.0375),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
-                  blurRadius: 10,
+                  blurRadius: context.width * 0.025,
                   offset: const Offset(0, 4),
                 ),
               ],
@@ -49,21 +49,23 @@ class BuildChoiceCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, size: 45,
-                    color: textColor),
-                const SizedBox(height: 15),
+                Icon(
+                    icon,
+                    size: context.width * 0.1125,
+                    color: textColor
+                ),
+                SizedBox(height: context.height * 0.018),
                 Text(
                   title,
-                  textAlign:TextAlign.center,
-                  style:Theme.of(context).textTheme.headlineMedium,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
-                const SizedBox(height: 5),
-            Text(
-              subtitle,
-              textAlign:TextAlign.center,
-              style:Theme.of(context).textTheme.headlineMedium,
-            ),
-
+                SizedBox(height: context.height * 0.006),
+                Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
               ],
             ),
           ),

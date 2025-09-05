@@ -70,7 +70,6 @@ class RegisterController extends GetxController {
     if (selectedImage.value != null) {
       final allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
       final fileExtension = selectedImage.value!.path.split('.').last.toLowerCase();
-
       if (!allowedExtensions.contains(fileExtension)) {
         CustomSnackbar.error(message: 'Only .jpg, .png, .webp, .jpeg are allowed');
         return;
@@ -96,11 +95,10 @@ class RegisterController extends GetxController {
       );
 
       print('Registration Response: ${response.statusCode}');
-      print('Registration Data: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.offAllNamed(AppRoutes.homepage);
-        CustomSnackbar.success(message: 'Registration successful');
+        CustomSnackbar.success(message: 'Registration successful, Welcome');
       } else {
         _handleRegistrationError(response);
       }

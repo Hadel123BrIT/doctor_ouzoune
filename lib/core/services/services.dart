@@ -18,7 +18,7 @@ class AuthService extends GetxService {
     super.onInit();
     dio.options.baseUrl = baseUrl;
     loadAuthData();
-    checkAuthAndRedirect();
+
   }
 
   void loadAuthData() {
@@ -26,26 +26,7 @@ class AuthService extends GetxService {
     isLoggedIn.value = authToken.isNotEmpty;
   }
 
-  Future<void> checkAuthAndRedirect() async {
-    if (authToken.isNotEmpty) {
-      try {
-        final response = await dio.get(
-          '${baseUrl}/verify-token',
-          options: Options(headers: {
-            'Authorization': 'Bearer ${authToken.value}'
-          }),
-        );
 
-        if (response.statusCode == 200 ||response.statusCode == 201 ) {
-          Get.offAllNamed(AppRoutes.homepage);
-        } else {
-          await logout();
-        }
-      } catch (e) {
-        await logout();
-      }
-    }
-  }
 
   Future<bool> login(String email, String password) async {
     try {

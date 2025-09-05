@@ -9,6 +9,7 @@ import 'package:ouzoun/Widgets/custom_button.dart';
 import 'package:ouzoun/Widgets/custom_text_form_field.dart' hide CustomTextFormField;
 import 'package:ouzoun/views/register/widget/registerValidators%20.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_images.dart';
 import '../../../widgets/custom_text_form_field.dart';
 import '../../login/login_screen.dart';
 import '../register_controller.dart';
@@ -17,12 +18,12 @@ import 'LocationPicker/locationPicker .dart';
 class RegisterHelpers {
   static Widget buildLoadingIndicator() {
     return Center(
-      child: Lottie.asset(
-        '',
-        fit: BoxFit.cover,
-        repeat: true,
-        height: 150,
-        width: 150,
+      child:Lottie.asset(
+          AppAssets.LoadingAnimation,
+          fit: BoxFit.cover,
+          repeat: true,
+          width: 200,
+          height: 200
       ),
     );
   }
@@ -166,15 +167,14 @@ class RegisterHelpers {
     );
   }
 
-  static Widget buildPhoneField( TextEditingController controller) {
+  static Widget buildPhoneField(TextEditingController controller) {
     return CustomTextFormField(
-      prefixIcon: Icon(Icons.phone,
-          color: Colors.grey[500]
-      ),
+      prefixIcon: Icon(Icons.phone, color: Colors.grey[500]),
       validator: RegisterValidators.validatePhone,
       myController: controller,
       hintText: "Enter your phone".tr,
       obscureText: false,
+      keyboardType: TextInputType.phone,
     );
   }
 

@@ -20,7 +20,9 @@ final RxList<dynamic> notifications = <dynamic>[].obs;
 final RxBool isLoadingNotifications = false.obs;
 final RxString notificationsError = ''.obs;
 
-// RegisterUser with image
+
+
+ // RegisterUser with image
   Future<Response> registerUserWithImage({
     required String userName,
     required String email,
@@ -36,7 +38,6 @@ final RxString notificationsError = ''.obs;
   }) async {
     try {
       final formData = FormData();
-
       formData.fields.addAll([
         MapEntry('userName', userName),
         MapEntry('email', email),
@@ -47,9 +48,9 @@ final RxString notificationsError = ''.obs;
         MapEntry('longtitude', longitude.toString()),
         MapEntry('latitude', latitude.toString()),
         MapEntry('role', role),
-        if (deviceToken != null) MapEntry('deviceToken', deviceToken),
+        if (deviceToken != null)
+          MapEntry('deviceToken', deviceToken),
       ]);
-
       if (ProfilePicture != null) {
         final String extension = _getFileExtension(ProfilePicture.path);
         final List<String> allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
@@ -57,7 +58,6 @@ final RxString notificationsError = ''.obs;
         if (!allowedExtensions.contains(extension)) {
           throw Exception('Only ${allowedExtensions.join(', ')} files are allowed');
         }
-
         formData.files.add(MapEntry(
           'ProfilePicture',
           await MultipartFile.fromFile(
@@ -67,7 +67,6 @@ final RxString notificationsError = ''.obs;
           ),
         ));
       }
-
       final response = await dio.post(
         "$baseUrl/users/register",
         data: formData,
@@ -77,7 +76,6 @@ final RxString notificationsError = ''.obs;
           sendTimeout: Duration(seconds: 30),
         ),
       );
-
       print("Response Status: ${response.statusCode}");
       print("Response Data: ${response.data}");
       return response;
@@ -100,6 +98,8 @@ final RxString notificationsError = ''.obs;
   }
 
 
+  //--------------------------------------------------------------------
+
   //LoginUser
   Future<Response> loginUser({required String email,required String password,String? deviceToken,}) async {
   try{
@@ -107,7 +107,7 @@ final RxString notificationsError = ''.obs;
     data: {
         'email': email,
         'password': password,
-      'deviceToken': deviceToken,
+        'deviceToken': deviceToken,
         },
       options: Options(
       headers: {
@@ -137,7 +137,7 @@ final RxString notificationsError = ''.obs;
 
 
 
-
+ //-------------------------------------------------------------------------
 
   //add procedure
   Future<Response> addProcedure(
@@ -149,17 +149,14 @@ final RxString notificationsError = ''.obs;
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       };
-
       if (token != null) {
         headers['Authorization'] = 'Bearer $token';
       }
-
       final response = await dio.post(
         "$baseUrl/procedures",
         data: procedureData,
         options: Options(headers: headers),
       );
-
       print(response.statusCode);
       return response;
     } on DioException catch (e) {
@@ -172,10 +169,7 @@ final RxString notificationsError = ''.obs;
     }
   }
 
-
-
-
-
+//----------------------------------------------------------------------
 
 
   //fetchAllProcedures
@@ -213,7 +207,6 @@ final RxString notificationsError = ''.obs;
       if (status != null && status > 0) {
         queryParams['status'] = status;
       }
-
       print('Sending query params: $queryParams');
 
       final response = await dio.post(
@@ -261,13 +254,10 @@ final RxString notificationsError = ''.obs;
     }
   }
 
-
-
-
+//-------------------------------------------------------------------------
 
 
   // fetch one procedure
-
   Future<Map<String, dynamic>> getProcedureDetails(int procedureId) async {
     print('1. Starting getProcedureDetails for ID: $procedureId');
     try {
@@ -315,10 +305,7 @@ final RxString notificationsError = ''.obs;
     }
   }
 
-
-
-
-
+  //---------------------------------------------------------------------
 
   //fetch procedure by paged
   Future<List<Procedure>> getProceduresPaged({
@@ -356,7 +343,7 @@ final RxString notificationsError = ''.obs;
     }
   }
 
-
+//---------------------------------------------------------------------
 
   Future<Response> changeProcedureStatus({
     required int procedureId,
@@ -389,7 +376,7 @@ final RxString notificationsError = ''.obs;
   }
 
 
-
+//------------------------------------------------------------------
 
   //fetch my profile
   Future<Map<String, dynamic>> getMyProfile() async {
@@ -434,7 +421,7 @@ final RxString notificationsError = ''.obs;
     }
   }
 
-
+  //----------------------------------------------------------------
 
   Future<Map<String, dynamic>> updateMyProfile({
     required Map<String, dynamic> data,
@@ -497,7 +484,7 @@ final RxString notificationsError = ''.obs;
       throw Exception('Unexpected error: $e');
     }
   }
-
+ //----------------------------------------------------------------------------
 
   // getAdditionalTools
   Future<List<AdditionalTool>> getAdditionalTools() async {
@@ -525,7 +512,7 @@ final RxString notificationsError = ''.obs;
     }
   }
 
-
+//----------------------------------------------------------------------------
 
   Future<Response> submitRating({
     required String note,
@@ -535,8 +522,6 @@ final RxString notificationsError = ''.obs;
     required String token,
   }) async {
     try {
-      final dio = Dio();
-
       final response = await dio.post(
         "$baseUrl/Ratings",
         data: {
@@ -564,14 +549,13 @@ final RxString notificationsError = ''.obs;
   }
 
 
-
+//--------------------------------------------------------------
 
   //select assistance
   Future<List<Map<String, dynamic>>> getAssistantsFromProcedures(String token) async {
     try {
-      final dio = Dio();
       final response = await dio.post(
-        "http://ouzon.somee.com/api/procedures/FilteredProcedure",
+        "$baseUrl/procedures/FilteredProcedure",
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -589,8 +573,6 @@ final RxString notificationsError = ''.obs;
         }
 
         final procedures = response.data as List;
-        print('📋 Number of procedures: ${procedures.length}');
-
         final assistants = <Map<String, dynamic>>[];
         final Set<String> addedAssistantIds = {};
 
@@ -602,7 +584,6 @@ final RxString notificationsError = ''.obs;
               final procedureAssistants = procedure['assistants'];
 
               if (procedureAssistants is List) {
-
                 for (var j = 0; j < procedureAssistants.length; j++) {
                   try {
                     final assistant = procedureAssistants[j];
@@ -614,19 +595,16 @@ final RxString notificationsError = ''.obs;
                         if (!addedAssistantIds.contains(assistantId)) {
                           assistants.add({
                             'id': assistantId,
-                            'name': assistant['userName']?.toString() ?? 'Unknown',
+                            'name': assistant['userName']?.toString() ??
+                                'Unknown',
                           });
                           addedAssistantIds.add(assistantId);
                         }
                       }
                     }
-                  } catch (e) {
-                  }
+                  } catch (e) {}
                 }
-              } else {
-              }
-            } else {
-            }
+              }}
           } catch (e) {
           }
         }
@@ -646,7 +624,7 @@ final RxString notificationsError = ''.obs;
   }
 
 
-
+//-----------------------------------------------------------------
 
   //get implants
   Future<List<Implant>> getImplants() async {
@@ -675,6 +653,8 @@ final RxString notificationsError = ''.obs;
     }
   }
 
+  //---------------------------------------------------------------
+
   // get kits
   Future<List<Kit>> getKits() async {
     try {
@@ -698,6 +678,7 @@ final RxString notificationsError = ''.obs;
       throw Exception('Failed to load tools: ${e.message}');
   }}
 
+//------------------------------------------------------------------
 
   Future<Kit> getKitById(int kitId) async {
     try {
@@ -740,6 +721,7 @@ final RxString notificationsError = ''.obs;
     }
   }
 
+//-------------------------------------------------------------------
 
   Future<Response> getCurrentUserNotifications() async {
     try {
@@ -777,46 +759,50 @@ final RxString notificationsError = ''.obs;
     }
   }
 
+  //--------------------------------------------------------------------
+
   Future<void> refreshNotifications() async {
     await getCurrentUserNotifications();
   }
 
+//-----------------------------------------------------------------------
 
-  Future<Response> sendNotification({
-    required String title,
-    required String body,
-  }) async {
-    try {
-      final String? authToken =  GetStorage().read('auth_token');
+  // Future<Response> sendNotification({
+  //   required String title,
+  //   required String body,
+  // }) async {
+  //   try {
+  //     final String? authToken =  GetStorage().read('auth_token');
+  //
+  //     if (authToken == null) {
+  //       throw Exception('Auth token is missing');
+  //     }
+  //
+  //     final response = await dio.post(
+  //       '$baseUrl/Notifications/SendNotification',
+  //       data: {
+  //         'title': title,
+  //         'body': body,
+  //       },
+  //       options: Options(
+  //         headers: {
+  //           'Authorization': 'Bearer $authToken',
+  //           'Content-Type': 'application/json',
+  //         },
+  //       ),
+  //     );
+  //
+  //     return response;
+  //   } on DioException catch (e) {
+  //     if (e.response != null) {
+  //       return e.response!;
+  //     } else {
+  //       throw Exception('Failed to connect to the server: ${e.message}');
+  //     }
+  //   }
+  // }
 
-      if (authToken == null) {
-        throw Exception('Auth token is missing');
-      }
-
-      final response = await dio.post(
-        '$baseUrl/Notifications/SendNotification',
-        data: {
-          'title': title,
-          'body': body,
-        },
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $authToken',
-            'Content-Type': 'application/json',
-          },
-        ),
-      );
-
-      return response;
-    } on DioException catch (e) {
-      if (e.response != null) {
-        return e.response!;
-      } else {
-        throw Exception('Failed to connect to the server: ${e.message}');
-      }
-    }
-  }
-
+  //-----------------------------------------------------------------
 
   Future<Response> deleteCurrentUserAccount() async {
     try {
@@ -846,6 +832,7 @@ final RxString notificationsError = ''.obs;
     }
   }
 
+//----------------------------------------------------------------------
 
    Future<Response> checkEmail(String email) async {
     return await dio.post(
@@ -928,6 +915,8 @@ final RxString notificationsError = ''.obs;
       };
     }
   }
+
+  //------------------------------------------------------------
 
   Future<Response> changePassword({
     required String newPassword,
