@@ -16,14 +16,14 @@ import 'core/constants/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  Get.put(AuthService());
   await GetStorage.init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
 
-  Get.put(AuthService());
+
   runApp(const MyApp());
 }
 
