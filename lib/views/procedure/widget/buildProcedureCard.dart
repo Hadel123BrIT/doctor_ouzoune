@@ -23,11 +23,11 @@ Widget buildProcedureCard(Procedure procedure, BuildContext context) {
       textCancel: "No".tr,
       confirmTextColor: Colors.white,
       onConfirm: () {
-        Get.back();
+        Navigator.of(Get.context!).pop();
         controller.changeProcedureStatus(procedure.id!, 5);
       },
       onCancel: () {
-        Get.back();
+        Navigator.of(Get.context!).pop();
       },
     );
   }

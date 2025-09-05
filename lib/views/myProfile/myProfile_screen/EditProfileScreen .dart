@@ -71,15 +71,17 @@ class EditProfileScreen extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: CustomButton(
+                      child: Obx(() => CustomButton(
                         onTap: () {
-
+                          if (!controller.isLoading.value) {
                             controller.updateProfile();
-
+                          }
                         },
-                        text: "Save Changes",
+                        text: controller.isLoading.value ? "Saving..." : "Save Changes",
                         color: AppColors.primaryGreen,
-                      ),
+
+                        // disabled: controller.isLoading.value,
+                      )),
                     ),
                   ],
                 ),

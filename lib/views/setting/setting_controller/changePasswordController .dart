@@ -49,10 +49,10 @@ class ChangePasswordController extends GetxController {
       // Handle other success status codes
       else if (response.statusCode == 200 || response.statusCode == 201) {
         print('🎉 Password change successful');
-        Get.back();
+        Navigator.of(Get.context!).pop();
         Get.snackbar('Success', 'Password changed successfully'.tr);
       }
-      // Handle error responses
+
       else {
         String errorMessage;
 

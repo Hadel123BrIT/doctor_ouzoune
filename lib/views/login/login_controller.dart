@@ -31,6 +31,8 @@ class LoginController extends GetxController {
         );
         if (response.statusCode == 200 || response.statusCode == 201) {
           final token = response.data['token'];
+          print("***********************************");
+          print(token);
           final box = GetStorage();
           await box.write('user_token', token);
           await GetStorage().write('auth_token', token.toString());

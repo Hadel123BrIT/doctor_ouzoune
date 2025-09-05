@@ -84,7 +84,7 @@ class _CustomDrawerState extends State<CustomDrawer> with SingleTickerProviderSt
                 ),
               ),
               ElevatedButton(
-                onPressed: () => Get.back(result: true),
+                onPressed: () => Navigator.of(Get.context!).pop(),
                 child: Text(
                   'Logout',
                   style: TextStyle(
