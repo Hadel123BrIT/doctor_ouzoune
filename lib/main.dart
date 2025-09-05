@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:ouzoun/views/notification/notification_controller/notification_controller.dart';
 import 'package:ouzoun/views/splash/splash_screens/splash_screen.dart';
 import 'binding/initialize_binding.dart';
 import 'core/services/LocalNotificationService .dart';
@@ -16,15 +15,28 @@ import 'core/constants/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Get.put(AuthService());
   await GetStorage.init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  await LocalNotificationService.init();
 
+  await initializeServices();
 
   runApp(const MyApp());
+}
+
+Future<void> initializeServices() async {
+  try {
+    Get.put(ApiServices(), permanent: true);
+    Get.put(AuthService(), permanent: true);
+    await Get.putAsync(() => FirebaseServices().onInit(), permanent: true);
+
+    print('✅ All services initialized successfully');
+  } catch (e) {
+    print('❌ Error initializing services: $e');
+  }
 }
 
 class MyApp extends StatelessWidget {

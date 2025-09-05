@@ -743,16 +743,14 @@ final RxString notificationsError = ''.obs;
 
   Future<Response> getCurrentUserNotifications() async {
     try {
-      final String? deviceToken = GetStorage().read('device_token');
-      final String? authToken =  GetStorage().read('auth_token');
+      final String? authToken = GetStorage().read('auth_token');
 
-      if (deviceToken == null || authToken == null) {
-        throw Exception('Device token or auth token is missing');
+      if (authToken == null) {
+        throw Exception('Auth token is missing');
       }
 
-      final response = await dio.post(
+      final response = await dio.get(
         '$baseUrl/Notifications/CurrnetUserNotifications',
-        data: {'deviceToken': deviceToken},
         options: Options(
           headers: {
             'Authorization': 'Bearer $authToken',
@@ -760,10 +758,12 @@ final RxString notificationsError = ''.obs;
           },
         ),
       );
-      if (response.statusCode == 200) {
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
         notifications.value = response.data;
         notifications.refresh();
       }
+
       return response;
     } on DioException catch (e) {
       print('Dio Error: ${e.message}');

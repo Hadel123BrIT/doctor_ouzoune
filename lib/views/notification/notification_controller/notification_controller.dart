@@ -17,21 +17,21 @@ class NotificationController extends GetxController {
   void onInit() {
     super.onInit();
     loadNotifications();
-    _setupNotificationListener();
+   // _setupNotificationListener();
   }
 
-  void _setupNotificationListener() {
-    ever(LocalNotificationService.instance.hasNewNotification, (hasNew) {
-      if (hasNew) {
-        refreshNotifications();
-        LocalNotificationService.instance.hasNewNotification.value = false;
-      }
-    });
-
-    LocalNotificationService.instance.streamController.stream.listen((response) {
-      refreshNotifications();
-    });
-  }
+  // void _setupNotificationListener() {
+  //   ever(LocalNotificationService.instance.hasNewNotification, (hasNew) {
+  //     if (hasNew != null) {
+  //       refreshNotifications();
+  //       LocalNotificationService.instance.hasNewNotification.value = false;
+  //     }
+  //   });
+  //
+  //   LocalNotificationService.instance.streamController.stream.listen((response) {
+  //     refreshNotifications();
+  //   });
+  // }
 
   Future<void> loadNotifications() async {
     try {

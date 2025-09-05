@@ -17,6 +17,8 @@ class FirebaseServices extends GetxService {
 
   Future<void> _initializeFirebase() async {
     try {
+      await Firebase.initializeApp();
+
       NotificationSettings settings = await messaging.requestPermission(
         alert: true,
         badge: true,
@@ -39,44 +41,26 @@ class FirebaseServices extends GetxService {
 
       await messaging.subscribeToTopic('all');
       log('Subscribed to topic: all');
-
       FirebaseMessaging.onBackgroundMessage(_handleBackgroundMessage);
-      _handleForegroundMessage();
-      _handleNotificationOpenedApp();
+      _setupForegroundMessageHandling();
+      _setupNotificationOpenedApp();
 
     } catch (e) {
       log('Error initializing Firebase: $e');
     }
   }
 
-  static Future<void> _handleBackgroundMessage(RemoteMessage message) async {
-    await Firebase.initializeApp();
-    log('Background Message: ${message.notification?.title}');
-
-    if (Get.isRegistered<LocalNotificationService>()) {
-      Get.find<LocalNotificationService>().showBasicNotification(message);
-    }
-
-    if (Get.isRegistered<NotificationController>()) {
-      Get.find<NotificationController>().refreshNotifications();
-    }
-  }
-
-  void _handleForegroundMessage() {
+  void _setupForegroundMessageHandling() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      log('Foreground Message: ${message.notification?.title}');
-
-      if (Get.isRegistered<LocalNotificationService>()) {
-        Get.find<LocalNotificationService>().showBasicNotification(message);
-      }
-
+      log('Foreground Message received: ${message.notification?.title}');
+      LocalNotificationService.showBasicNotification(message);
       if (Get.isRegistered<NotificationController>()) {
         Get.find<NotificationController>().refreshNotifications();
       }
     });
   }
 
-  void _handleNotificationOpenedApp() {
+  void _setupNotificationOpenedApp() {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       log('Notification tapped: ${message.notification?.title}');
 
@@ -84,6 +68,17 @@ class FirebaseServices extends GetxService {
         Get.find<NotificationController>().refreshNotifications();
       }
     });
+  }
+
+  static Future<void> _handleBackgroundMessage(RemoteMessage message) async {
+    log('Background Message: ${message.notification?.title}');
+    await Firebase.initializeApp();
+
+    LocalNotificationService.showBasicNotification(message);
+
+    if (Get.isRegistered<NotificationController>()) {
+      Get.find<NotificationController>().refreshNotifications();
+    }
   }
 
   void _sendTokenToServer(String token) {
