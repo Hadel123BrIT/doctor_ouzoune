@@ -9,7 +9,6 @@ import '../Kits_Controller/kits_controller.dart';
 
 void showSelectedToolsDialog(List<AdditionalTool> tools) {
   final int itemCount = tools.length;
-  final double estimatedHeight = 140 + (itemCount * 70.0);
 
   Get.dialog(
     Dialog(

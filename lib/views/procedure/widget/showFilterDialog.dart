@@ -136,6 +136,7 @@ void showFilterDialog(BuildContext context) {
                       fontSize: 14,
                     ),
                   )),
+
                 ],
                 onChanged: (value) {
                   controller.statusFilter.value = value ?? 0;
@@ -161,6 +162,23 @@ void showFilterDialog(BuildContext context) {
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2000),
                       lastDate: DateTime(2100),
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.light(
+                              primary: Colors.green[800]!,
+                              onPrimary: Colors.white,
+                              onSurface: Colors.black,
+                            ),
+                            textButtonTheme: TextButtonThemeData(
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.green[800]!,
+                              ),
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
                     );
                     if (selectedDate != null) {
                       controller.fromDate.value = selectedDate;
@@ -188,6 +206,30 @@ void showFilterDialog(BuildContext context) {
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2000),
                       lastDate: DateTime(2100),
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.light(
+                              primary: Colors.green[800]!,
+                              onPrimary: Colors.white,
+                              onSurface: Colors.black,
+                            ),
+                            textButtonTheme: TextButtonThemeData(
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.green[800]!,
+                              ),
+                            ),
+                            timePickerTheme: TimePickerThemeData(
+                              dialHandColor: Colors.green[800]!,
+                              dialBackgroundColor: Colors.green[50]!,
+                              hourMinuteColor: Colors.green[100]!,
+                              hourMinuteTextColor: Colors.black,
+                              dayPeriodColor: Colors.green[100]!,
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
                     );
                     if (selectedDate != null) {
                       controller.toDate.value = selectedDate;

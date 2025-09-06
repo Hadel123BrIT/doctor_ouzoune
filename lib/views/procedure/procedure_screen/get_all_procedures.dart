@@ -12,7 +12,6 @@ import '../../../models/additionalTool_model.dart';
 import '../../../models/procedure_model.dart';
 import '../procedure_controller/procedure_controller.dart';
 import '../widget/buildProceduresList.dart';
-import '../widget/buildSearchAndFilterBar.dart';
 import '../widget/showFilterDialog.dart';
 import '../widget/showPaginationDialog.dart';
 

@@ -89,14 +89,12 @@ class CheckEmail extends StatelessWidget {
                   ),
                   if (controller.isLoading.value)
                       Container(
-                        color: Colors.black.withOpacity(0.5),
                         child: const Center(
                           child: CircularProgressIndicator(
                             color: AppColors.primaryGreen,
                           ),
                         ),
                       ),
-
                 ],
               )),
             ),
