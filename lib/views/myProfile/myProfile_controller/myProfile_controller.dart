@@ -5,10 +5,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:get_storage/get_storage.dart';
 import '../../../core/services/api_services.dart';
 import '../../register/Widget/LocationPicker/locationPicker_controller.dart';
-import '../myProfile_screen/myProfile_screen.dart';
 
 class MyProfileController extends GetxController {
   final ApiServices apiServices = Get.put(ApiServices());
@@ -36,8 +34,6 @@ class MyProfileController extends GetxController {
     super.onInit();
     if (Get.currentRoute == '/profile') {
       fetchProfileData();
-    } else {
-      clearAllFields();
     }
   }
 
@@ -99,8 +95,6 @@ class MyProfileController extends GetxController {
           colorText: Colors.white,
         );
       }
-      debugPrint('Dio error fetching profile: $e');
-
     } catch (e) {
       Get.snackbar(
         'Profile Error',
@@ -108,7 +102,6 @@ class MyProfileController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-      debugPrint('Error fetching profile: $e');
     } finally {
       isLoading(false);
     }
@@ -119,13 +112,13 @@ class MyProfileController extends GetxController {
       isLoading(true);
 
       final data = {
-        'userName': userName.value,
-        'email': email.value,
-        'phoneNumber': phoneNumber.value,
-        'clinicName': clinicName.value,
-        'clinicAddress': clinicAddress.value,
-        'clinicLatitude': clinicLatitude.value,
-        'clinicLongitude': clinicLongitude.value,
+        'UserName': userName.value,
+        'Email': email.value,
+        'PhoneNumber': phoneNumber.value,
+        'ClinicName': clinicName.value,
+        'Address': clinicAddress.value,
+        'Longtitude': clinicLongitude.value,
+        'Latitude': clinicLatitude.value,
       };
 
       final response = await apiServices.updateMyProfile(
@@ -144,6 +137,9 @@ class MyProfileController extends GetxController {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
+
+        await fetchProfileData();
+
         Get.back();
       }
     } catch (e) {
@@ -153,28 +149,10 @@ class MyProfileController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-      debugPrint('Error updating profile: $e');
     } finally {
       isLoading(false);
       selectedImage.value = null;
     }
-  }
-
-  void clearAllFields() {
-    userName.value = "";
-    email.value = '';
-    phoneNumber.value = '';
-    clinicName.value = '';
-    clinicAddress.value = '';
-    location.value = '';
-    selectedImage.value = null;
-
-    Get.snackbar(
-      'Cleared',
-      'All fields cleared',
-      backgroundColor: Colors.blue,
-      colorText: Colors.white,
-    );
   }
 
   Future<void> pickImage() async {
@@ -203,7 +181,6 @@ class MyProfileController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-      debugPrint('Error picking image: $e');
     }
   }
 
@@ -218,7 +195,6 @@ class MyProfileController extends GetxController {
       await Future.delayed(Duration(milliseconds: 500));
       location.value = locationController.locationName.value;
     } catch (e) {
-      debugPrint('Error converting coordinates: $e');
       location.value = 'Location: ${latitude.toStringAsFixed(4)}, ${longitude.toStringAsFixed(4)}';
     }
   }

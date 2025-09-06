@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:ouzoun/Widgets/custom_button.dart';
 import 'package:ouzoun/core/constants/app_colors.dart';
 import 'package:ouzoun/core/constants/app_images.dart';
-
 import '../../../Widgets/custom_text_form_field.dart';
 import '../../register/Widget/LocationPicker/locationPicker .dart';
 import '../../register/register_controller.dart';
@@ -15,8 +15,6 @@ import '../widget/BuildEditableProfileItem .dart';
 class EditProfileScreen extends StatelessWidget {
   EditProfileScreen({super.key});
   final EditProfileController controller = Get.put(EditProfileController());
-  final RegisterController  _controller=Get.put(RegisterController());
-
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -74,13 +72,13 @@ class EditProfileScreen extends StatelessWidget {
                       child: Obx(() => CustomButton(
                         onTap: () {
                           if (!controller.isLoading.value) {
-                            controller.updateProfile();
+                            if (_formKey.currentState?.validate() ?? false) {
+                              controller.updateProfile();
+                            }
                           }
                         },
                         text: controller.isLoading.value ? "Saving..." : "Save Changes",
                         color: AppColors.primaryGreen,
-
-                        // disabled: controller.isLoading.value,
                       )),
                     ),
                   ],
@@ -156,8 +154,20 @@ class EditProfileScreen extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       );
+    } else if (controller.profileController.profileImagePath.value.isNotEmpty) {
+      // عرض الصورة الحالية من الخادم
+      return ClipOval(
+        child: Image.network(
+          controller.profileController.profileImagePath.value,
+          width: 120,
+          height: 120,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Icon(Icons.person, size: 60, color: Colors.grey[400]);
+          },
+        ),
+      );
     } else {
-      // لا نعرض الصورة القديمة، نعرض أيقونة افتراضية فقط
       return Icon(Icons.person, size: 60, color: Colors.grey[400]);
     }
   }
@@ -168,99 +178,79 @@ class EditProfileScreen extends StatelessWidget {
         BuildEditableProfileItem(
           icon: Icons.person,
           title: 'User Name',
-          initialValue: controller.userName.value,
+          initialValue: '',
           onChanged: (value) => controller.userName.value = value,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter your name';
-            }
-            return null;
-          },
         ),
         SizedBox(height: 20),
         BuildEditableProfileItem(
           icon: Icons.email,
           title: 'Email Address',
-          initialValue: controller.email.value,
+          initialValue: '',
           onChanged: (value) => controller.email.value = value,
           keyboardType: TextInputType.emailAddress,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter your email';
-            }
-            if (!GetUtils.isEmail(value)) {
-              return 'Please enter a valid email';
-            }
-            return null;
-          },
         ),
         SizedBox(height: 20),
         BuildEditableProfileItem(
           icon: Icons.phone,
           title: 'Phone Number',
-          initialValue: controller.phoneNumber.value,
+          initialValue: '',
           onChanged: (value) => controller.phoneNumber.value = value,
           keyboardType: TextInputType.phone,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter your phone number';
-            }
-            return null;
-          },
         ),
         SizedBox(height: 20),
-    GestureDetector(
-    behavior: HitTestBehavior.opaque,
-    onTap: () async {
-    Get.dialog(
-    Center(
-    child: CircularProgressIndicator(
-    color: AppColors.primaryGreen,
-    ),
-    ),
-    barrierDismissible: false,
-    );
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () async {
+            Get.dialog(
+              Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryGreen,
+                ),
+              ),
+              barrierDismissible: false,
+            );
 
-    try {
-    await Get.to(() => LocationPicker(
-    onLocationSelected: (coords, address) {
+            try {
+              await Get.to(() => LocationPicker(
+                onLocationSelected: (coords, address) {
 
-    _controller.updateLocation(coords, address);
-    },
-    useOSM: true,
-    ));
+                  controller.updateLocation(coords, address);
+                },
+                useOSM: true,
 
-    if (Get.isDialogOpen!) Get.back();
-    } catch (e) {
-    if (Get.isDialogOpen!) Get.back();
-    Get.snackbar(
-    'Error'.tr,
-    'Failed to load map: ${e.toString()}'.tr,
-    snackPosition: SnackPosition.BOTTOM,
-    );
-    }
-    },
-    child: IgnorePointer(
-    child: BuildEditableProfileItem(
-    icon: Icons.location_on,
-    title: 'Tap to choose Location',
-    initialValue: controller.location.value,
-    onChanged: (value) {},
-    ),
-    ),
+              ));
+
+            if (Get.isDialogOpen!) Get.back();
+            } catch (e) {
+              if (Get.isDialogOpen!) Get.back();
+              Get.snackbar(
+                'Error',
+                'Failed to load map: ${e.toString()}',
+                snackPosition: SnackPosition.BOTTOM,
+              );
+            }
+          },
+          child: IgnorePointer(
+            child: BuildEditableProfileItem(
+              icon: Icons.location_on,
+              title: 'Tap to choose Location',
+              initialValue: '',
+              onChanged: (value) {},
+            ),
+          ),
         ),
         SizedBox(height: 20),
         BuildEditableProfileItem(
           icon: Icons.medical_services,
           title: 'Clinic Name',
-          initialValue: controller.clinicName.value,
+          initialValue: '',
           onChanged: (value) => controller.clinicName.value = value,
         ),
         SizedBox(height: 20),
         BuildEditableProfileItem(
           icon: Icons.location_city,
           title: 'Clinic Address',
-          initialValue: controller.clinicAddress.value,
+          initialValue: '', // دائماً فارغ
           onChanged: (value) => controller.clinicAddress.value = value,
         ),
       ],

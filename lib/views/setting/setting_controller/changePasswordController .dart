@@ -65,7 +65,10 @@ class ChangePasswordController extends GetxController {
       else if (response.statusCode == 200 || response.statusCode == 201) {
         print('🎉 Password change successful');
         Get.snackbar('Success', 'Password changed successfully'.tr);
-        Navigator.of(Get.context!).pop();
+
+        Future.delayed(const Duration(milliseconds: 500), () {
+          Navigator.of(Get.context!).pop();
+        });
       }
 
       else {
@@ -88,7 +91,7 @@ class ChangePasswordController extends GetxController {
     } catch (e, stackTrace) {
       print('❌ Unexpected error: $e');
       print('❌ Error type: ${e.runtimeType}');
-      print('❌ Stack trace: $stackTrace'); // هذا سيعطيك معلومات عن مكان الخطأ
+      print('❌ Stack trace: $stackTrace');
 
       Get.snackbar('Error', 'An unexpected error occurred: ${e.toString()}'.tr);
     } finally {

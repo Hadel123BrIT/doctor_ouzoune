@@ -423,65 +423,42 @@ final RxString notificationsError = ''.obs;
 
   //----------------------------------------------------------------
 
-  Future<Map<String, dynamic>> updateMyProfile({
+  Future<Map<String, dynamic>?> updateMyProfile({
     required Map<String, dynamic> data,
     File? profileImageFile,
   }) async {
     try {
-      final dio = Dio();
-      final box = GetStorage();
-      final token = box.read('auth_token');
-
-      if (token == null) {
-        throw Exception('No authentication token found');
-      }
-
-      dio.options.headers['Authorization'] = 'Bearer $token';
 
       final formData = FormData.fromMap({
-        'UserName': data['userName'],
-        'Email': data['email'],
-        'PhoneNumber': data['phoneNumber'],
-        'Name': data['userName'],
-        'ClinicName': data['clinicName'],
-        'Address': data['clinicAddress'],
-        'Latitude': data['clinicLatitude']?.toString() ?? '0',
-        'Longtitude': data['clinicLongitude']?.toString() ?? '0',
+        'UserName': data['UserName'] ?? '',
+        'Email': data['Email'] ?? '',
+        'PhoneNumber': data['PhoneNumber'] ?? '',
+        'ClinicName': data['ClinicName'] ?? '',
+        'Address': data['Address'] ?? '',
+        'Longtitude': data['Longtitude']?.toString() ?? '0',
+        'Latitude': data['Latitude']?.toString() ?? '0',
+        'Image': profileImageFile != null
+            ? await MultipartFile.fromFile(profileImageFile.path)
+            : '',
       });
 
-      if (profileImageFile != null) {
-        formData.files.add(MapEntry(
-          'Image',
-          await MultipartFile.fromFile(
-            profileImageFile.path,
-            filename: 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg',
-          ),
-        ));
-      }
+      final token = GetStorage().read('auth_token');
 
       final response = await dio.put(
         '$baseUrl/users/UpdateCurrentUserProfile',
         data: formData,
         options: Options(
-          contentType: 'multipart/form-data',
-          receiveTimeout: Duration(seconds: 30),
-          sendTimeout: Duration(seconds: 30),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'accept': '*/*',
+          },
         ),
       );
 
-      if (response.statusCode == 200 || response.statusCode == 200 ) {
-        return response.data;
-      } else {
-        throw Exception('Failed to update profile: ${response.statusCode}');
-      }
-    } on DioException catch (e) {
-      if (e.response != null) {
-        throw Exception('Server error: ${e.response?.statusCode} - ${e.response?.data}');
-      } else {
-        throw Exception('Network error: ${e.message}');
-      }
+      return response.data;
     } catch (e) {
-      throw Exception('Unexpected error: $e');
+      debugPrint('API Error: $e');
+      rethrow;
     }
   }
  //----------------------------------------------------------------------------
