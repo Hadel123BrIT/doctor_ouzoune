@@ -6,8 +6,22 @@ import 'package:ouzoun/views/procedure/procedure_controller/procedure_controller
 import '../../../core/constants/app_colors.dart';
 import '../widget/buildProcedureHelper.dart';
 
-class AddProcedure extends StatelessWidget {
+class AddProcedure extends StatefulWidget {
   AddProcedure({super.key});
+  final ProcedureController controller = Get.put(ProcedureController());
+  void initState() {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.resetProcedureData();
+    });
+   }
+
+  @override
+  State<AddProcedure> createState() => _AddProcedureState();
+}
+
+
+class _AddProcedureState extends State<AddProcedure> {
   final ProcedureController controller = Get.put(ProcedureController());
 
   @override
@@ -53,5 +67,4 @@ class AddProcedure extends StatelessWidget {
       ),
     );
   }
-
 }

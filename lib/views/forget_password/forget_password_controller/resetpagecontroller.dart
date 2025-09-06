@@ -31,7 +31,7 @@ class ResetPageController extends GetxController {
 
     try {
       final token = box.read('resetToken');
-      print('🔐 Token from storage: $token');
+      print(' Token from storage: $token');
 
       if (token == null) {
         Get.snackbar('Error', 'Session expired, please try again'.tr);
@@ -45,9 +45,8 @@ class ResetPageController extends GetxController {
         token: token,
       );
 
-      print('📥 Full response: $response');
+      print('Full response: $response');
 
-      // معالجة الاستجابة الجديدة
       final statusCode = response['statusCode'];
       final responseData = response['data'];
       final success = response['success'];
@@ -58,7 +57,6 @@ class ResetPageController extends GetxController {
           Get.snackbar('Success', 'Password reset successfully'.tr);
           goToSuccessPage();
         } else {
-          // محاولة استخراج الرسالة من responseData
           String errorMessage = 'Password reset failed';
           if (responseData is Map) {
             errorMessage = responseData['message'] ?? errorMessage;
@@ -68,7 +66,6 @@ class ResetPageController extends GetxController {
           Get.snackbar('Error', errorMessage.tr);
         }
       } else if (statusCode == 500) {
-        // معالجة خطأ الخادم بشكل خاص
         String serverMessage = 'Internal server error (500)';
         if (responseData is String && responseData.isNotEmpty) {
           serverMessage = responseData;
@@ -80,7 +77,7 @@ class ResetPageController extends GetxController {
         Get.snackbar('Error', 'Request failed with status code: $statusCode'.tr);
       }
     } catch (e) {
-      print('❌ Unexpected error: ${e.toString()}');
+      print(' Unexpected error: ${e.toString()}');
       Get.snackbar('Error', 'Unexpected error: ${e.toString()}'.tr);
     } finally {
       isLoading.value = false;

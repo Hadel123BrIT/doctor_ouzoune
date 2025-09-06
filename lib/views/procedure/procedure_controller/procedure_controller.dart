@@ -40,12 +40,35 @@ class ProcedureController extends GetxController {
   final Rx<DateTime?> toDate = Rx<DateTime?>(null);
   final statusFilter = 0.obs;
 
+  void resetProcedureData() {
+    try {
+      print('🔄 Resetting procedure data...');
 
+      patientNameController.clear();
+      needsAssistance.value = false;
+      assistantsCount.value = 1;
+      procedureType.value = 1;
+      procedureDate.value = null;
+      procedureTime.value = null;
+      final KitsController kitsCtrl = Get.find<KitsController>();
+      kitsCtrl.selectedAdditionalTools.clear();
+      kitsCtrl.selectedImplants.clear();
+      kitsCtrl.selectedPartialImplants.clear();
+      kitsCtrl.selectedToolsForImplants.clear();
+      kitsCtrl.additionalToolQuantities.clear();
+
+      print('Procedure data reset successfully');
+    } catch (e) {
+      print(' Error resetting procedure data: $e');
+    }
+  }
 
   @override
   void onInit() {
     super.onInit();
-    fetchAllProcedures();
+    if (Get.routing.current == AppRoutes.getAllprocedure) {
+      fetchAllProcedures();
+    }
   }
 
   // Select Data
@@ -129,7 +152,6 @@ class ProcedureController extends GetxController {
       procedureTime.value!.hour,
       procedureTime.value!.minute,
     );
-
     return {
       "numberOfAssistants": assistantsCount.value,
       "date": combinedDateTime.toIso8601String(),
