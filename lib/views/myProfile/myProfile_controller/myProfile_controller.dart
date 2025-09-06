@@ -7,7 +7,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../core/services/api_services.dart';
-import '../../../widgets/CustomSnackbar .dart';
 import '../../register/Widget/LocationPicker/locationPicker_controller.dart';
 import '../myProfile_screen/myProfile_screen.dart';
 
@@ -15,8 +14,7 @@ class MyProfileController extends GetxController {
   final ApiServices apiServices = Get.put(ApiServices());
   final LocationPickerController locationController = Get.put(LocationPickerController());
 
-
-  final  id = ''.obs;
+  final id = ''.obs;
   final userName = ''.obs;
   final email = ''.obs;
   final phoneNumber = ''.obs;
@@ -33,15 +31,12 @@ class MyProfileController extends GetxController {
   final isLoading = false.obs;
   final isConvertingAddress = false.obs;
 
-
-
   @override
   void onInit() {
     super.onInit();
     if (Get.currentRoute == '/profile') {
       fetchProfileData();
-    }
-    else{
+    } else {
       clearAllFields();
     }
   }
@@ -53,9 +48,11 @@ class MyProfileController extends GetxController {
       final response = await apiServices.getMyProfile();
 
       if (response.isEmpty) {
-        CustomSnackbar.warning(
-          message: 'No profile data found',
-          title: 'Profile',
+        Get.snackbar(
+          'Profile',
+          'No profile data found',
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
         );
         return;
       }
@@ -79,31 +76,37 @@ class MyProfileController extends GetxController {
             clinicLatitude.value, clinicLongitude.value);
       }
 
-
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
-        CustomSnackbar.error(
-          message: 'Session expired. Please login again',
-          title: 'Authentication Error',
+        Get.snackbar(
+          'Authentication Error',
+          'Session expired. Please login again',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
         );
-
       } else if (e.type == DioExceptionType.connectionTimeout) {
-        CustomSnackbar.error(
-          message: 'Connection timeout. Please check your internet',
-          title: 'Network Error',
+        Get.snackbar(
+          'Network Error',
+          'Connection timeout. Please check your internet',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
         );
       } else {
-        CustomSnackbar.error(
-          message: 'Network error: ${e.message ?? "Unknown error"}',
-          title: 'Profile Error',
+        Get.snackbar(
+          'Profile Error',
+          'Network error: ${e.message ?? "Unknown error"}',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
         );
       }
       debugPrint('Dio error fetching profile: $e');
 
     } catch (e) {
-      CustomSnackbar.error(
-        message: 'Failed to load profile data: ${e.toString()}',
-        title: 'Profile Error',
+      Get.snackbar(
+        'Profile Error',
+        'Failed to load profile data: ${e.toString()}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
       debugPrint('Error fetching profile: $e');
     } finally {
@@ -135,11 +138,21 @@ class MyProfileController extends GetxController {
           profileImagePath.value = response['profileImagePath'];
         }
 
-        CustomSnackbar.success(message: 'Profile updated successfully');
+        Get.snackbar(
+          'Success',
+          'Profile updated successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
         Get.back();
       }
     } catch (e) {
-      CustomSnackbar.error(message: 'Failed to update profile: ${e.toString()}');
+      Get.snackbar(
+        'Error',
+        'Failed to update profile: ${e.toString()}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       debugPrint('Error updating profile: $e');
     } finally {
       isLoading(false);
@@ -147,10 +160,8 @@ class MyProfileController extends GetxController {
     }
   }
 
-
-
   void clearAllFields() {
-    userName.value="";
+    userName.value = "";
     email.value = '';
     phoneNumber.value = '';
     clinicName.value = '';
@@ -158,12 +169,13 @@ class MyProfileController extends GetxController {
     location.value = '';
     selectedImage.value = null;
 
-    CustomSnackbar.info(
-      message: 'All fields cleared',
-      title: 'Cleared',
+    Get.snackbar(
+      'Cleared',
+      'All fields cleared',
+      backgroundColor: Colors.blue,
+      colorText: Colors.white,
     );
   }
-
 
   Future<void> pickImage() async {
     try {
@@ -177,23 +189,25 @@ class MyProfileController extends GetxController {
 
       if (image != null) {
         selectedImage.value = File(image.path);
-        CustomSnackbar.success(
-          message: 'Image selected successfully',
-          title: 'Success',
+        Get.snackbar(
+          'Success',
+          'Image selected successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
         );
       }
     } catch (e) {
-      CustomSnackbar.error(
-        message: 'Failed to pick image: ${e.toString()}',
-        title: 'Error',
+      Get.snackbar(
+        'Error',
+        'Failed to pick image: ${e.toString()}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
       debugPrint('Error picking image: $e');
     }
   }
 
-
-  Future<void> convertCoordinatesToAddress(double latitude,
-      double longitude) async {
+  Future<void> convertCoordinatesToAddress(double latitude, double longitude) async {
     try {
       if (latitude == 0.0 && longitude == 0.0) {
         location.value = 'Location not set';
@@ -205,9 +219,7 @@ class MyProfileController extends GetxController {
       location.value = locationController.locationName.value;
     } catch (e) {
       debugPrint('Error converting coordinates: $e');
-      location.value =
-      'Location: ${latitude.toStringAsFixed(4)}, ${longitude.toStringAsFixed(
-          4)}';
+      location.value = 'Location: ${latitude.toStringAsFixed(4)}, ${longitude.toStringAsFixed(4)}';
     }
   }
 }

@@ -11,7 +11,6 @@ import '../../../models/assistant_model.dart';
 import '../../../models/doctor_model.dart';
 import '../../../models/implant_model.dart';
 import '../../../models/procedure_model.dart';
-import '../../../widgets/CustomSnackbar .dart';
 import '../../kits/Kits_Controller/kits_controller.dart';
 import '../procedure_screen/get_all_procedures.dart';
 
@@ -190,7 +189,32 @@ class ProcedureController extends GetxController {
 
   Future<void> postProcedure() async {
     if (procedureDate.value == null || procedureTime.value == null) {
-      CustomSnackbar.error(message: 'Procedure date and time are required'.tr);
+      Get.snackbar(
+        'Error',
+        'Procedure date and time are required'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'Procedure date and time are required'.tr,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
       return;
     }
 
@@ -235,7 +259,32 @@ class ProcedureController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
           duration: Duration(seconds: 2),
         );
-        CustomSnackbar.success(message: 'Procedure added successfully'.tr);
+        Get.snackbar(
+          'Success',
+          'Procedure added successfully'.tr,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
+          margin: EdgeInsets.all(15),
+          titleText: Text(
+            'Success',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          messageText: Text(
+            'Procedure added successfully'.tr,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+        );
         Get.to(ProceduresScreen());
         resetFilters();
       } else {
@@ -243,14 +292,89 @@ class ProcedureController extends GetxController {
           final errorMsg = response.data['message'] ??
               response.data['error'] ??
               'Failed with status ${response.statusCode}';
-          CustomSnackbar.error(message: errorMsg.toString().tr);
+          Get.snackbar(
+            'Error',
+            errorMsg.toString().tr,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: Duration(seconds: 4),
+            margin: EdgeInsets.all(15),
+            titleText: Text(
+              'Error',
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            messageText: Text(
+              errorMsg.toString().tr,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          );
         } else if (response.data is String) {
-          CustomSnackbar.error(message: response.data.tr);
+          Get.snackbar(
+            'Error',
+            response.data.tr,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: Duration(seconds: 4),
+            margin: EdgeInsets.all(15),
+            titleText: Text(
+              'Error',
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            messageText: Text(
+              response.data.tr,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          );
         }
       }
     } catch (e) {
       print('Error type: ${e.runtimeType}');
-      CustomSnackbar.error(message: 'An error occurred: ${e.toString()}'.tr);
+      Get.snackbar(
+        'Error',
+        'An error occurred: ${e.toString()}'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 4),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'An error occurred: ${e.toString()}'.tr,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
     }
   }
 
@@ -284,9 +408,31 @@ class ProcedureController extends GetxController {
       );
 
       if (procedures.isEmpty) {
-        CustomSnackbar.info(
-          message: 'No procedures found with the current filters',
+        Get.snackbar(
+          'Info',
+          'No procedures found with the current filters',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.blue,
+          colorText: Colors.white,
           duration: Duration(seconds: 3),
+          margin: EdgeInsets.all(15),
+          titleText: Text(
+            'Info',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          messageText: Text(
+            'No procedures found with the current filters',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
         );
         proceduresList.clear();
       } else {
@@ -295,14 +441,61 @@ class ProcedureController extends GetxController {
 
     } catch (e) {
       print('Error fetching procedures: $e');
-      if (e.toString().contains('Data not Found',)) {
-        CustomSnackbar.info(
-          message: 'No procedures match your search criteria',
+      if (e.toString().contains('Data not Found')) {
+        Get.snackbar(
+          'Info',
+          'No procedures match your search criteria',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.blue,
+          colorText: Colors.white,
           duration: Duration(seconds: 3),
+          margin: EdgeInsets.all(15),
+          titleText: Text(
+            'Info',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          messageText: Text(
+            'No procedures match your search criteria',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
         );
         proceduresList.clear();
       } else {
-        CustomSnackbar.error(message: 'Failed to load procedures');
+        Get.snackbar(
+          'Error',
+          'Failed to load procedures',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
+          margin: EdgeInsets.all(15),
+          titleText: Text(
+            'Error',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          messageText: Text(
+            'Failed to load procedures',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+        );
       }
     } finally {
       isLoading.value = false;
@@ -354,7 +547,32 @@ class ProcedureController extends GetxController {
       }
     }
     catch (e) {
-      CustomSnackbar.error(message: 'Failed to load procedures: ${e.toString()}'.tr);
+      Get.snackbar(
+        'Error',
+        'Failed to load procedures: ${e.toString()}'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 4),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'Failed to load procedures: ${e.toString()}'.tr,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
       print('Error fetching procedures: $e');
     } finally {
       isLoading.value = false;
@@ -389,7 +607,32 @@ class ProcedureController extends GetxController {
         }
       }
     }  catch (e) {
-      CustomSnackbar.error(message: 'Failed to load procedure details: ${e.toString()}');
+      Get.snackbar(
+        'Error',
+        'Failed to load procedure details: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 4),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'Failed to load procedure details: ${e.toString()}',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
       print('Error fetching procedure: $e');
     } finally {
       isLoading(false);
@@ -523,7 +766,31 @@ class ProcedureController extends GetxController {
           proceduresList.refresh();
         }
 
-        CustomSnackbar.success(message: 'Procedure status updated successfully'.tr,
+        Get.snackbar(
+          'Success',
+          'Procedure status updated successfully'.tr,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
+          margin: EdgeInsets.all(15),
+          titleText: Text(
+            'Success',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          messageText: Text(
+            'Procedure status updated successfully'.tr,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
         );
       } else {
         throw Exception('Failed to change status: ${response.statusCode}');
@@ -532,8 +799,31 @@ class ProcedureController extends GetxController {
       print('Dio Error: ${e.message}');
       print('Response: ${e.response?.data}');
 
-      CustomSnackbar.error(
-        message: 'Failed to update procedure status: ${e.response?.data?['message'] ?? e.message}'.tr,
+      Get.snackbar(
+        'Error',
+        'Failed to update procedure status: ${e.response?.data?['message'] ?? e.message}'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 4),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'Failed to update procedure status: ${e.response?.data?['message'] ?? e.message}'.tr,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
       );
     } finally {
       resetFilters();

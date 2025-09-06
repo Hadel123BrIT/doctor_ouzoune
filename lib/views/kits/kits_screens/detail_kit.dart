@@ -5,7 +5,6 @@ import 'package:ouzoun/models/additionalTool_model.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../models/Implant_model.dart';
 import '../../../models/kit_model.dart';
-import '../../../widgets/CustomSnackbar .dart';
 import '../../../widgets/custom_button.dart';
 import '../Kits_Controller/kits_controller.dart';
 import '../widget/buildKitToolsList.dart';
@@ -167,19 +166,21 @@ class ImplantDetailScreen extends StatelessWidget {
 
                               Get.back();
 
-                              CustomSnackbar.show(
-                                title: "Added",
-                                message: "${controller.getImplantNameByKitId(implant.kitId ?? 0)} added to cart",
+                              Get.snackbar(
+                                "Added",
+                                "${controller.getImplantNameByKitId(implant.kitId ?? 0)} added to cart",
                                 backgroundColor: Colors.green,
-                                icon: Icons.check_circle,
+                                colorText: Colors.white,
+                                icon: Icon(Icons.check_circle, color: Colors.white),
                                 duration: Duration(seconds: 2),
                               );
                             } else {
-                              CustomSnackbar.show(
-                                title: "Warning",
-                                message: "Please select at least one tool",
+                              Get.snackbar(
+                                "Warning",
+                                "Please select at least one tool",
                                 backgroundColor: Colors.orange,
-                                icon: Icons.warning,
+                                colorText: Colors.white,
+                                icon: Icon(Icons.warning, color: Colors.white),
                                 duration: Duration(seconds: 3),
                               );
                             }

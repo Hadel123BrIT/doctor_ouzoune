@@ -16,7 +16,6 @@ import '../views/about_us/about_us_screen.dart';
 import '../views/notification/notification_screen/notification_screen.dart';
 import '../views/procedure/procedure_screen/get_all_procedures.dart';
 import '../views/setting/setting_screen/setting_screen.dart';
-import 'CustomSnackbar .dart';
 import 'custom_view_item_list.dart';
 
 
@@ -84,7 +83,7 @@ class _CustomDrawerState extends State<CustomDrawer> with SingleTickerProviderSt
                 ),
               ),
               ElevatedButton(
-                onPressed: () => Navigator.of(Get.context!).pop(),
+                onPressed: () => Get.back(result: true),
                 child: Text(
                   'Logout',
                   style: TextStyle(
@@ -105,15 +104,58 @@ class _CustomDrawerState extends State<CustomDrawer> with SingleTickerProviderSt
             await authService.logout();
             await box.erase();
             Get.offAllNamed(AppRoutes.login);
-
-            CustomSnackbar.success(
-              title: 'Successfully',
-              message: 'You have been successfully logged out.',
+            Get.snackbar(
+              'Successfully',
+              'You have been successfully logged out.',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+              duration: Duration(seconds: 3),
+              margin: EdgeInsets.all(15),
+              titleText: Text(
+                'Successfully',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              messageText: Text(
+                'You have been successfully logged out.',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
             );
           } catch (e) {
-            CustomSnackbar.error(
-              title: 'Error',
-              message: 'An error occurred while logging out: ${e.toString()}',
+            Get.snackbar(
+              'Error',
+              'An error occurred while logging out: ${e.toString()}',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+              duration: Duration(seconds: 4),
+              margin: EdgeInsets.all(15),
+              titleText: Text(
+                'Error',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              messageText: Text(
+                'An error occurred while logging out: ${e.toString()}',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
             );
           }
         }

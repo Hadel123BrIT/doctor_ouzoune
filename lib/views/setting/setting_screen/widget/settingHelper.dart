@@ -187,21 +187,23 @@ Future<void> logout(BuildContext context) async {
 
   if (confirm == true) {
     try {
+      // محاولة العثور على AuthService
       AuthService authService;
       try {
         authService = Get.find<AuthService>();
         await authService.logout();
       } catch (e) {
         print('AuthService not found, proceeding with local logout: $e');
+        // إذا لم يتم العثور على AuthService، نقوم بالتسجيل الخروج محليًا فقط
+        await box.erase();
+        Get.offAll(() => LoginScreen());
       }
-      await box.erase();
-      Get.offAll(() => LoginScreen());
 
       Get.snackbar(
         'Success',
         'You have been successfully logged out.',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.green,
         colorText: Colors.white,
         duration: Duration(seconds: 2),
       );

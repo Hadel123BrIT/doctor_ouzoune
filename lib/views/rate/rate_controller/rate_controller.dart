@@ -5,7 +5,6 @@ import 'package:get_storage/get_storage.dart';
 import '../../../Routes/app_routes.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/services/api_services.dart';
-import '../../../widgets/CustomSnackbar .dart';
 
 class RateController extends GetxController {
   final ApiServices apiServices = Get.put(ApiServices());
@@ -30,12 +29,62 @@ class RateController extends GetxController {
 
   Future<void> submitRating() async {
     if (assistantId.value.isEmpty) {
-      CustomSnackbar.error(message: 'Please select an assistant');
+      Get.snackbar(
+        'Error',
+        'Please select an assistant',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'Please select an assistant',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
       return;
     }
 
     if (rate.value == 0) {
-      CustomSnackbar.error(message: 'Please select a rating');
+      Get.snackbar(
+        'Error',
+        'Please select a rating',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'Please select a rating',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
       return;
     }
 
@@ -44,7 +93,32 @@ class RateController extends GetxController {
       final token = GetStorage().read('auth_token');
 
       if (token == null) {
-        CustomSnackbar.error(message: 'Please login again');
+        Get.snackbar(
+          'Error',
+          'Please login again',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
+          margin: EdgeInsets.all(15),
+          titleText: Text(
+            'Error',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          messageText: Text(
+            'Please login again',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+        );
         return;
       }
 
@@ -57,7 +131,32 @@ class RateController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.back();
-        CustomSnackbar.success(message: 'Rating submitted successfully');
+        Get.snackbar(
+          'Success',
+          'Rating submitted successfully',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
+          margin: EdgeInsets.all(15),
+          titleText: Text(
+            'Success',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          messageText: Text(
+            'Rating submitted successfully',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+        );
         noteController.clear();
         rate.value = 0;
         assistantId.value = '';
@@ -66,10 +165,60 @@ class RateController extends GetxController {
       }
     } on DioException catch (e) {
       print('Dio Error: ${e.message}');
-      CustomSnackbar.error(message: 'Failed to submit rating: ${e.message}');
+      Get.snackbar(
+        'Error',
+        'Failed to submit rating: ${e.message}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 4),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'Failed to submit rating: ${e.message}',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
     } catch (e) {
       print('Unexpected Error: $e');
-      CustomSnackbar.error(message: 'An unexpected error occurred');
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'An unexpected error occurred',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
     } finally {
       isLoading.value = false;
     }
@@ -83,7 +232,32 @@ class RateController extends GetxController {
       final token = GetStorage().read('auth_token');
 
       if (token == null) {
-        CustomSnackbar.error(message: 'Please login again');
+        Get.snackbar(
+          'Error',
+          'Please login again',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
+          margin: EdgeInsets.all(15),
+          titleText: Text(
+            'Error',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          messageText: Text(
+            'Please login again',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+        );
         return;
       }
 
@@ -91,9 +265,31 @@ class RateController extends GetxController {
 
       if (assistants.isEmpty) {
         hasNoAssistants.value = true;
-        CustomSnackbar.info(
-          message: 'No assistants found in your procedures',
+        Get.snackbar(
+          'Info',
+          'No assistants found in your procedures',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.blue,
+          colorText: Colors.white,
           duration: Duration(seconds: 5),
+          margin: EdgeInsets.all(15),
+          titleText: Text(
+            'Info',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          messageText: Text(
+            'No assistants found in your procedures',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
         );
       } else {
         assistantsList.assignAll(assistants);
@@ -102,10 +298,60 @@ class RateController extends GetxController {
 
     } on DioException catch (e) {
       print('Dio Error loading assistants: ${e.message}');
-      CustomSnackbar.error(message: 'Failed to load assistants');
+      Get.snackbar(
+        'Error',
+        'Failed to load assistants',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'Failed to load assistants',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
     } catch (e) {
       print('Unexpected Error loading assistants: $e');
-      CustomSnackbar.error(message: 'Failed to load assistants');
+      Get.snackbar(
+        'Error',
+        'Failed to load assistants',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'Failed to load assistants',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
     } finally {
       isLoading.value = false;
     }

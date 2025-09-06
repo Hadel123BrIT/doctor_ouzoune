@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ouzoun/core/services/api_services.dart';
 import '../../Routes/app_routes.dart';
 import '../../core/services/firebase_service.dart';
-import '../../widgets/CustomSnackbar .dart';
 
 class RegisterController extends GetxController {
   final nameController = TextEditingController();
@@ -47,23 +47,123 @@ class RegisterController extends GetxController {
         selectedImage.value = File(image.path);
       }
     } catch (e) {
-      CustomSnackbar.error(message: 'Failed to pick image: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to pick image: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'Failed to pick image: $e',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
     }
   }
 
   Future<void> register() async {
     if (!formKey.currentState!.validate()) {
-      CustomSnackbar.error(message: 'Please fill all fields correctly');
+      Get.snackbar(
+        'Error',
+        'Please fill all fields correctly',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'Please fill all fields correctly',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
       return;
     }
 
     if (selectedLocation.value == null) {
-      CustomSnackbar.error(message: 'Please select a location');
+      Get.snackbar(
+        'Error',
+        'Please select a location',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'Please select a location',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
       return;
     }
 
     if (passwordController.text.length < 8) {
-      CustomSnackbar.error(message: 'Password must be at least 8 characters');
+      Get.snackbar(
+        'Error',
+        'Password must be at least 8 characters',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'Password must be at least 8 characters',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
       return;
     }
 
@@ -71,7 +171,32 @@ class RegisterController extends GetxController {
       final allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
       final fileExtension = selectedImage.value!.path.split('.').last.toLowerCase();
       if (!allowedExtensions.contains(fileExtension)) {
-        CustomSnackbar.error(message: 'Only .jpg, .png, .webp, .jpeg are allowed');
+        Get.snackbar(
+          'Error',
+          'Only .jpg, .png, .webp, .jpeg are allowed',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
+          margin: EdgeInsets.all(15),
+          titleText: Text(
+            'Error',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          messageText: Text(
+            'Only .jpg, .png, .webp, .jpeg are allowed',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+        );
         return;
       }
     }
@@ -98,7 +223,33 @@ class RegisterController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.offAllNamed(AppRoutes.homepage);
-        CustomSnackbar.success(message: 'Registration successful, Welcome');
+        // استبدال CustomSnackbar بـ Get.snackbar للنجاح
+        Get.snackbar(
+          'Success',
+          'Registration successful, Welcome',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
+          margin: EdgeInsets.all(15),
+          titleText: Text(
+            'Success',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          messageText: Text(
+            'Registration successful, Welcome',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+        );
       } else {
         _handleRegistrationError(response);
       }
@@ -106,7 +257,33 @@ class RegisterController extends GetxController {
       _handleDioError(e);
     } catch (e) {
       print('General Error: ${e.toString()}');
-      CustomSnackbar.error(message: 'An unexpected error occurred: ${e.toString()}');
+      // استبدال CustomSnackbar بـ Get.snackbar
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 4),
+        margin: EdgeInsets.all(15),
+        titleText: Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'An unexpected error occurred: ${e.toString()}',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      );
     } finally {
       isLoading(false);
     }
@@ -136,7 +313,32 @@ class RegisterController extends GetxController {
       errorMessage = 'Registration failed';
     }
 
-    CustomSnackbar.error(message: errorMessage);
+    Get.snackbar(
+      'Error',
+      errorMessage,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+      duration: Duration(seconds: 4),
+      margin: EdgeInsets.all(15),
+      titleText: Text(
+        'Error',
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      messageText: Text(
+        errorMessage,
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontSize: 16,
+          color: Colors.white,
+        ),
+      ),
+    );
   }
 
   void _handleDioError(DioException e) {
@@ -169,7 +371,33 @@ class RegisterController extends GetxController {
       errorMessage = 'Registration failed';
     }
 
-    CustomSnackbar.error(message: errorMessage);
+    // استبدال CustomSnackbar بـ Get.snackbar
+    Get.snackbar(
+      'Error',
+      errorMessage,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+      duration: Duration(seconds: 4),
+      margin: EdgeInsets.all(15),
+      titleText: Text(
+        'Error',
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      messageText: Text(
+        errorMessage,
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontSize: 16,
+          color: Colors.white,
+        ),
+      ),
+    );
   }
 
   @override

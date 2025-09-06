@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../widgets/CustomSnackbar .dart';
 import '../procedure_controller/procedure_controller.dart';
-
 
 void showFilterDialog(BuildContext context) {
   final ProcedureController controller = Get.find();
@@ -50,7 +48,7 @@ void showFilterDialog(BuildContext context) {
                 decoration: InputDecoration(
                   hintText: 'Minimum assistants...',
                   hintStyle: TextStyle(fontFamily: 'Montserrat',
-                  fontSize: 14,
+                    fontSize: 14,
                   ),
                   border: border,
                   enabledBorder: border,
@@ -72,7 +70,7 @@ void showFilterDialog(BuildContext context) {
                 decoration: InputDecoration(
                   hintText: 'Maximum assistants...',
                   hintStyle: TextStyle(fontFamily: 'Montserrat',
-                  fontSize: 14,
+                    fontSize: 14,
                   ),
                   border: border,
                   enabledBorder: border,
@@ -114,8 +112,8 @@ void showFilterDialog(BuildContext context) {
                 items: [
                   DropdownMenuItem(value: null, child: Text('All Statuses',
                     style:  TextStyle(fontFamily: 'Montserrat',
-                      fontSize: 14,
-                      color: Colors.grey
+                        fontSize: 14,
+                        color: Colors.grey
                     ),
                   )),
                   DropdownMenuItem(value: 1, child: Text('Request_Sent',
@@ -153,7 +151,7 @@ void showFilterDialog(BuildContext context) {
                   title: Text(
                     controller.fromDate.value?.toLocal().toString().split(' ')[0] ?? 'Select from date',
                     style: TextStyle(fontFamily: 'Montserrat',
-                    fontSize: 14
+                        fontSize: 14
                     ),
                   ),
                   trailing: Icon(Icons.calendar_today, color: AppColors.primaryGreen),
@@ -180,7 +178,7 @@ void showFilterDialog(BuildContext context) {
                   title: Text(
                     controller.toDate.value?.toLocal().toString().split(' ')[0] ?? 'Select to date',
                     style: TextStyle(fontFamily: 'Montserrat',
-                    fontSize: 14
+                        fontSize: 14
                     ),
                   ),
                   trailing: Icon(Icons.calendar_today, color: AppColors.primaryGreen),
@@ -201,68 +199,137 @@ void showFilterDialog(BuildContext context) {
             ],
           ),
         ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                controller.resetFilters();
-                Get.back();
-              },
-              child: Text("Reset",
+        actions: [
+          TextButton(
+            onPressed: () {
+              controller.resetFilters();
+              Get.back();
+            },
+            child: Text("Reset",
               style: TextStyle(
                 color: AppColors.primaryGreen,
                 fontFamily:'Montserrat',
               ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text("Cancel",
+              style: TextStyle(
+                color: AppColors.primaryGreen,
+                fontFamily:'Montserrat',
               ),
             ),
-            TextButton(
-              onPressed: () => Get.back(),
-              child: Text("Cancel",
-                style: TextStyle(
-                  color: AppColors.primaryGreen,
-                  fontFamily:'Montserrat',
-                ),
-              ),
-            ),
-      ElevatedButton(
-      onPressed: () async {
-      try {
-      await controller.fetchAllProcedures();
-      if (controller.proceduresList.isEmpty) {
-      CustomSnackbar.info(
-      message: 'No procedures found with these filters',
-      duration: Duration(seconds: 3),
-      );
-      }
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                await controller.fetchAllProcedures();
+                if (controller.proceduresList.isEmpty) {
+                  Get.snackbar(
+                    'Info',
+                    'No procedures found with these filters',
+                    snackPosition: SnackPosition.TOP,
+                    backgroundColor: Colors.blue,
+                    colorText: Colors.white,
+                    duration: Duration(seconds: 3),
+                    margin: EdgeInsets.all(15),
+                    titleText: Text(
+                      'Info',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    messageText: Text(
+                      'No procedures found with these filters',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+                }
 
-      Get.back();
-      } catch (e) {
-      if (e.toString().contains('Data not Found')) {
-      CustomSnackbar.info(
-      message: 'No matching procedures found',
-      duration: Duration(seconds: 3),
-      );
-      controller.proceduresList.clear();
-      Get.back();
-      } else {
-      CustomSnackbar.error(message: 'An error occurred');
-      }
-      }
-      },
-      style: ElevatedButton.styleFrom(
-      backgroundColor: AppColors.primaryGreen,
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
-      ),
-      ),
-      child: Text("Apply",
-        style: TextStyle(
-          color: Colors.white,
-          fontFamily:'Montserrat',
-        ),
-      ),
-      ),
-          ],
+                Get.back();
+              } catch (e) {
+                if (e.toString().contains('Data not Found')) {
+                  Get.snackbar(
+                    'Info',
+                    'No matching procedures found',
+                    snackPosition: SnackPosition.TOP,
+                    backgroundColor: Colors.blue,
+                    colorText: Colors.white,
+                    duration: Duration(seconds: 3),
+                    margin: EdgeInsets.all(15),
+                    titleText: Text(
+                      'Info',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    messageText: Text(
+                      'No matching procedures found',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+                  controller.proceduresList.clear();
+                  Get.back();
+                } else {
+                  Get.snackbar(
+                    'Error',
+                    'An error occurred',
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.red,
+                    colorText: Colors.white,
+                    duration: Duration(seconds: 3),
+                    margin: EdgeInsets.all(15),
+                    titleText: Text(
+                      'Error',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    messageText: Text(
+                      'An error occurred',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryGreen,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text("Apply",
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily:'Montserrat',
+              ),
+            ),
+          ),
+        ],
       );
     },
   );

@@ -11,6 +11,21 @@ class ChangePasswordController extends GetxController {
   final isLoading = false.obs;
   final formKey = GlobalKey<FormState>();
   final ApiServices apiServices = Get.find<ApiServices>();
+  var isOldPasswordVisible = false.obs;
+  var isNewPasswordVisible = false.obs;
+  var isConfirmPasswordVisible = false.obs;
+
+  void toggleOldPasswordVisibility() {
+    isOldPasswordVisible.value = !isOldPasswordVisible.value;
+  }
+
+  void toggleNewPasswordVisibility() {
+    isNewPasswordVisible.value = !isNewPasswordVisible.value;
+  }
+
+  void toggleConfirmPasswordVisibility() {
+    isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
+  }
 
   Future<void> changePassword() async {
     print('🔄 Starting change password process...');
@@ -43,14 +58,14 @@ class ChangePasswordController extends GetxController {
       // Handle 204 No Content response
       if (response.statusCode == 204) {
         print('🎉 Password change successful (204 No Content)');
-        Navigator.of(Get.context!).pop();
         Get.snackbar('Success', 'Password changed successfully'.tr);
+        Navigator.of(Get.context!).pop();
       }
       // Handle other success status codes
       else if (response.statusCode == 200 || response.statusCode == 201) {
         print('🎉 Password change successful');
-        Navigator.of(Get.context!).pop();
         Get.snackbar('Success', 'Password changed successfully'.tr);
+        Navigator.of(Get.context!).pop();
       }
 
       else {

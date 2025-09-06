@@ -1,12 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../../widgets/CustomSnackbar .dart';
 import '../../register/register_controller.dart';
 import 'myProfile_controller.dart';
 
@@ -47,6 +46,7 @@ class EditProfileController extends GetxController {
 
     await profileController.updateProfile();
   }
+
   Future<void> pickImage() async {
     try {
       final ImagePicker picker = ImagePicker();
@@ -59,15 +59,19 @@ class EditProfileController extends GetxController {
 
       if (image != null) {
         selectedImage.value = File(image.path);
-        CustomSnackbar.success(
-          message: 'Image selected successfully',
-          title: 'Success',
+        Get.snackbar(
+          'Success',
+          'Image selected successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
         );
       }
     } catch (e) {
-      CustomSnackbar.error(
-        message: 'Failed to pick image: ${e.toString()}',
-        title: 'Error',
+      Get.snackbar(
+        'Error',
+        'Failed to pick image: ${e.toString()}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
       debugPrint('Error picking image: $e');
     }

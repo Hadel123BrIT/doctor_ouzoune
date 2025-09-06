@@ -8,7 +8,6 @@ import 'package:ouzoun/core/constants/app_colors.dart';
 import 'package:ouzoun/core/services/api_services.dart';
 import '../../Routes/app_routes.dart';
 import '../../core/services/firebase_service.dart';
-import '../../widgets/CustomSnackbar .dart';
 import '../register/register_controller.dart';
 
 class LoginController extends GetxController {
@@ -37,15 +36,25 @@ class LoginController extends GetxController {
           final box = GetStorage();
           await box.write('user_token', token);
           await GetStorage().write('auth_token', token.toString());
-           print("***************device taken ${deviceToken}");
-          CustomSnackbar.success(
-            message: 'Welcome doctor  ${controller.nameController.text}',
+          print("***************device taken ${deviceToken}");
+
+          Get.snackbar(
+            'Success',
+            'Welcome doctor ${controller.nameController.text}',
+            backgroundColor: Colors.grey,
+            colorText: Colors.white,
             duration: Duration(seconds: 3),
           );
+
           Get.offAllNamed(AppRoutes.homepage);
         } else {
           final errorMessage = response.data?.toString() ?? 'Login failed';
-          CustomSnackbar.error(message: errorMessage);
+          Get.snackbar(
+            'Error',
+            errorMessage,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
         }
       } on DioException catch (e) {
         print('Dio Error: ${e.message}');
@@ -55,8 +64,7 @@ class LoginController extends GetxController {
         String errorMessage = 'Login failed';
 
         if (errorData is List && errorData.isNotEmpty) {
-          errorMessage =
-              errorData[0]['description'] ?? 'Email or Password is Wrong';
+          errorMessage = errorData[0]['description'] ?? 'Email or Password is Wrong';
         } else if (errorData is Map) {
           errorMessage = errorData['message'] ?? 'Email or Password is Wrong';
         } else if (errorData is String) {
@@ -64,18 +72,30 @@ class LoginController extends GetxController {
         } else if (e.response?.statusCode == 400) {
           errorMessage = 'Email or Password is Wrong';
         }
-        CustomSnackbar.error(message: errorMessage);
+
+        Get.snackbar(
+          'Error',
+          errorMessage,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       } catch (e) {
         print('General Error: $e');
-        CustomSnackbar.error(
-          message: 'An unexpected error occurred',
+        Get.snackbar(
+          'Error',
+          'An unexpected error occurred',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
         );
       } finally {
         isLoading(false);
       }
     } else {
-      CustomSnackbar.error(
-        message: 'Please fill all fields correctly',
+      Get.snackbar(
+        'Error',
+        'Please fill all fields correctly',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
     }
   }

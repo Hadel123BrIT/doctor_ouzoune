@@ -9,7 +9,7 @@ import '../setting_controller/changePasswordController .dart';
 class ChangePasswordPage extends StatelessWidget {
   ChangePasswordPage({super.key});
 
-  final ChangePasswordController controller =Get.put(ChangePasswordController());
+  final ChangePasswordController controller = Get.put(ChangePasswordController());
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +70,20 @@ class ChangePasswordPage extends StatelessWidget {
                   SizedBox(height: context.height * 0.05),
 
                   // Old Password
-                  CustomTextFormField(
+                  Obx(() => CustomTextFormField(
                     hintText: "Enter your old Password",
-                    suffixIcon: Icon(Icons.remove_red_eye_outlined),
-                    obscureText: true,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        controller.isOldPasswordVisible.value
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        controller.toggleOldPasswordVisibility();
+                      },
+                    ),
+                    obscureText: !controller.isOldPasswordVisible.value,
                     myController: controller.oldPasswordController,
                     validator: (val) {
                       if (val == null || val.isEmpty) {
@@ -84,14 +94,24 @@ class ChangePasswordPage extends StatelessWidget {
                       }
                       return null;
                     },
-                  ),
+                  )),
                   SizedBox(height: context.height * 0.04),
 
                   // New Password
-                  CustomTextFormField(
+                  Obx(() => CustomTextFormField(
                     hintText: "Enter your new Password",
-                    suffixIcon: Icon(Icons.remove_red_eye_outlined),
-                    obscureText: true,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        controller.isNewPasswordVisible.value
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        controller.toggleNewPasswordVisibility();
+                      },
+                    ),
+                    obscureText: !controller.isNewPasswordVisible.value,
                     myController: controller.newPasswordController,
                     validator: (val) {
                       if (val == null || val.isEmpty) {
@@ -105,14 +125,24 @@ class ChangePasswordPage extends StatelessWidget {
                       }
                       return null;
                     },
-                  ),
+                  )),
                   SizedBox(height: context.height * 0.04),
 
                   // Confirm Password
-                  CustomTextFormField(
+                  Obx(() => CustomTextFormField(
                     hintText: "Confirm your new Password",
-                    suffixIcon: Icon(Icons.remove_red_eye_outlined),
-                    obscureText: true,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        controller.isConfirmPasswordVisible.value
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        controller.toggleConfirmPasswordVisibility();
+                      },
+                    ),
+                    obscureText: !controller.isConfirmPasswordVisible.value,
                     myController: controller.confirmPasswordController,
                     validator: (val) {
                       if (val == null || val.isEmpty) {
@@ -123,7 +153,7 @@ class ChangePasswordPage extends StatelessWidget {
                       }
                       return null;
                     },
-                  ),
+                  )),
                   SizedBox(height: context.height * 0.04),
 
                   // Change Password Button
