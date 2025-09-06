@@ -13,46 +13,92 @@ import '../../../login/login_screen.dart';
 import '../../../myProfile/myProfile_controller/myProfile_controller.dart';
 import '../../setting_controller/setting_controller.dart';
 
-final _controller = Get.put(MyProfileController());
-SettingController controller = Get.put(SettingController());
+final MyProfileController _controller = Get.put(MyProfileController());
+final SettingController controller = Get.put(SettingController());
 
 Widget buildAccountCard(BuildContext context) {
-  return Card(
+  return Obx(() => Card(
     color: AppColors.primaryGreen,
     margin: EdgeInsets.only(bottom: context.height * 0.03),
     child: Padding(
       padding: EdgeInsets.all(context.width * 0.04),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: context.width * 0.1,
-            backgroundColor: AppColors.lightGreen,
-            child:  Icon(Icons.person,
-              color: Colors.grey[300],
-            ),
-          ),
+          _buildProfileAvatar(context),
           SizedBox(width: context.width * 0.04),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                  _controller.userName.value,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontFamily: 'Montserrat',
-                  )
+                _controller.userName.value.isNotEmpty
+                    ? _controller.userName.value
+                    : 'no name',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.bold,
+                ),
               ),
+              SizedBox(height: 4),
               Text(
-                _controller.email.value,
-                style: Theme.of(context).textTheme.titleMedium,
+                _controller.email.value.isNotEmpty
+                    ? _controller.email.value
+                    : 'no email',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                  fontFamily: 'Montserrat',
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                _controller.phoneNumber.value.isNotEmpty
+                    ? _controller.phoneNumber.value
+                    : 'no phone',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                  fontFamily: 'Montserrat',
+                ),
               ),
             ],
           ),
         ],
       ),
     ),
-  );
+  ));
+}
+
+Widget _buildProfileAvatar(BuildContext context) {
+  return Obx(() {
+    if (_controller.profileImagePath.value.isNotEmpty) {
+      // إذا كانت هناك صورة بروفايل من السيرفر
+      return CircleAvatar(
+        radius: context.width * 0.1,
+        backgroundImage: NetworkImage(_controller.profileImagePath.value),
+        backgroundColor: AppColors.lightGreen,
+      );
+    } else if (_controller.selectedImage.value != null) {
+      // إذا كانت هناك صورة مختارة حديثاً
+      return CircleAvatar(
+        radius: context.width * 0.1,
+        backgroundImage: FileImage(_controller.selectedImage.value!),
+        backgroundColor: AppColors.lightGreen,
+      );
+    } else {
+      // إذا لم توجد صورة، نعرض أيقونة افتراضية
+      return CircleAvatar(
+        radius: context.width * 0.1,
+        backgroundColor: AppColors.lightGreen,
+        child: Icon(
+          Icons.person,
+          color: Colors.grey[300],
+          size: context.width * 0.1,
+        ),
+      );
+    }
+  });
 }
 
 Widget buildSettingsSection(

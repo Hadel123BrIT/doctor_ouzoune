@@ -7,22 +7,22 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class SettingController extends GetxController {
-  final isDarkMode = false.obs;
-  late final GetStorage box;
+  final GetStorage box = GetStorage();
+  final RxBool isDarkMode = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    box = GetStorage();
-    _loadThemePreference();
+    _loadSavedTheme();
   }
-
-  void _loadThemePreference() {
+  void _loadSavedTheme() {
     try {
-      isDarkMode.value = box.read<bool>('isDarkMode') ?? false;
+      isDarkMode.value = box.read('isDarkMode') ?? false;
       Get.changeThemeMode(isDarkMode.value ? ThemeMode.dark : ThemeMode.light);
+
+      print(' Theme loaded: ${isDarkMode.value ? 'Dark' : 'Light'}');
     } catch (e) {
-      print('Error loading theme preference: $e');
+      print(' Error loading theme: $e');
       isDarkMode.value = false;
     }
   }
@@ -30,15 +30,19 @@ class SettingController extends GetxController {
   void toggleTheme() {
     try {
       isDarkMode.toggle();
-      box.write('isDarkMode', isDarkMode.value); // حفظ القيمة
+      box.write('isDarkMode', isDarkMode.value);
       Get.changeThemeMode(isDarkMode.value ? ThemeMode.dark : ThemeMode.light);
+
       Get.snackbar(
         'Theme Changed',
         isDarkMode.value ? 'Dark Mode Activated' : 'Light Mode Activated',
         snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 2),
       );
+
+      print(' Theme changed to: ${isDarkMode.value ? 'Dark' : 'Light'}');
     } catch (e) {
-      print('Error toggling theme: $e');
+      print(' Error toggling theme: $e');
       Get.snackbar('Error', 'Failed to change theme');
     }
   }

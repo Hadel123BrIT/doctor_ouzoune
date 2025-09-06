@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:ouzoun/views/setting/setting_controller/setting_controller.dart';
 import 'package:ouzoun/views/splash/splash_screens/splash_screen.dart';
 import 'binding/initialize_binding.dart';
 import 'core/services/LocalNotificationService .dart';
@@ -31,11 +32,9 @@ Future<void> initializeServices() async {
   try {
     Get.put(ApiServices(), permanent: true);
     Get.put(AuthService(), permanent: true);
+    Get.put(SettingController(), permanent: true);
     await Get.putAsync(() => FirebaseServices().onInit(), permanent: true);
-
-    print('✅ All services initialized successfully');
   } catch (e) {
-    print('❌ Error initializing services: $e');
   }
 }
 

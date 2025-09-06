@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as dio;
+import 'package:ouzoun/core/constants/app_colors.dart';
 import 'package:ouzoun/routes/app_routes.dart';
 import '../../../core/services/api_services.dart';
 import '../../../models/ImplantKit .dart';
@@ -38,6 +39,8 @@ class ProcedureController extends GetxController {
   final Rx<DateTime?> fromDate = Rx<DateTime?>(null);
   final Rx<DateTime?> toDate = Rx<DateTime?>(null);
   final statusFilter = 0.obs;
+
+
 
   @override
   void onInit() {
@@ -769,8 +772,8 @@ class ProcedureController extends GetxController {
         Get.snackbar(
           'Success',
           'Procedure status updated successfully'.tr,
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppColors.lightGreen,
           colorText: Colors.white,
           duration: Duration(seconds: 3),
           margin: EdgeInsets.all(15),
