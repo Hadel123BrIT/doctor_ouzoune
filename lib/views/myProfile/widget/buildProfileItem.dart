@@ -4,6 +4,38 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../myProfile_controller/myProfile_controller.dart';
+
+Widget buildProfileImage() {
+  final controller = Get.put(MyProfileController());
+  final imagePath = controller.profileImagePath.value;
+
+  if (imagePath.isEmpty) {
+    return Icon(Icons.person, color: Colors.grey[500], size: 80);
+  }
+
+  return ClipOval(
+    child: Image.network(
+      imagePath,
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return Center(
+          child: CircularProgressIndicator(
+            color: AppColors.primaryGreen,
+            value: loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded /
+                loadingProgress.expectedTotalBytes!
+                : null,
+          ),
+        );
+      },
+      errorBuilder: (context, error, stackTrace) {
+        return Icon(Icons.person, color: Colors.grey[500], size: 80);
+      },
+    ),
+  );
+}
 
 Widget buildProfileItem(BuildContext context, {
   required IconData icon,
@@ -18,9 +50,9 @@ Widget buildProfileItem(BuildContext context, {
       borderRadius: BorderRadius.circular(15),
       boxShadow: [
         BoxShadow(
-          color: Colors.grey.withOpacity(0.1),
+          color: Colors.grey,
           blurRadius: 5,
-          spreadRadius: 2,
+          spreadRadius: 1,
         ),
       ],
     ),

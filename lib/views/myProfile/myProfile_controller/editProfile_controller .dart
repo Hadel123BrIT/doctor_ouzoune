@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ouzoun/core/constants/app_colors.dart';
 import 'myProfile_controller.dart';
 
 class EditProfileController extends GetxController {
-  final MyProfileController profileController = Get.find<MyProfileController>();
+  final MyProfileController profileController = Get.put(MyProfileController());
 
-  // نترك جميع الحقول فارغة في البداية
   final userName = RxString('');
   final email = RxString('');
   final phoneNumber = RxString('');
@@ -17,7 +17,6 @@ class EditProfileController extends GetxController {
   final location = RxString('');
   final Rx<File?> selectedImage = Rx<File?>(null);
   final isLoading = false.obs;
-
   final clinicLongitude = 0.0.obs;
   final clinicLatitude = 0.0.obs;
 
@@ -29,10 +28,6 @@ class EditProfileController extends GetxController {
   Future<void> updateProfile() async {
     try {
       isLoading(true);
-
-      // طباعة البيانات قبل الإرسال
-      print('🔄 بدء عملية تحديث الملف الشخصي...');
-      print('📝 البيانات المحلية قبل الإرسال:');
       print('   UserName: ${userName.value}');
       print('   Email: ${email.value}');
       print('   PhoneNumber: ${phoneNumber.value}');
@@ -42,43 +37,33 @@ class EditProfileController extends GetxController {
       print('   Latitude: ${clinicLatitude.value}');
       print('   Has Image: ${selectedImage.value != null}');
 
-      // نرسل جميع الحقول فارغة مع القيم التي تم تعديلها فقط
       final data = {
-        'UserName': userName.value,          // فارغ إذا لم يتغير
-        'Email': email.value,                // فارغ إذا لم يتغير
-        'PhoneNumber': phoneNumber.value,    // فارغ إذا لم يتغير
-        'ClinicName': clinicName.value,      // فارغ إذا لم يتغير
-        'Address': clinicAddress.value,      // فارغ إذا لم يتغير
-        'Longtitude': clinicLongitude.value, // 0 إذا لم يتغير
-        'Latitude': clinicLatitude.value,    // 0 إذا لم يتغير
+        'UserName': userName.value,
+        'Email': email.value,
+        'PhoneNumber': phoneNumber.value,
+        'ClinicName': clinicName.value,
+        'Address': clinicAddress.value,
+        'Longtitude': clinicLongitude.value,
+        'Latitude': clinicLatitude.value,
       };
-
-      // نرسل البيانات إلى السيرفر
-      print('🚀 إرسال البيانات إلى السيرفر...');
       final response = await profileController.apiServices.updateMyProfile(
         data: data,
         profileImageFile: selectedImage.value,
       );
 
       if (response != null) {
-        print('🎉 تم تحديث الملف الشخصي بنجاح!');
         Get.snackbar(
           'Success',
           'Profile updated successfully',
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.lightGreen,
           colorText: Colors.white,
         );
-
-        // نعيد تحميل البيانات في المتحكم الرئيسي
-        print('🔄 إعادة تحميل بيانات الملف الشخصي...');
         await profileController.fetchProfileData();
 
         Get.back();
       } else {
-        print('⚠️ الاستجابة من السيرفر فارغة');
       }
     } catch (e) {
-      print('❌ فشل في تحديث الملف الشخصي: $e');
       Get.snackbar(
         'Error',
         'Failed to update profile: ${e.toString()}',
@@ -86,26 +71,19 @@ class EditProfileController extends GetxController {
         colorText: Colors.white,
       );
     } finally {
-      print('✅ انتهت عملية التحديث');
       isLoading(false);
     }
   }
 
   void updateLocation(LatLng coords, String address) {
-    print('📍 تحديث الموقع:');
-    print('   الإحداثيات: ${coords.latitude}, ${coords.longitude}');
-    print('   العنوان: $address');
 
     clinicLongitude.value = coords.longitude;
     clinicLatitude.value = coords.latitude;
     location.value = address;
-
-    print('   ✅ تم حفظ الإحداثيات: ${clinicLatitude.value}, ${clinicLongitude.value}');
   }
 
   Future<void> pickImage() async {
     try {
-      print('🖼️ محاولة اختيار صورة...');
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(
         source: ImageSource.gallery,
@@ -115,7 +93,6 @@ class EditProfileController extends GetxController {
       );
 
       if (image != null) {
-        print('✅ تم اختيار الصورة: ${image.path}');
         selectedImage.value = File(image.path);
         Get.snackbar(
           'Success',
@@ -124,10 +101,8 @@ class EditProfileController extends GetxController {
           colorText: Colors.white,
         );
       } else {
-        print('⚠️ لم يتم اختيار أي صورة');
       }
     } catch (e) {
-      print('❌ فشل في اختيار الصورة: $e');
       Get.snackbar(
         'Error',
         'Failed to pick image: ${e.toString()}',

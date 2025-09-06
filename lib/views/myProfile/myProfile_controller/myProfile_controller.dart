@@ -60,7 +60,6 @@ class MyProfileController extends GetxController {
       role.value = response['role'] ?? '';
       rate.value = (response['rate'] ?? 0.0).toDouble();
       profileImagePath.value = response['profileImagePath'] ?? '';
-
       final clinic = response['clinic'];
       if (clinic != null) {
         clinicId.value = clinic['id'] ?? 0;

@@ -65,15 +65,16 @@ class MyProfileScreen extends StatelessWidget {
                         shape: BoxShape.circle,
                         color: Colors.grey[300],
                       ),
-                      child: _buildProfileImage(),
+                      child: buildProfileImage(),
                     ),
                     SizedBox(height: context.height * 0.03),
-
                     if (controller.isLoading.value)
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: CircularProgressIndicator(
-                          color: AppColors.primaryGreen,
+                      Center(
+                        child: Padding(
+                          padding:  EdgeInsets.all(16.0),
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryGreen,
+                          ),
                         ),
                       )
                     else
@@ -147,33 +148,5 @@ class MyProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileImage() {
-    final imagePath = controller.profileImagePath.value;
 
-    if (imagePath.isEmpty) {
-      return Icon(Icons.person, color: Colors.grey[500], size: 80);
-    }
-
-    return ClipOval(
-      child: Image.network(
-        imagePath,
-        fit: BoxFit.cover,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Center(
-            child: CircularProgressIndicator(
-              color: AppColors.primaryGreen,
-              value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded /
-                  loadingProgress.expectedTotalBytes!
-                  : null,
-            ),
-          );
-        },
-        errorBuilder: (context, error, stackTrace) {
-          return Icon(Icons.person, color: Colors.grey[500], size: 80);
-        },
-      ),
-    );
-  }
 }
