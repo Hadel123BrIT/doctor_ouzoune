@@ -88,8 +88,7 @@ class CheckEmail extends StatelessWidget {
                     ],
                   ),
                   if (controller.isLoading.value)
-                    Positioned.fill(
-                      child: Container(
+                      Container(
                         color: Colors.black.withOpacity(0.5),
                         child: const Center(
                           child: CircularProgressIndicator(
@@ -97,7 +96,7 @@ class CheckEmail extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ),
+
                 ],
               )),
             ),

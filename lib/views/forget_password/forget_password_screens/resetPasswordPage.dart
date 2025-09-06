@@ -97,16 +97,15 @@ class ResetPasswordPage extends StatelessWidget {
                     ),
                   ),
                   if (controller.isLoading.value)
-                    Positioned.fill(
-                      child: Container(
-                        color: Colors.black.withOpacity(0.5),
+                       Container(
+
                         child: Center(
                           child: CircularProgressIndicator(
                             color: AppColors.primaryGreen,
                           ),
                         ),
                       ),
-                    ),
+
                 ],
               )),
             ),
