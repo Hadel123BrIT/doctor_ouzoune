@@ -7,6 +7,7 @@ import '../../../models/Implant_model.dart';
 import '../../kits/Kits_Controller/kits_controller.dart';
 import '../../kits/kits_screens/detail_kit.dart';
 import '../../kits/kits_screens/implant_kits.dart';
+import '../procedure_controller/addProcedureController .dart';
 import '../procedure_controller/procedure_controller.dart';
 import '../procedure_screen/get_all_procedures.dart';
 
@@ -14,7 +15,7 @@ import '../procedure_screen/get_all_procedures.dart';
 Widget buildNeedsAssistanceDropdown(BuildContext context) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
   final borderColor = isDark ? Colors.white : Colors.grey;
-  final controller = Get.put(ProcedureController());
+  final controller = Get.put(AddProcedureController());
   return Obx(() => DropdownButtonFormField<bool>(
     items: [
       DropdownMenuItem(
@@ -130,7 +131,7 @@ Widget buildProcedureTypeDropdown(BuildContext context) {
 }
 
 Widget buildDateTimeSelectionRow(BuildContext context) {
-  final controller = Get.put(ProcedureController());
+  final controller = Get.put(AddProcedureController());
   return Row(
     children: [
       Expanded(
@@ -339,7 +340,7 @@ Widget buildKitsToolsButtonsRow(BuildContext context) {
 }
 
 Widget buildSubmitButton(BuildContext context) {
-  final controller = Get.put(ProcedureController());
+  final controller = Get.put(AddProcedureController());
   return CustomButton(
     onTap: () async {
 

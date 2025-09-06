@@ -4,17 +4,13 @@ import 'package:ouzoun/Widgets/custom_button.dart';
 import 'package:ouzoun/routes/app_routes.dart';
 import 'package:ouzoun/views/procedure/procedure_controller/procedure_controller.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../setting/setting_screen/widget/settingHelper.dart';
+import '../procedure_controller/addProcedureController .dart';
 import '../widget/buildProcedureHelper.dart';
 
 class AddProcedure extends StatefulWidget {
   AddProcedure({super.key});
-  final ProcedureController controller = Get.put(ProcedureController());
-  void initState() {
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.resetProcedureData();
-    });
-   }
 
   @override
   State<AddProcedure> createState() => _AddProcedureState();
@@ -22,8 +18,15 @@ class AddProcedure extends StatefulWidget {
 
 
 class _AddProcedureState extends State<AddProcedure> {
-  final ProcedureController controller = Get.put(ProcedureController());
+  final AddProcedureController _controller = Get.put(AddProcedureController());
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.resetProcedureData();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +55,7 @@ class _AddProcedureState extends State<AddProcedure> {
             buildNeedsAssistanceDropdown(context),
             SizedBox(height: Get.height * 0.03),
             buildAssistantsCountDropdown(context),
-            controller.needsAssistance.value?
+            _controller.needsAssistance.value?
               SizedBox(height: Get.height * 0.04):
             SizedBox(height: Get.height * 0.03),
             buildProcedureTypeDropdown(context),
